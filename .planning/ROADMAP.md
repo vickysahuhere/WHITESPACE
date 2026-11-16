@@ -16,7 +16,7 @@ White Collars (WHITESPACE) is built as a complete, high-speed, dual-target AI Wo
 - [x] **Phase 4: User Personalization, Chat Isolation & 3D Assistant (WHITE)** - 4-member session switcher + add user, strictly isolated chat histories, personal AI profiles, and reactive Three.js 3D assistant.
 - [x] **Phase 5: Multi-Tab OSS Browser & Selective Tab Sharing** - Embedded multi-tab browser with per-tab privacy (PRIVATE vs SHARED), Team Shared Tabs strip, and web viewport with INDEX TO SPACE.
 - [x] **Phase 6: Built-in Developer Suite (GitHub OSS, Sandbox, Vector Board, REST Tester)** - GitHub repo search with CDN links, monochrome live code sandbox, interactive vector architecture canvas, and Hoppscotch-lite REST client.
-- [ ] **Phase 7: Uncompressed Studio WebRTC Stage & Hardware Audio Pod** - 48 kHz 510 kbps stereo Opus stage, 0–200% GainNode boost with soft limiter, live FFT spectrum canvas, 4K60 screen share, and BroadcastChannel/SDP signaling.
+- [x] **Phase 7: Uncompressed Studio WebRTC Stage & Hardware Audio Pod** - 48 kHz 510 kbps stereo Opus stage, 0–200% GainNode boost with soft limiter, live FFT spectrum canvas, 4K60 screen share, and BroadcastChannel/SDP signaling.
 - [ ] **Phase 8: OpenClaw Mission Control Kanban & Right-Docked AI Copilot** - 3-column task pipeline with one-click DISPATCH AI into right-docked AI Copilot drawer with RAG grounding.
 - [ ] **Phase 9: Google Gemini Direct REST, Firebase Cloud Sync & Antigravity Bridge** - Direct Gemini REST with model discovery, Firebase Spark Firestore sync with invite-only auth, context.md download, and auto-generated wc_bridge.py.
 - [ ] **Phase 10: Electron Native Desktop Packaging & Cross-Platform Launchers** - Electron 34+ wrapper with CSP/X-Frame-Options stripper, LAUNCH_WINDOWS_APP.bat, BUILD_EXE_INSTALLER.bat (portable .exe), and full dual web/desktop verification.
@@ -147,9 +147,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 07-01: Implement Web Audio API hardware pod: input device selector, 0–200% GainNode boost with dynamics compressor, and loopback monitor.
-- [ ] 07-02: Build 60fps HTML5 Canvas dB level meter and FFT frequency spectrum analyzer linked to the audio pipeline.
-- [ ] 07-03: Implement WebRTC Stage with 510 kbps Opus SDP mutator, 4K60 screen share (b=AS:25000), and dual BroadcastChannel + SDP signaling.
+- [x] 07-01: Implement Web Audio API hardware pod: input device selector, 0–200% GainNode boost with dynamics compressor, and loopback monitor.
+- [x] 07-02: Build 60fps HTML5 Canvas dB level meter and FFT frequency spectrum analyzer linked to the audio pipeline.
+- [x] 07-03: Implement WebRTC Stage with 510 kbps Opus SDP mutator, 4K60 screen share (b=AS:25000), and dual BroadcastChannel + SDP signaling.
 
 ### Phase 8: OpenClaw Mission Control Kanban & Right-Docked AI Copilot
 **Goal**: Deliver the OpenClaw 3-column Kanban pipeline with one-click DISPATCH AI execution into the right-docked AI Copilot drawer grounded by Space RAG context.

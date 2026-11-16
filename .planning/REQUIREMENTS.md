@@ -53,11 +53,11 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Uncompressed WebRTC Stage & Hardware Audio Pod
 
-- [ ] **RTC-01**: Studio audio WebRTC stage at 48 kHz, 510 kbps stereo Opus with hardware bypass options.
-- [ ] **RTC-02**: Hardware audio controls with selectable audio inputs, 0–200% live GainNode boost, and loopback monitor.
-- [ ] **RTC-03**: Real-time dB level meter and FFT spectrum visualizer rendered on HTML5 Canvas.
-- [ ] **RTC-04**: High-bitrate 60fps screen and video sharing supporting 1080p, 1440p, and 4K (via `b=AS:25000` SDP override).
-- [ ] **RTC-05**: Peer signaling via `BroadcastChannel` (for instant local browser tabs) and SDP Offer/Answer tokens or Firestore.
+- [x] **RTC-01**: Studio audio WebRTC stage at 48 kHz, 510 kbps stereo Opus with hardware bypass options.
+- [x] **RTC-02**: Hardware audio controls with selectable audio inputs, 0–200% live GainNode boost, and loopback monitor.
+- [x] **RTC-03**: Real-time dB level meter and FFT spectrum visualizer rendered on HTML5 Canvas.
+- [x] **RTC-04**: High-bitrate 60fps screen and video sharing supporting 1080p, 1440p, and 4K (via `b=AS:25000` SDP override).
+- [x] **RTC-05**: Peer signaling via `BroadcastChannel` (for instant local browser tabs) and SDP Offer/Answer tokens or Firestore.
 
 ### OpenClaw Mission Control Kanban & AI Copilot
 
