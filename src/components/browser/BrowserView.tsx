@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { useBrowser } from '../../context/BrowserContext';
 import { BrowserTabType, BrowserTab } from '../../types';
+import { TeamSharedTabsStrip } from './TeamSharedTabsStrip';
+import { EmbeddedWebViewport } from './EmbeddedWebViewport';
 import { 
   Globe, 
   Plus, 
@@ -14,12 +16,12 @@ import {
   Code, 
   Share2, 
   Terminal, 
-  ExternalLink,
-  ChevronDown
+  Copy,
+  Eye
 } from 'lucide-react';
 
 export const BrowserView: React.FC = () => {
-  const { activeMember, activeSpace } = useWorkspace();
+  const { activeMember, activeSpace, members } = useWorkspace();
   const { 
     activeTab, 
     activeTabId, 
@@ -30,7 +32,8 @@ export const BrowserView: React.FC = () => {
     toggleTabSharing, 
     navigateTab, 
     goBack, 
-    goForward 
+    goForward,
+    cloneTab
   } = useBrowser();
 
   const userTabs = getUserTabs(activeMember.id, activeSpace.id);
@@ -65,7 +68,7 @@ export const BrowserView: React.FC = () => {
     }
   };
 
-  if (!activeTab || userTabs.length === 0) {
+  if (!activeTab && userTabs.length === 0) {
     return (
       <div className="h-full border border-[#262626] bg-[#0A0A0A] flex flex-col items-center justify-center font-mono select-none p-8">
         <Globe size={40} className="text-[#333333] mb-4" />
@@ -76,7 +79,7 @@ export const BrowserView: React.FC = () => {
           Initialize a personal developer tab. All new tabs default to PRIVATE (ONLY ME).
         </p>
         <button
-          onClick={() => createTab(activeMember.id, activeSpace.id, { type: 'web', url: 'https://docs.github.com', title: 'GitHub Docs' })}
+          onClick={() => createTab(activeMember.id, activeSpace.id, { type: 'web', url: 'https://docs.github.com/en/rest', title: 'GitHub Docs' })}
           className="px-4 py-2 bg-[#FFFFFF] text-[#000000] font-bold text-xs border border-[#FFFFFF] hover:bg-[#A3A3A3] flex items-center gap-2"
         >
           <Plus size={14} />
@@ -86,15 +89,23 @@ export const BrowserView: React.FC = () => {
     );
   }
 
-  const canGoBack = (activeTab.historyIndex ?? 0) > 0;
-  const canGoForward = (activeTab.historyIndex ?? 0) < (activeTab.history?.length ?? 1) - 1;
+  const isTeammateTab = activeTab && activeTab.userId !== activeMember.id;
+  const tabOwner = isTeammateTab ? members.find(m => m.id === activeTab.userId) : null;
+
+  const canGoBack = (activeTab?.historyIndex ?? 0) > 0;
+  const canGoForward = (activeTab?.historyIndex ?? 0) < (activeTab?.history?.length ?? 1) - 1;
 
   return (
     <div className="h-full border border-[#262626] bg-[#0A0A0A] flex flex-col font-mono select-none overflow-hidden relative">
       {/* 1. Personal Tabs Strip */}
       <div className="h-10 bg-[#0C0C0C] border-b border-[#262626] px-2 flex items-center gap-1 overflow-x-auto no-scrollbar shrink-0">
+        <div className="flex items-center gap-1.5 px-2 text-[10px] text-[#737373] uppercase font-bold shrink-0 border-r border-[#262626] mr-1">
+          <span className="text-[#FFFFFF]">{activeMember.badge}</span>
+          <span>MY TABS:</span>
+        </div>
+
         {userTabs.map(tab => {
-          const isActive = tab.id === activeTab.id;
+          const isActive = tab.id === activeTab?.id;
           return (
             <div
               key={tab.id}
@@ -190,106 +201,105 @@ export const BrowserView: React.FC = () => {
         </div>
       </div>
 
-      {/* 2. Navigation & Privacy Controls Bar */}
-      <div className="h-11 bg-[#0F0F0F] border-b border-[#262626] px-3 flex items-center justify-between gap-3 shrink-0">
-        {/* Navigation History Buttons */}
-        <div className="flex items-center gap-1 text-[#A3A3A3]">
-          <button
-            onClick={() => goBack(activeTab.id)}
-            disabled={!canGoBack}
-            title="Go Back"
-            className={`p-1.5 border border-[#262626] transition-colors ${
-              canGoBack ? 'hover:text-[#FFFFFF] hover:border-[#404040]' : 'opacity-30 cursor-not-allowed'
-            }`}
-          >
-            <ArrowLeft size={13} />
-          </button>
-          <button
-            onClick={() => goForward(activeTab.id)}
-            disabled={!canGoForward}
-            title="Go Forward"
-            className={`p-1.5 border border-[#262626] transition-colors ${
-              canGoForward ? 'hover:text-[#FFFFFF] hover:border-[#404040]' : 'opacity-30 cursor-not-allowed'
-            }`}
-          >
-            <ArrowRight size={13} />
-          </button>
-          <button
-            onClick={() => navigateTab(activeTab.id, activeTab.url)}
-            title="Reload Tab"
-            className="p-1.5 border border-[#262626] hover:text-[#FFFFFF] hover:border-[#404040] transition-colors"
-          >
-            <RotateCw size={13} />
-          </button>
-        </div>
+      {/* 2. Team Shared Tabs Strip */}
+      <TeamSharedTabsStrip onPreviewTab={(tab) => setActiveTabId(tab.id)} />
 
-        {/* Address URL Bar */}
-        <form onSubmit={handleNavigate} className="flex-1 max-w-2xl relative flex items-center">
-          <input
-            type="text"
-            value={urlInput}
-            onChange={e => setUrlInput(e.target.value)}
-            placeholder="ENTER HTTPS:// URL OR DEVELOPER PROTOCOL..."
-            className="w-full bg-[#000000] border border-[#262626] focus:border-[#FFFFFF] px-3 py-1.5 text-xs text-[#FFFFFF] font-mono outline-none"
-          />
-        </form>
-
-        {/* Privacy Toggle Button (Selective Tab Privacy) */}
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => toggleTabSharing(activeTab.id)}
-            title={activeTab.isShared ? "Click to make this tab PRIVATE (Only you)" : "Click to SHARE this tab with your team"}
-            className={`px-3 py-1 text-xs font-bold border flex items-center gap-1.5 transition-all ${
-              activeTab.isShared
-                ? 'bg-[#FFFFFF] text-[#000000] border-[#FFFFFF]'
-                : 'bg-[#121212] text-[#A3A3A3] border-[#333333] hover:border-[#FFFFFF] hover:text-[#FFFFFF]'
-            }`}
-          >
-            {activeTab.isShared ? (
-              <>
-                <Users size={12} />
-                <span>TAB: SHARED WITH TEAM</span>
-              </>
-            ) : (
-              <>
-                <Lock size={12} />
-                <span>PRIVATE (ONLY ME)</span>
-              </>
-            )}
-          </button>
-        </div>
-      </div>
-
-      {/* 3. Viewport Container */}
-      <div className="flex-1 bg-[#050505] overflow-hidden flex flex-col">
-        {activeTab.type === 'web' ? (
-          <div className="flex-1 flex flex-col p-4">
-            <div className="flex items-center justify-between pb-2 border-b border-[#262626] text-xs text-[#737373]">
-              <div className="flex items-center gap-2">
-                <Globe size={13} />
-                <span className="font-bold text-[#FFFFFF]">{activeTab.url}</span>
-              </div>
-              <a 
-                href={activeTab.url} 
-                target="_blank" 
-                rel="noreferrer"
-                className="flex items-center gap-1 hover:text-[#FFFFFF]"
-              >
-                <span>OPEN EXTERNAL</span>
-                <ExternalLink size={11} />
-              </a>
-            </div>
-            <div className="flex-1 mt-2 border border-[#262626] bg-[#000000] relative overflow-hidden">
-              <iframe
-                key={activeTab.url}
-                src={activeTab.url}
-                title={activeTab.title}
-                sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-                className="w-full h-full border-none"
-              />
-            </div>
+      {/* 3. Navigation & Privacy Controls Bar */}
+      {activeTab && (
+        <div className="h-11 bg-[#0F0F0F] border-b border-[#262626] px-3 flex items-center justify-between gap-3 shrink-0">
+          {/* Navigation History Buttons */}
+          <div className="flex items-center gap-1 text-[#A3A3A3]">
+            <button
+              onClick={() => goBack(activeTab.id)}
+              disabled={!canGoBack}
+              title="Go Back"
+              className={`p-1.5 border border-[#262626] transition-colors ${
+                canGoBack ? 'hover:text-[#FFFFFF] hover:border-[#404040]' : 'opacity-30 cursor-not-allowed'
+              }`}
+            >
+              <ArrowLeft size={13} />
+            </button>
+            <button
+              onClick={() => goForward(activeTab.id)}
+              disabled={!canGoForward}
+              title="Go Forward"
+              className={`p-1.5 border border-[#262626] transition-colors ${
+                canGoForward ? 'hover:text-[#FFFFFF] hover:border-[#404040]' : 'opacity-30 cursor-not-allowed'
+              }`}
+            >
+              <ArrowRight size={13} />
+            </button>
+            <button
+              onClick={() => navigateTab(activeTab.id, activeTab.url)}
+              title="Reload Tab"
+              className="p-1.5 border border-[#262626] hover:text-[#FFFFFF] hover:border-[#404040] transition-colors"
+            >
+              <RotateCw size={13} />
+            </button>
           </div>
-        ) : (
+
+          {/* Address URL Bar */}
+          <form onSubmit={handleNavigate} className="flex-1 max-w-2xl relative flex items-center">
+            <input
+              type="text"
+              value={urlInput}
+              onChange={e => setUrlInput(e.target.value)}
+              placeholder="ENTER HTTPS:// URL OR DEVELOPER PROTOCOL..."
+              className="w-full bg-[#000000] border border-[#262626] focus:border-[#FFFFFF] px-3 py-1.5 text-xs text-[#FFFFFF] font-mono outline-none"
+            />
+          </form>
+
+          {/* Teammate Preview Badge OR Privacy Toggle Button */}
+          <div className="flex items-center gap-2">
+            {isTeammateTab ? (
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 bg-[#171717] border border-[#404040] px-2 py-1 text-[11px] text-[#A3A3A3]">
+                  <Eye size={12} className="text-[#FFFFFF]" />
+                  <span>PREVIEWING TEAMMATE TAB ({tabOwner?.badge || 'TM'})</span>
+                </div>
+                <button
+                  onClick={() => {
+                    const cloned = cloneTab(activeTab.id, activeMember.id);
+                    if (cloned) setActiveTabId(cloned.id);
+                  }}
+                  className="px-3 py-1 text-xs font-bold bg-[#FFFFFF] text-[#000000] border border-[#FFFFFF] hover:bg-[#CCCCCC] flex items-center gap-1.5"
+                >
+                  <Copy size={12} />
+                  <span>CLONE TO MY TABS</span>
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => toggleTabSharing(activeTab.id)}
+                title={activeTab.isShared ? "Click to make this tab PRIVATE (Only you)" : "Click to SHARE this tab with your team"}
+                className={`px-3 py-1 text-xs font-bold border flex items-center gap-1.5 transition-all ${
+                  activeTab.isShared
+                    ? 'bg-[#FFFFFF] text-[#000000] border-[#FFFFFF]'
+                    : 'bg-[#121212] text-[#A3A3A3] border-[#333333] hover:border-[#FFFFFF] hover:text-[#FFFFFF]'
+                }`}
+              >
+                {activeTab.isShared ? (
+                  <>
+                    <Users size={12} />
+                    <span>TAB: SHARED WITH TEAM</span>
+                  </>
+                ) : (
+                  <>
+                    <Lock size={12} />
+                    <span>PRIVATE (ONLY ME)</span>
+                  </>
+                )}
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* 4. Viewport Container */}
+      <div className="flex-1 bg-[#050505] overflow-hidden flex flex-col">
+        {activeTab && activeTab.type === 'web' ? (
+          <EmbeddedWebViewport tab={activeTab} />
+        ) : activeTab ? (
           <div className="flex-1 p-6 flex flex-col items-center justify-center font-mono">
             <div className="border border-[#262626] bg-[#0D0D0D] p-6 max-w-lg text-center space-y-3">
               <div className="w-10 h-10 mx-auto bg-[#000000] border border-[#404040] flex items-center justify-center text-[#FFFFFF]">
@@ -303,7 +313,7 @@ export const BrowserView: React.FC = () => {
               </p>
             </div>
           </div>
-        )}
+        ) : null}
       </div>
     </div>
   );
