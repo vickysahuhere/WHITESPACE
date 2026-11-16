@@ -13,7 +13,7 @@ White Collars (WHITESPACE) is built as a complete, high-speed, dual-target AI Wo
 - [x] **Phase 1: Monochrome Design Foundation & Triple-Paradigm Shell** - Establish strict black-and-white theme tokens, Discord space rail, Notion navigation, top-bar Gemini bar, audio pod, and CTRL+K palette.
 - [x] **Phase 2: Multi-Space Knowledge Base, SOUL.MD & Live Document Editor** - Multi-space management, persistent per-space SOUL.MD, multi-format file ingestion, and Notion-style slash-command editor.
 - [x] **Phase 3: Sub-Millisecond In-Memory Local RAG Engine** - Client-side incremental chunking and token index providing < 1 ms similarity search across active or all spaces.
-- [ ] **Phase 4: User Personalization, Chat Isolation & 3D Assistant (WHITE)** - 4-member session switcher + add user, strictly isolated chat histories, personal AI profiles, and reactive Three.js 3D assistant.
+- [x] **Phase 4: User Personalization, Chat Isolation & 3D Assistant (WHITE)** - 4-member session switcher + add user, strictly isolated chat histories, personal AI profiles, and reactive Three.js 3D assistant.
 - [ ] **Phase 5: Multi-Tab OSS Browser & Selective Tab Sharing** - Embedded multi-tab browser with per-tab privacy (PRIVATE vs SHARED), Team Shared Tabs strip, and web viewport with INDEX TO SPACE.
 - [ ] **Phase 6: Built-in Developer Suite (GitHub OSS, Sandbox, Vector Board, REST Tester)** - GitHub repo search with CDN links, monochrome live code sandbox, interactive vector architecture canvas, and Hoppscotch-lite REST client.
 - [ ] **Phase 7: Uncompressed Studio WebRTC Stage & Hardware Audio Pod** - 48 kHz 510 kbps stereo Opus stage, 0–200% GainNode boost with soft limiter, live FFT spectrum canvas, 4K60 screen share, and BroadcastChannel/SDP signaling.
@@ -96,9 +96,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 04-01: Implement multi-member session switcher, member management modal, and strictly isolated chat stores by user and space.
-- [ ] 04-02: Build personal AI profile customization interface and Gemini prompt injection assembler.
-- [ ] 04-03: Build Three.js 3D assistant (WHITE) with geometric wireframe sphere and sculpted "W" audio reactivity.
+- [x] 04-01: Implement multi-member session switcher, member management modal, and strictly isolated chat stores by user and space.
+- [x] 04-02: Build personal AI profile customization interface and Gemini prompt injection assembler.
+- [x] 04-03: Build Three.js 3D assistant (WHITE) with geometric wireframe sphere and sculpted "W" audio reactivity.
 
 ### Phase 5: Multi-Tab OSS Browser & Selective Tab Sharing
 **Goal**: Deliver an embedded multi-tab browser per member with selective privacy toggles (`PRIVATE (ONLY ME)` vs. `SHARED WITH TEAM`), Team Shared Tabs strip, and embedded web viewport with INDEX TO SPACE.

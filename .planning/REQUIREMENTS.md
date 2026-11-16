@@ -32,10 +32,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### User Personalization & Chat Isolation
 
-- [ ] **USR-01**: Multi-member session switcher with 4 pre-configured slots (`Vicky Sahu`, `Arnav Suryavanshi`, `Lakshay Arora`, `Shiwant Goyal`) plus dynamic member creation.
-- [ ] **USR-02**: Strict chat history isolation per user per Space (`chatsByUser[userId][spaceId]`).
-- [ ] **USR-03**: Personal AI profile (Name, Role, Hardware/Tech Stack, Personal Instructions) injected into Gemini queries.
-- [ ] **USR-04**: Reactive 3D monochrome assistant (`WHITE`) rendered with Three.js WebGL (geometric wireframe sphere / sculpted "W") with audio reactivity.
+- [x] **USR-01**: Multi-member session switcher with 4 pre-configured slots (`Vicky Sahu`, `Arnav Suryavanshi`, `Lakshay Arora`, `Shiwant Goyal`) plus dynamic member creation.
+- [x] **USR-02**: Strict chat history isolation per user per Space (`chatsByUser[userId][spaceId]`).
+- [x] **USR-03**: Personal AI profile (Name, Role, Hardware/Tech Stack, Personal Instructions) injected into Gemini queries.
+- [x] **USR-04**: Reactive 3D monochrome assistant (`WHITE`) rendered with Three.js WebGL (geometric wireframe sphere / sculpted "W") with audio reactivity.
 
 ### Multi-Tab OSS Developer Browser
 
