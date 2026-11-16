@@ -14,6 +14,7 @@ import { BrowserView } from '../browser/BrowserView';
 import { StageView } from '../stage/StageView';
 import { KanbanView } from '../kanban/KanbanView';
 import { AudioHardwareModal } from '../stage/AudioHardwareModal';
+import { ModelDiscoveryModal } from '../common/ModelDiscoveryModal';
 import { CopilotDrawer } from './CopilotDrawer';
 import { useAudio } from '../../context/AudioContext';
 import { Task } from '../../types';
@@ -38,6 +39,7 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
   const [showMemberModal, setShowMemberModal] = useState(false);
   const [showSoulModal, setShowSoulModal] = useState(false);
   const [showAssistantModal, setShowAssistantModal] = useState(false);
+  const [showModelModal, setShowModelModal] = useState(false);
   const [copilotDrawerOpen, setCopilotDrawerOpen] = useState(false);
   const [dispatchedTask, setDispatchedTask] = useState<Task | null>(null);
   const { showHardwareModal, setShowHardwareModal } = useAudio();
@@ -74,6 +76,7 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
           onOpenCommandPalette={() => setCommandPaletteOpen(true)}
           onToggleCopilotDrawer={() => setCopilotDrawerOpen(!copilotDrawerOpen)}
           isCopilotDrawerOpen={copilotDrawerOpen}
+          onOpenModelDiscovery={() => setShowModelModal(true)}
         />
 
         {/* Viewport Content Host */}
@@ -178,6 +181,12 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
       <AssistantModal 
         isOpen={showAssistantModal} 
         onClose={() => setShowAssistantModal(false)} 
+      />
+
+      {/* --- Google Gemini Live Model Discovery Modal --- */}
+      <ModelDiscoveryModal 
+        isOpen={showModelModal} 
+        onClose={() => setShowModelModal(false)} 
       />
 
       {/* --- Audio Hardware Calibration Modal --- */}

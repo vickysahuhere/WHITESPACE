@@ -8,7 +8,8 @@ export const TopBar: React.FC<{
   onOpenCommandPalette: () => void;
   onToggleCopilotDrawer?: () => void;
   isCopilotDrawerOpen?: boolean;
-}> = ({ onUserClick, onOpenCommandPalette, onToggleCopilotDrawer, isCopilotDrawerOpen }) => {
+  onOpenModelDiscovery?: () => void;
+}> = ({ onUserClick, onOpenCommandPalette, onToggleCopilotDrawer, isCopilotDrawerOpen, onOpenModelDiscovery }) => {
   const { activeSpace, activeView, activeMember, geminiKey, setGeminiKey, isKeyLinked } = useWorkspace();
   const { totalChunksIndexed, setRagInspectorOpen } = useRAG();
   const [inputKey, setInputKey] = useState(geminiKey);
@@ -68,18 +69,20 @@ export const TopBar: React.FC<{
           )}
         </button>
 
-        {/* Status Indicator */}
-        <div 
-          className={`flex items-center gap-1.5 px-2 py-0.5 border text-[10px] font-mono shrink-0 transition-colors ${
+        {/* Status Indicator / Model Discovery Trigger */}
+        <button
+          type="button"
+          onClick={onOpenModelDiscovery}
+          className={`flex items-center gap-1.5 px-2 py-0.5 border text-[10px] font-mono shrink-0 transition-colors cursor-pointer hover:border-[#FFFFFF] ${
             isKeyLinked 
               ? 'border-[#FFFFFF] bg-[#141414] text-[#FFFFFF]' 
               : 'border-[#262626] bg-[#0A0A0A] text-[#737373]'
           }`}
-          title={isKeyLinked ? "Gemini REST API active" : "Using local in-memory fallback RAG"}
+          title="Inspect and Select Discovered Google Gemini Models"
         >
           <div className={`w-1.5 h-1.5 rounded-full ${isKeyLinked ? 'bg-[#FFFFFF] animate-pulse' : 'bg-[#525252]'}`} />
           <span>{isKeyLinked ? 'GEMINI READY' : 'LOCAL RAG ONLY'}</span>
-        </div>
+        </button>
       </form>
 
       {/* Right: Actions & User Quick Profile */}
