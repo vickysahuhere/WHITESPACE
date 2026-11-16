@@ -61,6 +61,8 @@ export interface BrowserTab {
   url: string;
   type: BrowserTabType;
   isShared: boolean; // PRIVATE (ONLY ME) vs TAB: SHARED WITH TEAM
+  history?: string[];
+  historyIndex?: number;
   data?: any; // tool-specific persistent payload
   createdAt: string;
 }

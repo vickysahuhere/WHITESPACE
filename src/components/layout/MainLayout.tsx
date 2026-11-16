@@ -10,6 +10,7 @@ import { RAGInspectorModal } from '../rag/RAGInspectorModal';
 import { MemberManagerModal } from '../members/MemberManagerModal';
 import { ChatView } from '../chat/ChatView';
 import { AssistantModal } from '../assistant/AssistantModal';
+import { BrowserView } from '../browser/BrowserView';
 import { X, Sparkles, UserPlus, Plus } from 'lucide-react';
 
 export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
@@ -71,6 +72,8 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
               <NotionEditor />
             ) : activeView === 'copilot' ? (
               <ChatView />
+            ) : activeView === 'browser' ? (
+              <BrowserView />
             ) : (
               <div className="h-full border border-[#262626] bg-[#0A0A0A] p-6 flex flex-col justify-between">
                 <div>
