@@ -59,8 +59,13 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
+**Wave 1**
 - [ ] 02-01: Implement Space management state machine, Space creation/switch/delete modals, and SOUL.MD persistent storage.
+
+**Wave 2** *(blocked on Wave 1 completion)*
 - [ ] 02-02: Build multi-format document ingestion pipeline supporting 10 file formats with drag-and-drop file upload.
+
+**Wave 3** *(blocked on Wave 2 completion)*
 - [ ] 02-03: Build Notion 3.0 live slash-command document editor with inline formatting, block actions, and Markdown rendering.
 
 ### Phase 3: Sub-Millisecond In-Memory Local RAG Engine
