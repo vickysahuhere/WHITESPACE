@@ -4,6 +4,8 @@ import { useBrowser } from '../../context/BrowserContext';
 import { BrowserTabType, BrowserTab } from '../../types';
 import { TeamSharedTabsStrip } from './TeamSharedTabsStrip';
 import { EmbeddedWebViewport } from './EmbeddedWebViewport';
+import { GitHubExplorer } from './tools/GitHubExplorer';
+import { CodeSandbox } from './tools/CodeSandbox';
 import { 
   Globe, 
   Plus, 
@@ -299,6 +301,10 @@ export const BrowserView: React.FC = () => {
       <div className="flex-1 bg-[#050505] overflow-hidden flex flex-col">
         {activeTab && activeTab.type === 'web' ? (
           <EmbeddedWebViewport tab={activeTab} />
+        ) : activeTab && activeTab.type === 'github' ? (
+          <GitHubExplorer tab={activeTab} />
+        ) : activeTab && activeTab.type === 'sandbox' ? (
+          <CodeSandbox tab={activeTab} />
         ) : activeTab ? (
           <div className="flex-1 p-6 flex flex-col items-center justify-center font-mono">
             <div className="border border-[#262626] bg-[#0D0D0D] p-6 max-w-lg text-center space-y-3">
