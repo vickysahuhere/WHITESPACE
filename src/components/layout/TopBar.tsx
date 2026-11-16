@@ -52,9 +52,16 @@ export const TopBar: React.FC<{
 
         <button
           type="submit"
-          className="px-2.5 py-1 bg-[#171717] hover:bg-[#FFFFFF] text-[#FFFFFF] hover:text-[#000000] border border-[#404040] hover:border-[#FFFFFF] text-xs font-mono font-bold tracking-wider transition-all shrink-0"
+          className="px-2.5 py-1 bg-[#171717] hover:bg-[#FFFFFF] text-[#FFFFFF] hover:text-[#000000] border border-[#404040] hover:border-[#FFFFFF] text-xs font-mono font-bold tracking-wider transition-all shrink-0 flex items-center gap-1"
         >
-          {saveSuccess ? 'LINKED ✓' : 'LINK'}
+          {saveSuccess ? (
+            <>
+              <Check size={12} strokeWidth={3} />
+              <span>LINKED</span>
+            </>
+          ) : (
+            'LINK'
+          )}
         </button>
 
         {/* Status Indicator */}

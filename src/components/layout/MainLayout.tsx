@@ -3,6 +3,7 @@ import { useWorkspace } from '../../context/WorkspaceContext';
 import { DiscordRail } from './DiscordRail';
 import { NotionSidebar } from './NotionSidebar';
 import { TopBar } from './TopBar';
+import { CommandPalette } from '../common/CommandPalette';
 import { X, Sparkles, UserPlus, Plus } from 'lucide-react';
 
 export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
@@ -155,6 +156,9 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
           )}
         </main>
       </div>
+
+      {/* --- Global Command Palette (CTRL+K) --- */}
+      <CommandPalette />
 
       {/* --- MODAL 1: Create New Space --- */}
       {showSpaceModal && (
