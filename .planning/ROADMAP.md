@@ -10,7 +10,7 @@ White Collars (WHITESPACE) is built as a complete, high-speed, dual-target AI Wo
 - Integer phases (1, 2, 3): Planned milestone work
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
-- [ ] **Phase 1: Monochrome Design Foundation & Triple-Paradigm Shell** - Establish strict black-and-white theme tokens, Discord space rail, Notion navigation, top-bar Gemini bar, audio pod, and CTRL+K palette.
+- [x] **Phase 1: Monochrome Design Foundation & Triple-Paradigm Shell** - Establish strict black-and-white theme tokens, Discord space rail, Notion navigation, top-bar Gemini bar, audio pod, and CTRL+K palette.
 - [ ] **Phase 2: Multi-Space Knowledge Base, SOUL.MD & Live Document Editor** - Multi-space management, persistent per-space SOUL.MD, multi-format file ingestion, and Notion-style slash-command editor.
 - [ ] **Phase 3: Sub-Millisecond In-Memory Local RAG Engine** - Client-side incremental chunking and token index providing < 1 ms similarity search across active or all spaces.
 - [ ] **Phase 4: User Personalization, Chat Isolation & 3D Assistant (WHITE)** - 4-member session switcher + add user, strictly isolated chat histories, personal AI profiles, and reactive Three.js 3D assistant.
@@ -44,7 +44,7 @@ Plans:
 - [x] 01-02: Build Discord Space Rail, Notion Sidebar, Top-Bar Gemini Key Bar, and persistent Voice & User Pod.
 
 **Wave 3** *(blocked on Wave 2 completion)*
-- [ ] 01-03: Implement CTRL+K global command palette modal with keyboard navigation across spaces, documents, tools, and actions.
+- [x] 01-03: Implement CTRL+K global command palette modal with keyboard navigation across spaces, documents, tools, and actions.
 
 ### Phase 2: Multi-Space Knowledge Base, SOUL.MD & Live Document Editor
 **Goal**: Deliver multi-space workspace partitioning (*White Collars Core*, *SignBridge*, *Mai-Reads*), per-space persistent SOUL.MD, multi-format document ingestion, and Notion-style live slash-command markdown editor.
@@ -203,7 +203,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Monochrome Design Foundation & Triple-Paradigm Shell | 2/3 | In progress | - |
+| 1. Monochrome Design Foundation & Triple-Paradigm Shell | 3/3 | Completed | 2026-11-16 |
 | 2. Multi-Space Knowledge Base, SOUL.MD & Live Document Editor | 0/3 | Not started | - |
 | 3. Sub-Millisecond In-Memory Local RAG Engine | 0/2 | Not started | - |
 | 4. User Personalization, Chat Isolation & 3D Assistant (WHITE) | 0/3 | Not started | - |

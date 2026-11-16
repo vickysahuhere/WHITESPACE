@@ -9,13 +9,13 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Visual Design & Triple-Paradigm Shell
 
-- [ ] **UI-01**: Strict Black-and-White monochrome palette (`#000000`, `#0A0A0A`–`#171717`, `#262626`–`#404040`, `#FFFFFF`).
-- [ ] **UI-02**: Zero emojis anywhere in the UI, icons, placeholders, or AI responses (crisp inline SVGs and typographic badges only).
-- [ ] **UI-03**: Discord-style far-left vertical Space rail with active space indicator and direct voice/stage toggle.
-- [ ] **UI-04**: Notion-style workspace navigation tree and document sidebar.
-- [ ] **UI-05**: Persistent bottom-left Voice & User Pod (`MIC ON`, `MUTE`, `STAGE`) with instant status badges.
-- [ ] **UI-06**: Keyboard-first global Command Palette (`CTRL+K`) for sub-second switching between spaces, docs, tabs, and team members.
-- [ ] **UI-07**: Top-bar instant Gemini API Key input bar with link button, live status indicator, and model discovery.
+- [x] **UI-01**: Strict Black-and-White monochrome palette (`#000000`, `#0A0A0A`–`#171717`, `#262626`–`#404040`, `#FFFFFF`).
+- [x] **UI-02**: Zero emojis anywhere in the UI, icons, placeholders, or AI responses (crisp inline SVGs and typographic badges only).
+- [x] **UI-03**: Discord-style far-left vertical Space rail with active space indicator and direct voice/stage toggle.
+- [x] **UI-04**: Notion-style workspace navigation tree and document sidebar.
+- [x] **UI-05**: Persistent bottom-left Voice & User Pod (`MIC ON`, `MUTE`, `STAGE`) with instant status badges.
+- [x] **UI-06**: Keyboard-first global Command Palette (`CTRL+K`) for sub-second switching between spaces, docs, tabs, and team members.
+- [x] **UI-07**: Top-bar instant Gemini API Key input bar with link button, live status indicator, and model discovery.
 
 ### Multi-Space Knowledge Base & Live Editor
 
@@ -108,7 +108,7 @@ Which phases cover which requirements. Populated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| UI-01 to UI-07 | Phase 1 | Pending |
+| UI-01 to UI-07 | Phase 1 | Complete |
 | KB-01 to KB-04 | Phase 2 | Pending |
 | RAG-01 to RAG-03 | Phase 3 | Pending |
 | USR-01 to USR-04 | Phase 4 | Pending |
