@@ -1,6 +1,7 @@
 import React from 'react';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { useAudio } from '../../context/AudioContext';
+import { AudioVisualizerCanvas } from '../stage/AudioVisualizerCanvas';
 import { Mic, MicOff, Volume2, VolumeX, Radio, User, Box, Sliders } from 'lucide-react';
 
 export const VoicePod: React.FC<{ 
@@ -54,6 +55,9 @@ export const VoicePod: React.FC<{
         </div>
         <span className="text-[9px] text-[#555555] group-hover:text-[#A3A3A3]">STUDIO</span>
       </div>
+
+      {/* Compact Real-Time Frequency Waveform */}
+      <AudioVisualizerCanvas mode="compact" className="w-full h-5" />
 
       {/* Hardware Voice Controls */}
       <div className="flex items-center justify-between gap-1 bg-[#121212] p-1 border border-[#262626]">

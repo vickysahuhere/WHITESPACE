@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAudio } from '../../context/AudioContext';
+import { AudioVisualizerCanvas } from './AudioVisualizerCanvas';
 import { 
   X, 
   Mic, 
@@ -77,6 +78,15 @@ export const AudioHardwareModal: React.FC<AudioHardwareModalProps> = ({ isOpen, 
               </option>
             ))}
           </select>
+        </div>
+
+        {/* Real-Time Studio FFT Spectrum & dB VU Meter */}
+        <div className="space-y-1">
+          <div className="flex items-center justify-between text-[10px] text-[#737373] uppercase font-bold">
+            <span>LIVE 60FPS FFT SPECTRUM & RMS dBFS LEVEL</span>
+            <span>{isMicOn ? 'HARDWARE STREAM ACTIVE' : 'SIMULATED IDLE'}</span>
+          </div>
+          <AudioVisualizerCanvas mode="studio" className="w-full h-24" />
         </div>
 
         {/* 3. Gain Boost (0% to 200%) */}
