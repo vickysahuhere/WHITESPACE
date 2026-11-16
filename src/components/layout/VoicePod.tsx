@@ -1,8 +1,11 @@
 import React from 'react';
 import { useWorkspace } from '../../context/WorkspaceContext';
-import { Mic, MicOff, Volume2, VolumeX, Radio, User } from 'lucide-react';
+import { Mic, MicOff, Volume2, VolumeX, Radio, User, Box } from 'lucide-react';
 
-export const VoicePod: React.FC<{ onUserClick: () => void }> = ({ onUserClick }) => {
+export const VoicePod: React.FC<{ 
+  onUserClick: () => void;
+  onAssistantClick?: () => void;
+}> = ({ onUserClick, onAssistantClick }) => {
   const { activeMember, audioState, toggleMic, toggleMute, toggleStage, setActiveView } = useWorkspace();
 
   return (
@@ -25,6 +28,23 @@ export const VoicePod: React.FC<{ onUserClick: () => void }> = ({ onUserClick })
           </div>
         </div>
         <div className="w-2 h-2 rounded-full bg-[#FFFFFF]" title="Online" />
+      </div>
+
+      {/* 3D Reactive Assistant WHITE Mini Bar */}
+      <div 
+        onClick={onAssistantClick}
+        title="Open WHITE 3D Assistant Studio"
+        className="flex items-center justify-between px-2 py-1 bg-[#121212] border border-[#262626] hover:border-[#FFFFFF] cursor-pointer transition-all group"
+      >
+        <div className="flex items-center gap-2">
+          <div className="w-5 h-5 bg-[#000000] border border-[#404040] group-hover:border-[#FFFFFF] flex items-center justify-center overflow-hidden">
+            <Box size={11} className={audioState.micActive ? 'text-[#FFFFFF] animate-pulse' : 'text-[#737373]'} />
+          </div>
+          <span className="text-[10px] font-mono text-[#A3A3A3] group-hover:text-[#FFFFFF] font-bold">
+            WHITE 3D // {audioState.micActive ? 'PULSING' : 'IDLE'}
+          </span>
+        </div>
+        <span className="text-[9px] text-[#555555] group-hover:text-[#A3A3A3]">STUDIO</span>
       </div>
 
       {/* Hardware Voice Controls */}

@@ -11,7 +11,8 @@ export const NotionSidebar: React.FC<{
   onUserClick: () => void;
   onSoulClick: () => void;
   onManageSpaces?: () => void;
-}> = ({ onUserClick, onSoulClick, onManageSpaces }) => {
+  onAssistantClick?: () => void;
+}> = ({ onUserClick, onSoulClick, onManageSpaces, onAssistantClick }) => {
   const { activeSpace, activeView, setActiveView } = useWorkspace();
   const { getDocumentsForSpace, activeDocumentId, setActiveDocumentId, createDocument, deleteDocument } = useDocuments();
   const [docsExpanded, setDocsExpanded] = useState(true);
@@ -176,7 +177,7 @@ export const NotionSidebar: React.FC<{
       </div>
 
       {/* Bottom Persistent Voice & User Pod */}
-      <VoicePod onUserClick={onUserClick} />
+      <VoicePod onUserClick={onUserClick} onAssistantClick={onAssistantClick} />
 
       {/* Document Uploader Modal */}
       <DocumentUploader 

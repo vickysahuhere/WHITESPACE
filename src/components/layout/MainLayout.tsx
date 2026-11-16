@@ -9,6 +9,7 @@ import { NotionEditor } from '../editor/NotionEditor';
 import { RAGInspectorModal } from '../rag/RAGInspectorModal';
 import { MemberManagerModal } from '../members/MemberManagerModal';
 import { ChatView } from '../chat/ChatView';
+import { AssistantModal } from '../assistant/AssistantModal';
 import { X, Sparkles, UserPlus, Plus } from 'lucide-react';
 
 export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
@@ -29,6 +30,7 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
   const [showSpaceManagerModal, setShowSpaceManagerModal] = useState(false);
   const [showMemberModal, setShowMemberModal] = useState(false);
   const [showSoulModal, setShowSoulModal] = useState(false);
+  const [showAssistantModal, setShowAssistantModal] = useState(false);
 
   // Editable SOUL.MD
   const [soulContent, setSoulContent] = useState(activeSpace.soulMd);
@@ -51,6 +53,7 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
           setShowSoulModal(true);
         }} 
         onManageSpaces={() => setShowSpaceManagerModal(true)}
+        onAssistantClick={() => setShowAssistantModal(true)}
       />
 
       {/* 3. Main Stage Content Area */}
@@ -146,6 +149,12 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
       <MemberManagerModal 
         isOpen={showMemberModal} 
         onClose={() => setShowMemberModal(false)} 
+      />
+
+      {/* --- 3D Assistant Studio Modal --- */}
+      <AssistantModal 
+        isOpen={showAssistantModal} 
+        onClose={() => setShowAssistantModal(false)} 
       />
 
       {/* --- MODAL 3: Space SOUL.MD Editor --- */}
