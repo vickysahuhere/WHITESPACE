@@ -46,10 +46,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Built-in Developer Suite
 
-- [ ] **DEV-01**: GitHub OSS Explorer searching live repositories via GitHub REST API with jsDelivr CDN links and save to space docs.
-- [ ] **DEV-02**: Monochrome Code Sandbox with live HTML/CSS/JS editing and instant sandboxed execution.
-- [ ] **DEV-03**: Vector Architecture Board with interactive draggable node-and-connector canvas and state sync.
-- [ ] **DEV-04**: REST API Tester (Hoppscotch-lite client) firing GET/POST requests and formatting JSON responses.
+- [x] **DEV-01**: GitHub OSS Explorer searching live repositories via GitHub REST API with jsDelivr CDN links and save to space docs.
+- [x] **DEV-02**: Monochrome Code Sandbox with live HTML/CSS/JS editing and instant sandboxed execution.
+- [x] **DEV-03**: Vector Architecture Board with interactive draggable node-and-connector canvas and state sync.
+- [x] **DEV-04**: REST API Tester (Hoppscotch-lite client) firing GET/POST requests and formatting JSON responses.
 
 ### Uncompressed WebRTC Stage & Hardware Audio Pod
 

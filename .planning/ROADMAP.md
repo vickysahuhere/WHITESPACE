@@ -15,7 +15,7 @@ White Collars (WHITESPACE) is built as a complete, high-speed, dual-target AI Wo
 - [x] **Phase 3: Sub-Millisecond In-Memory Local RAG Engine** - Client-side incremental chunking and token index providing < 1 ms similarity search across active or all spaces.
 - [x] **Phase 4: User Personalization, Chat Isolation & 3D Assistant (WHITE)** - 4-member session switcher + add user, strictly isolated chat histories, personal AI profiles, and reactive Three.js 3D assistant.
 - [x] **Phase 5: Multi-Tab OSS Browser & Selective Tab Sharing** - Embedded multi-tab browser with per-tab privacy (PRIVATE vs SHARED), Team Shared Tabs strip, and web viewport with INDEX TO SPACE.
-- [ ] **Phase 6: Built-in Developer Suite (GitHub OSS, Sandbox, Vector Board, REST Tester)** - GitHub repo search with CDN links, monochrome live code sandbox, interactive vector architecture canvas, and Hoppscotch-lite REST client.
+- [x] **Phase 6: Built-in Developer Suite (GitHub OSS, Sandbox, Vector Board, REST Tester)** - GitHub repo search with CDN links, monochrome live code sandbox, interactive vector architecture canvas, and Hoppscotch-lite REST client.
 - [ ] **Phase 7: Uncompressed Studio WebRTC Stage & Hardware Audio Pod** - 48 kHz 510 kbps stereo Opus stage, 0–200% GainNode boost with soft limiter, live FFT spectrum canvas, 4K60 screen share, and BroadcastChannel/SDP signaling.
 - [ ] **Phase 8: OpenClaw Mission Control Kanban & Right-Docked AI Copilot** - 3-column task pipeline with one-click DISPATCH AI into right-docked AI Copilot drawer with RAG grounding.
 - [ ] **Phase 9: Google Gemini Direct REST, Firebase Cloud Sync & Antigravity Bridge** - Direct Gemini REST with model discovery, Firebase Spark Firestore sync with invite-only auth, context.md download, and auto-generated wc_bridge.py.
@@ -129,9 +129,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 06-01: Build GitHub OSS Explorer (REST search, jsDelivr links, save repo spec to Space Docs) and Monochrome Code Sandbox (live HTML/CSS/JS runner).
-- [ ] 06-02: Build Vector Architecture Board with draggable nodes, connectors, geometric badges, and state serialization.
-- [ ] 06-03: Build REST API Tester (Hoppscotch-lite client) with method selector, header editor, payload input, and formatted JSON viewer.
+- [x] 06-01: Build GitHub OSS Explorer (REST search, jsDelivr links, save repo spec to Space Docs) and Monochrome Code Sandbox (live HTML/CSS/JS runner).
+- [x] 06-02: Build Vector Architecture Board with draggable nodes, connectors, geometric badges, and state serialization.
+- [x] 06-03: Build REST API Tester (Hoppscotch-lite client) with method selector, header editor, payload input, and formatted JSON viewer.
 
 ### Phase 7: Uncompressed Studio WebRTC Stage & Hardware Audio Pod
 **Goal**: Deliver uncompressed studio-grade WebRTC voice/video/screen calling (48 kHz 510 kbps stereo Opus, 4K60 video, 0–200% GainNode boost, loopback monitor, FFT canvas visualizer, BroadcastChannel/SDP signaling).
