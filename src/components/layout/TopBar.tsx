@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { useRAG } from '../../context/RAGContext';
 import { firebaseSync } from '../../services/firebaseSync';
+import { WindowControls } from './WindowControls';
 import { Key, Eye, EyeOff, Check, AlertCircle, Search, User, Database, Bot, Cloud, Download } from 'lucide-react';
 
 export const TopBar: React.FC<{
@@ -170,6 +171,9 @@ export const TopBar: React.FC<{
           <span className="text-[11px] font-bold text-[#A3A3A3]">{activeMember.badge}</span>
           <span className="hidden md:inline text-xs truncate max-w-[90px]">{activeMember.name}</span>
         </button>
+
+        {/* Frameless Desktop Window Controls (Min / Max / Close) */}
+        <WindowControls />
       </div>
     </header>
   );
