@@ -17,6 +17,9 @@ import { AudioHardwareModal } from '../stage/AudioHardwareModal';
 import { ModelDiscoveryModal } from '../common/ModelDiscoveryModal';
 import { CloudSyncModal } from '../common/CloudSyncModal';
 import { WorkspaceExportModal } from '../common/WorkspaceExportModal';
+import { AppGuideModal } from '../guide/AppGuideModal';
+import { MobileLayout } from '../mobile/MobileLayout';
+import { useIsMobile } from '../../hooks/useIsMobile';
 import { CopilotDrawer } from './CopilotDrawer';
 import { useAudio } from '../../context/AudioContext';
 import { Task } from '../../types';
@@ -33,7 +36,9 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
     setActiveMemberId, 
     addMember, 
     activeView,
-    setCommandPaletteOpen
+    setCommandPaletteOpen,
+    guideModalOpen,
+    setGuideModalOpen
   } = useWorkspace();
 
   // Modals
@@ -51,10 +56,16 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
   // Editable SOUL.MD
   const [soulContent, setSoulContent] = useState(activeSpace.soulMd);
 
+  const isMobile = useIsMobile(768);
+
   const handleSaveSoul = () => {
     updateSpace(activeSpace.id, { soulMd: soulContent });
     setShowSoulModal(false);
   };
+
+  if (isMobile) {
+    return <MobileLayout />;
+  }
 
   return (
     <div className="flex h-screen w-screen bg-[#000000] text-[#FFFFFF] overflow-hidden select-none font-mono">
@@ -211,6 +222,12 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
       <AudioHardwareModal 
         isOpen={showHardwareModal} 
         onClose={() => setShowHardwareModal(false)} 
+      />
+
+      {/* --- Universal App Demo & Contextual Guide Modal (CTRL+S+D+F) --- */}
+      <AppGuideModal
+        isOpen={guideModalOpen}
+        onClose={() => setGuideModalOpen(false)}
       />
 
       {/* --- MODAL 3: Space SOUL.MD Editor --- */}

@@ -3,7 +3,7 @@ import { useWorkspace } from '../../context/WorkspaceContext';
 import { useRAG } from '../../context/RAGContext';
 import { firebaseSync } from '../../services/firebaseSync';
 import { WindowControls } from './WindowControls';
-import { Search, Database, Bot, Cloud, Download } from 'lucide-react';
+import { Search, Database, Bot, Cloud, Download, HelpCircle } from 'lucide-react';
 
 export const TopBar: React.FC<{
   onUserClick: () => void;
@@ -22,7 +22,7 @@ export const TopBar: React.FC<{
   onOpenCloudSync, 
   onOpenExport 
 }) => {
-  const { activeSpace, activeView, activeMember, isKeyLinked } = useWorkspace();
+  const { activeSpace, activeView, activeMember, isKeyLinked, guideModalOpen, setGuideModalOpen } = useWorkspace();
   const { totalChunksIndexed, setRagInspectorOpen } = useRAG();
   const [isCloudAuthorized, setIsCloudAuthorized] = useState(() => firebaseSync.isAuthorized());
 
@@ -39,34 +39,34 @@ export const TopBar: React.FC<{
     >
       {/* Left: Minimal Single-Line Breadcrumb */}
       <div 
-        className="flex items-center gap-2 text-xs text-[#A3A3A3] shrink-0 whitespace-nowrap overflow-hidden max-w-[280px] lg:max-w-[360px]"
+        className="flex items-center gap-2 text-xs text-[#A3A3A3] shrink-0 whitespace-nowrap overflow-hidden max-w-[240px] sm:max-w-[280px]"
         style={{ WebkitAppRegion: 'no-drag' } as any}
       >
         <span className="text-[#FFFFFF] font-bold tracking-wider">WHITESPACE</span>
         <span className="text-[#333333]">/</span>
-        <span className="text-[#CCCCCC] font-bold truncate max-w-[140px] lg:max-w-[200px]" title={activeSpace.name}>
+        <span className="text-[#CCCCCC] font-semibold truncate max-w-[120px] sm:max-w-[150px]" title={activeSpace.name}>
           {activeSpace.name.toUpperCase()}
         </span>
         <span className="text-[#333333]">/</span>
-        <span className="text-[#737373] uppercase shrink-0">{activeView}</span>
+        <span className="text-[#737373] uppercase shrink-0 text-[11px]">{activeView}</span>
       </div>
 
       {/* Center: Minimal Command Bar / Quick Search */}
       <div 
-        className="flex-1 flex justify-center max-w-sm mx-auto min-w-0"
+        className="flex-1 flex justify-center px-2 min-w-0"
         style={{ WebkitAppRegion: 'no-drag' } as any}
       >
         <button
           type="button"
           onClick={onOpenCommandPalette}
-          className="w-full max-w-[280px] flex items-center justify-between px-2.5 py-1 bg-[#121212] hover:bg-[#181818] border border-[#262626] hover:border-[#404040] text-xs text-[#666666] hover:text-[#A3A3A3] transition-colors"
+          className="w-full max-w-[260px] h-7 flex items-center justify-between px-2.5 bg-[#121212] hover:bg-[#181818] border border-[#262626] hover:border-[#404040] text-xs text-[#666666] hover:text-[#A3A3A3] transition-colors"
           title="Open Command Palette (CTRL+K)"
         >
           <span className="flex items-center gap-2 truncate">
             <Search size={12} className="text-[#555555] shrink-0" />
-            <span className="text-[11px] truncate">Search or jump to...</span>
+            <span className="text-[11px] truncate text-[#737373]">Search or jump to...</span>
           </span>
-          <kbd className="text-[9px] bg-[#000000] border border-[#2E2E2E] px-1 py-0.2 text-[#888888] shrink-0">CTRL+K</kbd>
+          <kbd className="text-[9px] bg-[#000000] border border-[#262626] px-1 py-0.2 text-[#737373] shrink-0 font-mono">CTRL+K</kbd>
         </button>
       </div>
 
@@ -79,7 +79,7 @@ export const TopBar: React.FC<{
         <button
           type="button"
           onClick={onOpenModelDiscovery}
-          className={`flex items-center gap-1.5 px-2 py-1 border text-[10px] shrink-0 transition-colors cursor-pointer hover:border-[#FFFFFF] ${
+          className={`h-7 flex items-center gap-1.5 px-2 border text-[10px] shrink-0 transition-colors cursor-pointer hover:border-[#FFFFFF] ${
             isKeyLinked 
               ? 'border-[#333333] bg-[#121212] text-[#FFFFFF]' 
               : 'border-[#262626] bg-[#0A0A0A] text-[#737373]'
@@ -90,70 +90,84 @@ export const TopBar: React.FC<{
           <span>{isKeyLinked ? 'GEMINI' : 'LOCAL RAG'}</span>
         </button>
 
-        {/* Cloud Sync Status */}
-        {onOpenCloudSync && (
-          <button
-            type="button"
-            onClick={onOpenCloudSync}
-            title="Firebase Cloud Firestore Sync"
-            className="flex items-center gap-1.5 px-2 py-1 border border-[#262626] hover:border-[#FFFFFF] bg-[#121212] hover:bg-[#181818] text-[10px] text-[#A3A3A3] hover:text-[#FFFFFF] transition-colors shrink-0"
-          >
-            <Cloud size={11} className={isCloudAuthorized ? "text-[#FFFFFF]" : "text-[#555555]"} />
-            <span className="hidden sm:inline">{isCloudAuthorized ? 'SYNCED' : 'LOCAL'}</span>
-          </button>
-        )}
-
         {/* In-Memory Local RAG Metrics */}
         <button
           type="button"
           onClick={() => setRagInspectorOpen(true)}
           title="Local RAG Context Inspector (<1ms)"
-          className="flex items-center gap-1.5 px-2 py-1 border border-[#262626] hover:border-[#FFFFFF] bg-[#121212] hover:bg-[#181818] text-[10px] text-[#A3A3A3] hover:text-[#FFFFFF] transition-colors shrink-0"
+          className="h-7 flex items-center gap-1.5 px-2 border border-[#262626] hover:border-[#FFFFFF] bg-[#121212] hover:bg-[#181818] text-[10px] text-[#A3A3A3] hover:text-[#FFFFFF] transition-colors shrink-0"
         >
-          <Database size={11} />
+          <Database size={11} className="text-[#737373]" />
           <span>RAG</span>
           <span className="text-[#FFFFFF] font-bold">({totalChunksIndexed})</span>
         </button>
 
-        {/* Workspace Exporter */}
-        {onOpenExport && (
-          <button
-            type="button"
-            onClick={onOpenExport}
-            title="Export Context.md, Python Bridge & Backups"
-            className="flex items-center gap-1.5 px-2 py-1 border border-[#262626] hover:border-[#FFFFFF] bg-[#121212] hover:bg-[#181818] text-[10px] text-[#A3A3A3] hover:text-[#FFFFFF] transition-colors shrink-0"
-          >
-            <Download size={11} />
-            <span className="hidden md:inline">EXPORT</span>
-          </button>
-        )}
+        {/* Consolidated Utility Icon Strip (Cloud, Guide, Export, Copilot) */}
+        <div className="flex items-center border border-[#262626] bg-[#121212] divide-x divide-[#262626] h-7 shrink-0">
+          {/* Cloud Sync Status */}
+          {onOpenCloudSync && (
+            <button
+              type="button"
+              onClick={onOpenCloudSync}
+              title={`Firebase Cloud Firestore (${isCloudAuthorized ? 'Synced' : 'Local / Offline'})`}
+              className="w-7 h-full flex items-center justify-center hover:bg-[#1E1E1E] text-[#888888] hover:text-[#FFFFFF] transition-colors"
+            >
+              <Cloud size={12} className={isCloudAuthorized ? "text-[#FFFFFF]" : "text-[#555555]"} />
+            </button>
+          )}
 
-        {/* AI Copilot Drawer Toggle */}
-        {onToggleCopilotDrawer && (
+          {/* Interactive App Demo & Contextual Guide (CTRL+S+D+F) */}
           <button
             type="button"
-            onClick={onToggleCopilotDrawer}
-            title="Toggle Right-Docked AI Copilot Drawer"
-            className={`flex items-center gap-1.5 px-2 py-1 text-[10px] border transition-colors shrink-0 ${
-              isCopilotDrawerOpen
-                ? 'bg-[#FFFFFF] text-[#000000] border-[#FFFFFF] font-bold'
-                : 'bg-[#121212] hover:bg-[#181818] border-[#262626] text-[#A3A3A3] hover:text-[#FFFFFF]'
+            onClick={() => setGuideModalOpen(true)}
+            className={`w-7 h-full flex items-center justify-center transition-colors cursor-pointer ${
+              guideModalOpen
+                ? 'bg-[#FFFFFF] text-[#000000]'
+                : 'hover:bg-[#1E1E1E] text-[#888888] hover:text-[#FFFFFF]'
             }`}
+            title="App Demo & Guide (Shortcut: CTRL+S+D+F)"
           >
-            <Bot size={12} />
-            <span className="hidden md:inline">COPILOT</span>
+            <HelpCircle size={12} />
           </button>
-        )}
 
-        {/* Active Member Quick Switcher */}
+          {/* Workspace Exporter */}
+          {onOpenExport && (
+            <button
+              type="button"
+              onClick={onOpenExport}
+              title="Export Workspace Docs, Python Bridge & Backups"
+              className="w-7 h-full flex items-center justify-center hover:bg-[#1E1E1E] text-[#888888] hover:text-[#FFFFFF] transition-colors"
+            >
+              <Download size={12} />
+            </button>
+          )}
+
+          {/* AI Copilot Drawer Toggle */}
+          {onToggleCopilotDrawer && (
+            <button
+              type="button"
+              onClick={onToggleCopilotDrawer}
+              title="Toggle AI Copilot Drawer"
+              className={`w-7 h-full flex items-center justify-center transition-colors ${
+                isCopilotDrawerOpen
+                  ? 'bg-[#FFFFFF] text-[#000000]'
+                  : 'hover:bg-[#1E1E1E] text-[#888888] hover:text-[#FFFFFF]'
+              }`}
+            >
+              <Bot size={12} />
+            </button>
+          )}
+        </div>
+
+        {/* Active Member Avatar Monogram */}
         <button
           type="button"
           onClick={onUserClick}
-          className="flex items-center gap-1.5 pl-1.5 pr-2 py-1 bg-[#121212] hover:bg-[#181818] border border-[#262626] hover:border-[#404040] text-xs text-[#FFFFFF] transition-colors shrink-0"
-          title="Switch Active Team Member"
+          className="h-7 px-1.5 flex items-center gap-1.5 bg-[#121212] hover:bg-[#181818] border border-[#262626] hover:border-[#404040] text-xs text-[#FFFFFF] transition-colors shrink-0"
+          title={`Team Member: ${activeMember.name} (${activeMember.role})`}
         >
           <span className="text-[10px] font-bold text-[#000000] bg-[#FFFFFF] px-1 py-0.2">{activeMember.badge}</span>
-          <span className="hidden lg:inline text-xs truncate max-w-[80px]">{activeMember.name}</span>
+          <span className="hidden xl:inline text-xs truncate max-w-[70px]">{activeMember.name}</span>
         </button>
 
         {/* Native Frameless Window Controls (Desktop Only) */}

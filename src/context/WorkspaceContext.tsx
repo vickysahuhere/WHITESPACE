@@ -36,6 +36,10 @@ interface WorkspaceContextType {
 
   commandPaletteOpen: boolean;
   setCommandPaletteOpen: (open: boolean) => void;
+
+  guideModalOpen: boolean;
+  setGuideModalOpen: (open: boolean) => void;
+  toggleGuideModal: () => void;
 }
 
 const WorkspaceContext = createContext<WorkspaceContextType | null>(null);
@@ -241,6 +245,78 @@ export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   // 6. Global Command Palette
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
 
+  // 7. Interactive App Demo & Contextual Guide (CTRL+S+D+F)
+  const [guideModalOpen, setGuideModalOpen] = useState(false);
+  const toggleGuideModal = () => setGuideModalOpen(prev => !prev);
+
+  // Global Keydown Listener for CTRL+S+D+F shortcut
+  useEffect(() => {
+    const heldKeys = new Set<string>();
+    let chordBuffer: string[] = [];
+    let chordTimeout: ReturnType<typeof setTimeout> | null = null;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const key = e.key.toLowerCase();
+      heldKeys.add(key);
+
+      // Prevent default save-page if ctrl is held with 's' to allow smooth typing of s+d+f
+      if ((e.ctrlKey || e.metaKey) && key === 's') {
+        e.preventDefault();
+      }
+
+      // 1. Simultaneous trigger: Ctrl held + 's', 'd', 'f' all held
+      if (e.ctrlKey || e.metaKey) {
+        if (heldKeys.has('s') && heldKeys.has('d') && heldKeys.has('f')) {
+          e.preventDefault();
+          setGuideModalOpen(prev => !prev);
+          heldKeys.clear();
+          chordBuffer = [];
+          return;
+        }
+      }
+
+      // 2. Chord / Sequential trigger: user presses s, then d, then f while Ctrl is active
+      if (e.ctrlKey || e.metaKey || chordBuffer.length > 0) {
+        if (key === 's' || key === 'd' || key === 'f') {
+          chordBuffer.push(key);
+          if (chordTimeout) clearTimeout(chordTimeout);
+          chordTimeout = setTimeout(() => {
+            chordBuffer = [];
+          }, 1500);
+
+          const sequence = chordBuffer.slice(-3).join('');
+          if (sequence === 'sdf' || sequence === 'sfd' || sequence === 'dsf') {
+            e.preventDefault();
+            setGuideModalOpen(prev => !prev);
+            chordBuffer = [];
+            heldKeys.clear();
+            return;
+          }
+        }
+      }
+    };
+
+    const handleKeyUp = (e: KeyboardEvent) => {
+      heldKeys.delete(e.key.toLowerCase());
+    };
+
+    const handleBlur = () => {
+      heldKeys.clear();
+      chordBuffer = [];
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    window.addEventListener('blur', handleBlur);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+      window.removeEventListener('blur', handleBlur);
+      if (chordTimeout) clearTimeout(chordTimeout);
+    };
+  }, []);
+
   return (
     <WorkspaceContext.Provider
       value={{
@@ -276,7 +352,11 @@ export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         isKeyLinked,
 
         commandPaletteOpen,
-        setCommandPaletteOpen
+        setCommandPaletteOpen,
+
+        guideModalOpen,
+        setGuideModalOpen,
+        toggleGuideModal
       }}
     >
       {children}

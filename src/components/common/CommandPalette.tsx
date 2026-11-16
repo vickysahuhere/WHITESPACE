@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { useRAG } from '../../context/RAGContext';
-import { Search, Compass, FileText, Kanban, Radio, Bot, Mic, Volume2, Key, Users, Database } from 'lucide-react';
+import { Search, Compass, FileText, Kanban, Radio, Bot, Mic, Volume2, Key, Users, Database, HelpCircle } from 'lucide-react';
 
 interface PaletteItem {
   id: string;
@@ -27,7 +27,8 @@ export const CommandPalette: React.FC = () => {
     toggleMic,
     toggleMute,
     toggleStage,
-    audioState
+    audioState,
+    setGuideModalOpen
   } = useWorkspace();
   const { setRagInspectorOpen } = useRAG();
 
@@ -154,6 +155,18 @@ export const CommandPalette: React.FC = () => {
     })),
 
     // Actions
+    {
+      id: 'action_guide',
+      category: 'ACTIONS',
+      title: 'Open: App Demo & Contextual Guide',
+      badge: 'CTRL+S+D+F',
+      subtitle: 'Complete Page-by-Page Instructions, Feature Diagnostics & Live Tests',
+      icon: <HelpCircle size={14} />,
+      action: () => {
+        setGuideModalOpen(true);
+        setCommandPaletteOpen(false);
+      }
+    },
     {
       id: 'action_rag',
       category: 'ACTIONS',
