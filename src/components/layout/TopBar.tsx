@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { useRAG } from '../../context/RAGContext';
 import { firebaseSync } from '../../services/firebaseSync';
-import { Key, Eye, EyeOff, Check, AlertCircle, Search, User, Database, Bot, Cloud } from 'lucide-react';
+import { Key, Eye, EyeOff, Check, AlertCircle, Search, User, Database, Bot, Cloud, Download } from 'lucide-react';
 
 export const TopBar: React.FC<{
   onUserClick: () => void;
@@ -11,7 +11,8 @@ export const TopBar: React.FC<{
   isCopilotDrawerOpen?: boolean;
   onOpenModelDiscovery?: () => void;
   onOpenCloudSync?: () => void;
-}> = ({ onUserClick, onOpenCommandPalette, onToggleCopilotDrawer, isCopilotDrawerOpen, onOpenModelDiscovery, onOpenCloudSync }) => {
+  onOpenExport?: () => void;
+}> = ({ onUserClick, onOpenCommandPalette, onToggleCopilotDrawer, isCopilotDrawerOpen, onOpenModelDiscovery, onOpenCloudSync, onOpenExport }) => {
   const { activeSpace, activeView, activeMember, geminiKey, setGeminiKey, isKeyLinked } = useWorkspace();
   const { totalChunksIndexed, setRagInspectorOpen } = useRAG();
   const [inputKey, setInputKey] = useState(geminiKey);
@@ -120,6 +121,19 @@ export const TopBar: React.FC<{
           <span className="hidden sm:inline">RAG: &lt;1ms</span>
           <span className="text-[#FFFFFF] font-bold">({totalChunksIndexed})</span>
         </button>
+
+        {/* Workspace Export & Local Agent Bridge */}
+        {onOpenExport && (
+          <button
+            type="button"
+            onClick={onOpenExport}
+            title="Export Context.md, Python Bridge, and Full Backups"
+            className="flex items-center gap-1.5 px-2 py-1 border border-[#333333] hover:border-[#FFFFFF] bg-[#121212] hover:bg-[#1A1A1A] text-xs font-mono text-[#A3A3A3] hover:text-[#FFFFFF] transition-all"
+          >
+            <Download size={12} />
+            <span className="hidden sm:inline">EXPORT</span>
+          </button>
+        )}
 
         {/* Command Palette Trigger */}
         <button

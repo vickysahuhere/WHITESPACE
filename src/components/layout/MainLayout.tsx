@@ -16,6 +16,7 @@ import { KanbanView } from '../kanban/KanbanView';
 import { AudioHardwareModal } from '../stage/AudioHardwareModal';
 import { ModelDiscoveryModal } from '../common/ModelDiscoveryModal';
 import { CloudSyncModal } from '../common/CloudSyncModal';
+import { WorkspaceExportModal } from '../common/WorkspaceExportModal';
 import { CopilotDrawer } from './CopilotDrawer';
 import { useAudio } from '../../context/AudioContext';
 import { Task } from '../../types';
@@ -42,6 +43,7 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
   const [showAssistantModal, setShowAssistantModal] = useState(false);
   const [showModelModal, setShowModelModal] = useState(false);
   const [showCloudSyncModal, setShowCloudSyncModal] = useState(false);
+  const [showExportModal, setShowExportModal] = useState(false);
   const [copilotDrawerOpen, setCopilotDrawerOpen] = useState(false);
   const [dispatchedTask, setDispatchedTask] = useState<Task | null>(null);
   const { showHardwareModal, setShowHardwareModal } = useAudio();
@@ -80,6 +82,7 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
           isCopilotDrawerOpen={copilotDrawerOpen}
           onOpenModelDiscovery={() => setShowModelModal(true)}
           onOpenCloudSync={() => setShowCloudSyncModal(true)}
+          onOpenExport={() => setShowExportModal(true)}
         />
 
         {/* Viewport Content Host */}
@@ -196,6 +199,12 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
       <CloudSyncModal 
         isOpen={showCloudSyncModal} 
         onClose={() => setShowCloudSyncModal(false)} 
+      />
+
+      {/* --- Workspace Exporter & Local Agent Bridge Modal --- */}
+      <WorkspaceExportModal 
+        isOpen={showExportModal} 
+        onClose={() => setShowExportModal(false)} 
       />
 
       {/* --- Audio Hardware Calibration Modal --- */}
