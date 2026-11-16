@@ -1,0 +1,63 @@
+{
+  "contract": "1.0.0",
+  "flavor": "core",
+  "milestone": null,
+  "phases": [
+    {
+      "number": "1",
+      "name": "Monochrome Design Foundation & Triple-Paradigm Shell",
+      "status": "pending"
+    },
+    {
+      "number": "2",
+      "name": "Multi-Space Knowledge Base, SOUL.MD & Live Document Editor",
+      "status": "pending"
+    },
+    {
+      "number": "3",
+      "name": "Sub-Millisecond In-Memory Local RAG Engine",
+      "status": "pending"
+    },
+    {
+      "number": "4",
+      "name": "User Personalization, Chat Isolation & 3D Assistant (WHITE)",
+      "status": "pending"
+    },
+    {
+      "number": "5",
+      "name": "Multi-Tab OSS Browser & Selective Tab Sharing",
+      "status": "pending"
+    },
+    {
+      "number": "6",
+      "name": "Built-in Developer Suite",
+      "status": "pending"
+    },
+    {
+      "number": "7",
+      "name": "Uncompressed Studio WebRTC Stage & Hardware Audio Pod",
+      "status": "pending"
+    },
+    {
+      "number": "8",
+      "name": "OpenClaw Mission Control Kanban & Right-Docked AI Copilot",
+      "status": "pending"
+    },
+    {
+      "number": "9",
+      "name": "Google Gemini Direct REST, Firebase Cloud Sync & Antigravity Bridge",
+      "status": "pending"
+    },
+    {
+      "number": "10",
+      "name": "Electron Native Desktop Packaging & Cross-Platform Launchers",
+      "status": "pending"
+    }
+  ],
+  "next": {
+    "command": "/gsd-progress --next",
+    "label": "Advance to the next step",
+    "reason": "Phase 2 of 10 · 10% · executing"
+  },
+  "updated_at": "2026-11-16T09:41:32.589Z"
+}
