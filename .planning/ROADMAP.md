@@ -17,7 +17,7 @@ White Collars (WHITESPACE) is built as a complete, high-speed, dual-target AI Wo
 - [x] **Phase 5: Multi-Tab OSS Browser & Selective Tab Sharing** - Embedded multi-tab browser with per-tab privacy (PRIVATE vs SHARED), Team Shared Tabs strip, and web viewport with INDEX TO SPACE.
 - [x] **Phase 6: Built-in Developer Suite (GitHub OSS, Sandbox, Vector Board, REST Tester)** - GitHub repo search with CDN links, monochrome live code sandbox, interactive vector architecture canvas, and Hoppscotch-lite REST client.
 - [x] **Phase 7: Uncompressed Studio WebRTC Stage & Hardware Audio Pod** - 48 kHz 510 kbps stereo Opus stage, 0–200% GainNode boost with soft limiter, live FFT spectrum canvas, 4K60 screen share, and BroadcastChannel/SDP signaling.
-- [ ] **Phase 8: OpenClaw Mission Control Kanban & Right-Docked AI Copilot** - 3-column task pipeline with one-click DISPATCH AI into right-docked AI Copilot drawer with RAG grounding.
+- [x] **Phase 8: OpenClaw Mission Control Kanban & Right-Docked AI Copilot** - 3-column task pipeline with one-click DISPATCH AI into right-docked AI Copilot drawer with RAG grounding.
 - [ ] **Phase 9: Google Gemini Direct REST, Firebase Cloud Sync & Antigravity Bridge** - Direct Gemini REST with model discovery, Firebase Spark Firestore sync with invite-only auth, context.md download, and auto-generated wc_bridge.py.
 - [ ] **Phase 10: Electron Native Desktop Packaging & Cross-Platform Launchers** - Electron 34+ wrapper with CSP/X-Frame-Options stripper, LAUNCH_WINDOWS_APP.bat, BUILD_EXE_INSTALLER.bat (portable .exe), and full dual web/desktop verification.
 
@@ -163,8 +163,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 08-01: Build OpenClaw 3-column Kanban board with card drag-and-drop, priority tagging (`P0`/`P1`/`P2`), and card creation/editing.
-- [ ] 08-02: Implement right-docked AI Copilot drawer with DISPATCH AI binding, RAG context injection, and streaming execution updates.
+- [x] 08-01: Build OpenClaw 3-column Kanban board with card drag-and-drop, priority tagging (`P0`/`P1`/`P2`), and card creation/editing.
+- [x] 08-02: Implement right-docked AI Copilot drawer with DISPATCH AI binding, RAG context injection, and streaming execution updates.
 
 ### Phase 9: Google Gemini Direct REST, Firebase Cloud Sync & Antigravity Bridge
 **Goal**: Wire direct client-side Google Gemini REST API with live model discovery, Firebase Spark Cloud Firestore sync with invite-only auth, workspace export bundle, and auto-generated `wc_bridge.py`.

@@ -61,9 +61,9 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### OpenClaw Mission Control Kanban & AI Copilot
 
-- [ ] **TSK-01**: 3-column Kanban pipeline (`01 // QUEUED SPECS`, `02 // ACTIVE AGENT LOOP`, `03 // VERIFIED & SHIPPED`) with priority badges (`P0 HIGH`, `P1 MED`, `P2 LOW`).
-- [ ] **TSK-02**: One-click **DISPATCH AI** execution moving cards to `ACTIVE AGENT LOOP` and executing them in the right-docked AI Copilot drawer.
-- [ ] **TSK-03**: Right-docked AI Copilot drawer with real-time streaming, RAG context grounding, and space `SOUL.MD` awareness.
+- [x] **TSK-01**: 3-column Kanban pipeline (`01 // QUEUED SPECS`, `02 // ACTIVE AGENT LOOP`, `03 // VERIFIED & SHIPPED`) with priority badges (`P0 HIGH`, `P1 MED`, `P2 LOW`).
+- [x] **TSK-02**: One-click **DISPATCH AI** execution moving cards to `ACTIVE AGENT LOOP` and executing them in the right-docked AI Copilot drawer.
+- [x] **TSK-03**: Right-docked AI Copilot drawer with real-time streaming, RAG context grounding, and space `SOUL.MD` awareness.
 
 ### Google Gemini Direct REST, Firebase Cloud Sync & Bridge
 
