@@ -109,14 +109,14 @@ Which phases cover which requirements. Populated during roadmap creation.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | UI-01 to UI-07 | Phase 1 | Complete |
-| KB-01 to KB-04 | Phase 2 | Pending |
-| RAG-01 to RAG-03 | Phase 3 | Pending |
-| USR-01 to USR-04 | Phase 4 | Pending |
-| BRW-01 to BRW-04 | Phase 5 | Pending |
-| DEV-01 to DEV-04 | Phase 6 | Pending |
-| RTC-01 to RTC-05 | Phase 7 | Pending |
-| TSK-01 to TSK-03 | Phase 8 | Pending |
-| SYNC-01 to SYNC-04 | Phase 9 | Pending |
+| KB-01 to KB-04 | Phase 2 | Complete |
+| RAG-01 to RAG-03 | Phase 3 | Complete |
+| USR-01 to USR-04 | Phase 4 | Complete |
+| BRW-01 to BRW-04 | Phase 5 | Complete |
+| DEV-01 to DEV-04 | Phase 6 | Complete |
+| RTC-01 to RTC-05 | Phase 7 | Complete |
+| TSK-01 to TSK-03 | Phase 8 | Complete |
+| SYNC-01 to SYNC-04 | Phase 9 | Complete |
 | APP-01 to APP-05 | Phase 10 | Pending |
 
 **Coverage:**

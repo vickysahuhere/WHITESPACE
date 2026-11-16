@@ -179,9 +179,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 09-01: Build direct client-side Gemini REST client with model discovery and automatic offline Local RAG fallback.
-- [ ] 09-02: Implement Firebase Spark Cloud Firestore sync with debounced updates and invite-only authentication.
-- [ ] 09-03: Implement workspace export bundle (`context.md`), JSON backup/restore, and auto-generated `wc_bridge.py` sync script.
+- [x] 09-01: Build direct client-side Gemini REST client with model discovery and automatic offline Local RAG fallback.
+- [x] 09-02: Implement Firebase Spark Cloud Firestore sync with debounced updates and invite-only authentication.
+- [x] 09-03: Implement workspace export bundle (`context.md`), JSON backup/restore, and auto-generated `wc_bridge.py` sync script.
 
 ### Phase 10: Electron Native Desktop Packaging & Cross-Platform Launchers
 **Goal**: Assemble Electron 34+ desktop wrapper with GPU flags and session-level header stripper (removing `X-Frame-Options` and CSP), create native launchers (`LAUNCH_WINDOWS_APP.bat`, `BUILD_EXE_INSTALLER.bat`, `launch_fedora.sh`), and verify end-to-end dual web/desktop parity.
@@ -209,15 +209,15 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Monochrome Design Foundation & Triple-Paradigm Shell | 3/3 | Completed | 2026-11-16 |
-| 2. Multi-Space Knowledge Base, SOUL.MD & Live Document Editor | 0/3 | Not started | - |
-| 3. Sub-Millisecond In-Memory Local RAG Engine | 0/2 | Not started | - |
-| 4. User Personalization, Chat Isolation & 3D Assistant (WHITE) | 0/3 | Not started | - |
-| 5. Multi-Tab OSS Browser & Selective Tab Sharing | 0/2 | Not started | - |
-| 6. Built-in Developer Suite | 0/3 | Not started | - |
-| 7. Uncompressed Studio WebRTC Stage & Hardware Audio Pod | 0/3 | Not started | - |
-| 8. OpenClaw Mission Control Kanban & Right-Docked AI Copilot | 0/2 | Not started | - |
-| 9. Google Gemini Direct REST, Firebase Cloud Sync & Antigravity Bridge | 0/3 | Not started | - |
-| 10. Electron Native Desktop Packaging & Cross-Platform Launchers | 0/3 | Not started | - |
+| 2. Multi-Space Knowledge Base, SOUL.MD & Live Document Editor | 3/3 | Completed | 2026-11-16 |
+| 3. Sub-Millisecond In-Memory Local RAG Engine | 2/2 | Completed | 2026-11-16 |
+| 4. User Personalization, Chat Isolation & 3D Assistant (WHITE) | 3/3 | Completed | 2026-11-16 |
+| 5. Multi-Tab OSS Browser & Selective Tab Sharing | 2/2 | Completed | 2026-11-16 |
+| 6. Built-in Developer Suite | 3/3 | Completed | 2026-11-16 |
+| 7. Uncompressed Studio WebRTC Stage & Hardware Audio Pod | 3/3 | Completed | 2026-11-16 |
+| 8. OpenClaw Mission Control Kanban & Right-Docked AI Copilot | 2/2 | Completed | 2026-11-16 |
+| 9. Google Gemini Direct REST, Firebase Cloud Sync & Antigravity Bridge | 3/3 | Completed | 2026-11-16 |
+| 10. Electron Native Desktop Packaging & Cross-Platform Launchers | 0/3 | In progress | - |
 
 ---
 *Roadmap generated: 2026-11-16*
