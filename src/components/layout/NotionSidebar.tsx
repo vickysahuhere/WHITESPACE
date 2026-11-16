@@ -7,7 +7,8 @@ import { FileText, Kanban, Globe, Radio, Bot, ChevronDown, ChevronRight, Sparkle
 export const NotionSidebar: React.FC<{ 
   onUserClick: () => void;
   onSoulClick: () => void;
-}> = ({ onUserClick, onSoulClick }) => {
+  onManageSpaces?: () => void;
+}> = ({ onUserClick, onSoulClick, onManageSpaces }) => {
   const { activeSpace, activeView, setActiveView } = useWorkspace();
   const [docsExpanded, setDocsExpanded] = useState(true);
 
@@ -24,22 +25,35 @@ export const NotionSidebar: React.FC<{
       {/* Top Space Header */}
       <div>
         <div className="p-3 border-b border-[#262626] flex items-center justify-between">
-          <div className="flex items-center gap-2 min-w-0">
-            <span className="border border-[#404040] bg-[#171717] px-1.5 py-0.5 text-[11px] font-mono font-bold text-[#FFFFFF] shrink-0">
+          <div 
+            onClick={onManageSpaces}
+            title="Manage Spaces (Click to configure)"
+            className="flex items-center gap-2 min-w-0 cursor-pointer group"
+          >
+            <span className="border border-[#404040] group-hover:border-[#FFFFFF] bg-[#171717] px-1.5 py-0.5 text-[11px] font-mono font-bold text-[#FFFFFF] shrink-0">
               {activeSpace.badge}
             </span>
-            <span className="font-mono text-xs font-bold text-[#FFFFFF] truncate">
+            <span className="font-mono text-xs font-bold text-[#FFFFFF] truncate group-hover:text-[#FFFFFF]">
               {activeSpace.name}
             </span>
           </div>
 
-          <button
-            onClick={onSoulClick}
-            title="Inspect Space SOUL.MD"
-            className="p-1 hover:bg-[#1C1C1C] text-[#A3A3A3] hover:text-[#FFFFFF] border border-transparent hover:border-[#262626] transition-all"
-          >
-            <Sparkles size={14} />
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={onManageSpaces}
+              title="Open Space Manager"
+              className="p-1 hover:bg-[#1C1C1C] text-[#A3A3A3] hover:text-[#FFFFFF] border border-transparent hover:border-[#262626] transition-all"
+            >
+              <Settings size={13} />
+            </button>
+            <button
+              onClick={onSoulClick}
+              title="Inspect Space SOUL.MD"
+              className="p-1 hover:bg-[#1C1C1C] text-[#A3A3A3] hover:text-[#FFFFFF] border border-transparent hover:border-[#262626] transition-all"
+            >
+              <Sparkles size={13} />
+            </button>
+          </div>
         </div>
 
         {/* View Switcher Links */}

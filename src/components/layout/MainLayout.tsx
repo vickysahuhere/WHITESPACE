@@ -4,6 +4,7 @@ import { DiscordRail } from './DiscordRail';
 import { NotionSidebar } from './NotionSidebar';
 import { TopBar } from './TopBar';
 import { CommandPalette } from '../common/CommandPalette';
+import { SpaceManagerModal } from '../spaces/SpaceManagerModal';
 import { X, Sparkles, UserPlus, Plus } from 'lucide-react';
 
 export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
@@ -21,14 +22,9 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
   } = useWorkspace();
 
   // Modals
-  const [showSpaceModal, setShowSpaceModal] = useState(false);
+  const [showSpaceManagerModal, setShowSpaceManagerModal] = useState(false);
   const [showUserModal, setShowUserModal] = useState(false);
   const [showSoulModal, setShowSoulModal] = useState(false);
-
-  // New Space Form
-  const [newSpaceName, setNewSpaceName] = useState('');
-  const [newSpaceDesc, setNewSpaceDesc] = useState('');
-  const [newSpaceBadge, setNewSpaceBadge] = useState('');
 
   // New Member Form
   const [newUserName, setNewUserName] = useState('');
@@ -37,20 +33,6 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
 
   // Editable SOUL.MD
   const [soulContent, setSoulContent] = useState(activeSpace.soulMd);
-
-  const handleCreateSpace = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newSpaceName.trim()) return;
-    addSpace(
-      newSpaceName,
-      newSpaceDesc || 'Workspace collaboration space.',
-      newSpaceBadge || newSpaceName.slice(0, 2)
-    );
-    setNewSpaceName('');
-    setNewSpaceDesc('');
-    setNewSpaceBadge('');
-    setShowSpaceModal(false);
-  };
 
   const handleCreateMember = (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,7 +57,7 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
   return (
     <div className="flex h-screen w-screen bg-[#000000] text-[#FFFFFF] overflow-hidden select-none font-mono">
       {/* 1. Far-Left Vertical Discord Rail */}
-      <DiscordRail onAddSpaceClick={() => setShowSpaceModal(true)} />
+      <DiscordRail onAddSpaceClick={() => setShowSpaceManagerModal(true)} />
 
       {/* 2. Notion Navigation Sidebar */}
       <NotionSidebar 
@@ -84,6 +66,7 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
           setSoulContent(activeSpace.soulMd);
           setShowSoulModal(true);
         }} 
+        onManageSpaces={() => setShowSpaceManagerModal(true)}
       />
 
       {/* 3. Main Stage Content Area */}
@@ -160,72 +143,11 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
       {/* --- Global Command Palette (CTRL+K) --- */}
       <CommandPalette />
 
-      {/* --- MODAL 1: Create New Space --- */}
-      {showSpaceModal && (
-        <div className="fixed inset-0 bg-[#000000]/80 backdrop-blur-xs flex items-center justify-center z-50 p-4">
-          <div className="w-full max-w-md bg-[#0F0F0F] border border-[#404040] p-5 shadow-2xl">
-            <div className="flex items-center justify-between pb-3 border-b border-[#262626] mb-4">
-              <span className="text-xs font-bold tracking-wider text-[#FFFFFF]">CREATE NEW SPACE</span>
-              <button onClick={() => setShowSpaceModal(false)} className="text-[#A3A3A3] hover:text-[#FFFFFF]">
-                <X size={15} />
-              </button>
-            </div>
-
-            <form onSubmit={handleCreateSpace} className="space-y-4 text-xs font-mono">
-              <div>
-                <label className="block text-[#A3A3A3] mb-1">SPACE NAME</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. SignBridge Vision Core"
-                  value={newSpaceName}
-                  onChange={e => setNewSpaceName(e.target.value)}
-                  className="w-full bg-[#171717] border border-[#262626] focus:border-[#FFFFFF] p-2 text-[#FFFFFF] outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[#A3A3A3] mb-1">BADGE (2 CHARS)</label>
-                <input
-                  type="text"
-                  maxLength={2}
-                  placeholder="e.g. SV"
-                  value={newSpaceBadge}
-                  onChange={e => setNewSpaceBadge(e.target.value.toUpperCase())}
-                  className="w-24 bg-[#171717] border border-[#262626] focus:border-[#FFFFFF] p-2 text-[#FFFFFF] outline-none uppercase font-bold"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[#A3A3A3] mb-1">DESCRIPTION</label>
-                <textarea
-                  rows={2}
-                  placeholder="Short summary of space domain and mission..."
-                  value={newSpaceDesc}
-                  onChange={e => setNewSpaceDesc(e.target.value)}
-                  className="w-full bg-[#171717] border border-[#262626] focus:border-[#FFFFFF] p-2 text-[#FFFFFF] outline-none resize-none"
-                />
-              </div>
-
-              <div className="flex justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowSpaceModal(false)}
-                  className="px-3 py-1.5 border border-[#262626] hover:bg-[#171717] text-[#A3A3A3]"
-                >
-                  CANCEL
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-1.5 bg-[#FFFFFF] text-[#000000] font-bold border border-[#FFFFFF] hover:bg-[#A3A3A3]"
-                >
-                  CREATE SPACE
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      {/* --- Space Management Modal --- */}
+      <SpaceManagerModal 
+        isOpen={showSpaceManagerModal} 
+        onClose={() => setShowSpaceManagerModal(false)} 
+      />
 
       {/* --- MODAL 2: User Profile & Session Switcher --- */}
       {showUserModal && (

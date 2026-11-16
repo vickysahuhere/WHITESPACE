@@ -2,6 +2,8 @@
 
 export type WorkspaceView = 'editor' | 'kanban' | 'browser' | 'stage' | 'copilot';
 
+export type DocumentFormat = 'md' | 'txt' | 'json' | 'csv' | 'py' | 'js' | 'ts' | 'html' | 'css' | 'yaml';
+
 export interface Space {
   id: string;
   name: string;
@@ -9,6 +11,7 @@ export interface Space {
   description: string;
   badge: string; // e.g. 'WC', 'SB', 'MR'
   soulMd: string; // Persistent system prompt for the space
+  tags?: string[];
   createdAt: string;
   updatedAt: string;
 }
@@ -28,7 +31,7 @@ export interface Document {
   spaceId: string;
   title: string;
   content: string;
-  format: 'md' | 'txt' | 'json' | 'csv' | 'py' | 'js' | 'ts' | 'html' | 'css' | 'yaml';
+  format: DocumentFormat;
   createdAt: string;
   updatedAt: string;
 }

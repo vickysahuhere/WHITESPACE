@@ -10,6 +10,7 @@ interface WorkspaceContextType {
   addSpace: (name: string, description: string, badge: string, soulMd?: string) => Space;
   updateSpace: (id: string, partial: Partial<Space>) => void;
   deleteSpace: (id: string) => void;
+  duplicateSpace: (id: string) => Space | null;
 
   members: Member[];
   activeMember: Member;
@@ -90,6 +91,23 @@ export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     if (activeSpaceId === id) {
       setActiveSpaceId(remaining[0].id);
     }
+  };
+
+  const duplicateSpace = (id: string): Space | null => {
+    const target = spaces.find(s => s.id === id);
+    if (!target) return null;
+    const cloned: Space = {
+      ...target,
+      id: `space_${Date.now()}`,
+      name: `${target.name} (Copy)`,
+      slug: `${target.slug}-copy`,
+      badge: `${target.badge}+`.slice(0, 2),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    setSpaces(prev => [...prev, cloned]);
+    setActiveSpaceId(cloned.id);
+    return cloned;
   };
 
   // 2. Members State with LocalStorage backing
@@ -202,6 +220,7 @@ export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         addSpace,
         updateSpace,
         deleteSpace,
+        duplicateSpace,
 
         members,
         activeMember,
