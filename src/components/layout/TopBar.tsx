@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { useRAG } from '../../context/RAGContext';
-import { Key, Eye, EyeOff, Check, AlertCircle, Search, User, Database } from 'lucide-react';
+import { Key, Eye, EyeOff, Check, AlertCircle, Search, User, Database, Bot } from 'lucide-react';
 
 export const TopBar: React.FC<{
   onUserClick: () => void;
   onOpenCommandPalette: () => void;
-}> = ({ onUserClick, onOpenCommandPalette }) => {
+  onToggleCopilotDrawer?: () => void;
+  isCopilotDrawerOpen?: boolean;
+}> = ({ onUserClick, onOpenCommandPalette, onToggleCopilotDrawer, isCopilotDrawerOpen }) => {
   const { activeSpace, activeView, activeMember, geminiKey, setGeminiKey, isKeyLinked } = useWorkspace();
   const { totalChunksIndexed, setRagInspectorOpen } = useRAG();
   const [inputKey, setInputKey] = useState(geminiKey);
@@ -103,6 +105,22 @@ export const TopBar: React.FC<{
           <span className="hidden sm:inline">SEARCH</span>
           <kbd className="px-1 py-0.2 bg-[#000000] border border-[#404040] text-[10px] text-[#FFFFFF]">CTRL+K</kbd>
         </button>
+
+        {/* AI Copilot Drawer Toggle */}
+        {onToggleCopilotDrawer && (
+          <button
+            onClick={onToggleCopilotDrawer}
+            title="Toggle Right-Docked AI Copilot Drawer"
+            className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono border transition-all ${
+              isCopilotDrawerOpen
+                ? 'bg-[#FFFFFF] text-[#000000] border-[#FFFFFF] font-bold'
+                : 'bg-[#121212] hover:bg-[#171717] border-[#262626] text-[#A3A3A3] hover:text-[#FFFFFF]'
+            }`}
+          >
+            <Bot size={13} />
+            <span className="hidden sm:inline">COPILOT</span>
+          </button>
+        )}
 
         {/* Member Switcher Trigger */}
         <button

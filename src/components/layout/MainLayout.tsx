@@ -14,7 +14,9 @@ import { BrowserView } from '../browser/BrowserView';
 import { StageView } from '../stage/StageView';
 import { KanbanView } from '../kanban/KanbanView';
 import { AudioHardwareModal } from '../stage/AudioHardwareModal';
+import { CopilotDrawer } from './CopilotDrawer';
 import { useAudio } from '../../context/AudioContext';
+import { Task } from '../../types';
 import { X, Sparkles, UserPlus, Plus } from 'lucide-react';
 
 export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
@@ -36,6 +38,8 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
   const [showMemberModal, setShowMemberModal] = useState(false);
   const [showSoulModal, setShowSoulModal] = useState(false);
   const [showAssistantModal, setShowAssistantModal] = useState(false);
+  const [copilotDrawerOpen, setCopilotDrawerOpen] = useState(false);
+  const [dispatchedTask, setDispatchedTask] = useState<Task | null>(null);
   const { showHardwareModal, setShowHardwareModal } = useAudio();
 
   // Editable SOUL.MD
@@ -68,6 +72,8 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
         <TopBar 
           onUserClick={() => setShowMemberModal(true)} 
           onOpenCommandPalette={() => setCommandPaletteOpen(true)}
+          onToggleCopilotDrawer={() => setCopilotDrawerOpen(!copilotDrawerOpen)}
+          isCopilotDrawerOpen={copilotDrawerOpen}
         />
 
         {/* Viewport Content Host */}
@@ -82,7 +88,12 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
             ) : activeView === 'stage' ? (
               <StageView />
             ) : activeView === 'kanban' ? (
-              <KanbanView />
+              <KanbanView 
+                onDispatchTask={(task) => {
+                  setDispatchedTask(task);
+                  setCopilotDrawerOpen(true);
+                }}
+              />
             ) : (
               <div className="h-full border border-[#262626] bg-[#0A0A0A] p-6 flex flex-col justify-between">
                 <div>
@@ -218,6 +229,13 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
           </div>
         </div>
       )}
+      {/* --- Right-Docked AI Copilot Drawer --- */}
+      <CopilotDrawer 
+        isOpen={copilotDrawerOpen} 
+        onClose={() => setCopilotDrawerOpen(false)} 
+        dispatchedTask={dispatchedTask}
+        onClearTask={() => setDispatchedTask(null)}
+      />
     </div>
   );
 };
