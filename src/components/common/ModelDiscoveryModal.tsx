@@ -11,7 +11,9 @@ import {
   Layers, 
   Database,
   ShieldCheck,
-  Zap
+  Zap,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 
 interface ModelDiscoveryModalProps {
@@ -20,18 +22,21 @@ interface ModelDiscoveryModalProps {
 }
 
 export const ModelDiscoveryModal: React.FC<ModelDiscoveryModalProps> = ({ isOpen, onClose }) => {
-  const { geminiKey, isKeyLinked } = useWorkspace();
+  const { geminiKey, setGeminiKey, isKeyLinked } = useWorkspace();
   const { totalChunksIndexed } = useRAG();
 
   const [models, setModels] = useState<GeminiModelInfo[]>([]);
   const [activeModel, setActiveModel] = useState<string>(geminiClient.getActiveModel());
   const [loading, setLoading] = useState<boolean>(false);
   const [switchedId, setSwitchedId] = useState<string | null>(null);
+  const [keyInput, setKeyInput] = useState(geminiKey);
+  const [showKey, setShowKey] = useState(false);
+  const [keySaved, setKeySaved] = useState(false);
 
-  const fetchModels = async () => {
+  const fetchModels = async (keyToUse?: string) => {
     setLoading(true);
     try {
-      const list = await geminiClient.listModels(geminiKey);
+      const list = await geminiClient.listModels(keyToUse !== undefined ? keyToUse : geminiKey);
       setModels(list);
     } finally {
       setLoading(false);
@@ -40,10 +45,19 @@ export const ModelDiscoveryModal: React.FC<ModelDiscoveryModalProps> = ({ isOpen
 
   useEffect(() => {
     if (isOpen) {
+      setKeyInput(geminiKey);
       setActiveModel(geminiClient.getActiveModel());
-      fetchModels();
+      fetchModels(geminiKey);
     }
   }, [isOpen, geminiKey]);
+
+  const handleSaveKey = (e: React.FormEvent) => {
+    e.preventDefault();
+    setGeminiKey(keyInput);
+    setKeySaved(true);
+    fetchModels(keyInput);
+    setTimeout(() => setKeySaved(false), 2000);
+  };
 
   if (!isOpen) return null;
 
@@ -82,13 +96,55 @@ export const ModelDiscoveryModal: React.FC<ModelDiscoveryModalProps> = ({ isOpen
           </div>
 
           <button
-            onClick={fetchModels}
+            onClick={() => fetchModels(keyInput)}
             disabled={loading}
             className="px-2.5 py-1 bg-[#141414] hover:bg-[#202020] text-[#A3A3A3] hover:text-[#FFFFFF] border border-[#262626] text-[10px] flex items-center gap-1.5"
           >
             <RotateCw size={11} className={loading ? 'animate-spin' : ''} />
             <span>RESCAN MODELS</span>
           </button>
+        </div>
+
+        {/* Gemini API Key Configuration */}
+        <div className="p-3 bg-[#080808] border border-[#202020] space-y-2">
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-[#FFFFFF] font-bold flex items-center gap-1.5">
+              <Key size={13} />
+              <span>CONFIGURE GOOGLE GEMINI KEY</span>
+            </span>
+            <span className={`px-2 py-0.5 text-[9px] font-bold border ${
+              isKeyLinked 
+                ? 'bg-[#FFFFFF] text-[#000000] border-[#FFFFFF]' 
+                : 'bg-[#171717] text-[#737373] border-[#333333]'
+            }`}>
+              {isKeyLinked ? 'ACTIVE' : 'NOT LINKED'}
+            </span>
+          </div>
+
+          <form onSubmit={handleSaveKey} className="flex gap-2">
+            <div className="relative flex-1">
+              <input
+                type={showKey ? 'text' : 'password'}
+                value={keyInput}
+                onChange={e => setKeyInput(e.target.value)}
+                placeholder="PASTE GOOGLE GEMINI API KEY..."
+                className="w-full bg-[#000000] border border-[#262626] focus:border-[#FFFFFF] px-3 py-1.5 text-xs text-[#FFFFFF] outline-none pr-8 font-mono"
+              />
+              <button
+                type="button"
+                onClick={() => setShowKey(!showKey)}
+                className="absolute right-2.5 top-2 text-[#737373] hover:text-[#FFFFFF]"
+              >
+                {showKey ? <EyeOff size={13} /> : <Eye size={13} />}
+              </button>
+            </div>
+            <button
+              type="submit"
+              className="px-4 py-1.5 bg-[#FFFFFF] text-[#000000] font-bold text-xs border border-[#FFFFFF] hover:bg-[#CCCCCC] transition-colors"
+            >
+              {keySaved ? 'LINKED' : 'LINK KEY'}
+            </button>
+          </form>
         </div>
 
         {/* Models List */}

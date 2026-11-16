@@ -3,7 +3,7 @@ import { useWorkspace } from '../../context/WorkspaceContext';
 import { useRAG } from '../../context/RAGContext';
 import { firebaseSync } from '../../services/firebaseSync';
 import { WindowControls } from './WindowControls';
-import { Key, Eye, EyeOff, Check, AlertCircle, Search, User, Database, Bot, Cloud, Download } from 'lucide-react';
+import { Search, Database, Bot, Cloud, Download } from 'lucide-react';
 
 export const TopBar: React.FC<{
   onUserClick: () => void;
@@ -13,12 +13,17 @@ export const TopBar: React.FC<{
   onOpenModelDiscovery?: () => void;
   onOpenCloudSync?: () => void;
   onOpenExport?: () => void;
-}> = ({ onUserClick, onOpenCommandPalette, onToggleCopilotDrawer, isCopilotDrawerOpen, onOpenModelDiscovery, onOpenCloudSync, onOpenExport }) => {
-  const { activeSpace, activeView, activeMember, geminiKey, setGeminiKey, isKeyLinked } = useWorkspace();
+}> = ({ 
+  onUserClick, 
+  onOpenCommandPalette, 
+  onToggleCopilotDrawer, 
+  isCopilotDrawerOpen, 
+  onOpenModelDiscovery, 
+  onOpenCloudSync, 
+  onOpenExport 
+}) => {
+  const { activeSpace, activeView, activeMember, isKeyLinked } = useWorkspace();
   const { totalChunksIndexed, setRagInspectorOpen } = useRAG();
-  const [inputKey, setInputKey] = useState(geminiKey);
-  const [showKey, setShowKey] = useState(false);
-  const [saveSuccess, setSaveSuccess] = useState(false);
   const [isCloudAuthorized, setIsCloudAuthorized] = useState(() => firebaseSync.isAuthorized());
 
   useEffect(() => {
@@ -27,152 +32,131 @@ export const TopBar: React.FC<{
     return () => window.removeEventListener('storage', checkSync);
   }, []);
 
-  const handleLink = (e: React.FormEvent) => {
-    e.preventDefault();
-    setGeminiKey(inputKey);
-    setSaveSuccess(true);
-    setTimeout(() => setSaveSuccess(false), 2000);
-  };
-
   return (
-    <header className="h-11 bg-[#0A0A0A] border-b border-[#262626] px-3 flex items-center justify-between select-none shrink-0 z-20">
-      {/* Left: Breadcrumbs */}
-      <div className="flex items-center gap-2 font-mono text-xs text-[#A3A3A3]">
+    <header 
+      className="h-11 bg-[#0A0A0A] border-b border-[#262626] px-3 flex items-center justify-between select-none shrink-0 z-20 gap-3 font-mono"
+      style={{ WebkitAppRegion: 'drag' } as any}
+    >
+      {/* Left: Minimal Single-Line Breadcrumb */}
+      <div 
+        className="flex items-center gap-2 text-xs text-[#A3A3A3] shrink-0 whitespace-nowrap overflow-hidden max-w-[280px] lg:max-w-[360px]"
+        style={{ WebkitAppRegion: 'no-drag' } as any}
+      >
         <span className="text-[#FFFFFF] font-bold tracking-wider">WHITESPACE</span>
-        <span className="text-[#404040]">/</span>
-        <span className="text-[#FFFFFF]">{activeSpace.name.toUpperCase()}</span>
-        <span className="text-[#404040]">/</span>
-        <span className="text-[#737373] uppercase">{activeView}</span>
+        <span className="text-[#333333]">/</span>
+        <span className="text-[#CCCCCC] font-bold truncate max-w-[140px] lg:max-w-[200px]" title={activeSpace.name}>
+          {activeSpace.name.toUpperCase()}
+        </span>
+        <span className="text-[#333333]">/</span>
+        <span className="text-[#737373] uppercase shrink-0">{activeView}</span>
       </div>
 
-      {/* Center: Instant Gemini API Key Wiring */}
-      <form onSubmit={handleLink} className="flex items-center gap-2 max-w-lg flex-1 justify-center mx-4">
-        <div className="relative flex items-center w-full max-w-md">
-          <Key size={13} className="absolute left-2.5 text-[#737373] pointer-events-none" />
-          <input
-            type={showKey ? 'text' : 'password'}
-            value={inputKey}
-            onChange={(e) => setInputKey(e.target.value)}
-            placeholder="PASTE GOOGLE GEMINI API KEY..."
-            className="w-full bg-[#121212] border border-[#262626] focus:border-[#FFFFFF] pl-8 pr-16 py-1 text-xs font-mono text-[#FFFFFF] placeholder-[#525252] outline-none transition-colors"
-          />
-          <button
-            type="button"
-            onClick={() => setShowKey(!showKey)}
-            title={showKey ? "Mask Key" : "Reveal Key"}
-            className="absolute right-2 text-[#737373] hover:text-[#FFFFFF] p-0.5"
-          >
-            {showKey ? <EyeOff size={13} /> : <Eye size={13} />}
-          </button>
-        </div>
-
+      {/* Center: Minimal Command Bar / Quick Search */}
+      <div 
+        className="flex-1 flex justify-center max-w-sm mx-auto min-w-0"
+        style={{ WebkitAppRegion: 'no-drag' } as any}
+      >
         <button
-          type="submit"
-          className="px-2.5 py-1 bg-[#171717] hover:bg-[#FFFFFF] text-[#FFFFFF] hover:text-[#000000] border border-[#404040] hover:border-[#FFFFFF] text-xs font-mono font-bold tracking-wider transition-all shrink-0 flex items-center gap-1"
+          type="button"
+          onClick={onOpenCommandPalette}
+          className="w-full max-w-[280px] flex items-center justify-between px-2.5 py-1 bg-[#121212] hover:bg-[#181818] border border-[#262626] hover:border-[#404040] text-xs text-[#666666] hover:text-[#A3A3A3] transition-colors"
+          title="Open Command Palette (CTRL+K)"
         >
-          {saveSuccess ? (
-            <>
-              <Check size={12} strokeWidth={3} />
-              <span>LINKED</span>
-            </>
-          ) : (
-            'LINK'
-          )}
+          <span className="flex items-center gap-2 truncate">
+            <Search size={12} className="text-[#555555] shrink-0" />
+            <span className="text-[11px] truncate">Search or jump to...</span>
+          </span>
+          <kbd className="text-[9px] bg-[#000000] border border-[#2E2E2E] px-1 py-0.2 text-[#888888] shrink-0">CTRL+K</kbd>
         </button>
+      </div>
 
-        {/* Status Indicator / Model Discovery Trigger */}
+      {/* Right: Minimal Unified Status & Tooling Actions */}
+      <div 
+        className="flex items-center gap-1.5 shrink-0 whitespace-nowrap"
+        style={{ WebkitAppRegion: 'no-drag' } as any}
+      >
+        {/* Gemini AI Status Pill */}
         <button
           type="button"
           onClick={onOpenModelDiscovery}
-          className={`flex items-center gap-1.5 px-2 py-0.5 border text-[10px] font-mono shrink-0 transition-colors cursor-pointer hover:border-[#FFFFFF] ${
+          className={`flex items-center gap-1.5 px-2 py-1 border text-[10px] shrink-0 transition-colors cursor-pointer hover:border-[#FFFFFF] ${
             isKeyLinked 
-              ? 'border-[#FFFFFF] bg-[#141414] text-[#FFFFFF]' 
+              ? 'border-[#333333] bg-[#121212] text-[#FFFFFF]' 
               : 'border-[#262626] bg-[#0A0A0A] text-[#737373]'
           }`}
-          title="Inspect and Select Discovered Google Gemini Models"
+          title="Google Gemini Models & API Key"
         >
           <div className={`w-1.5 h-1.5 rounded-full ${isKeyLinked ? 'bg-[#FFFFFF] animate-pulse' : 'bg-[#525252]'}`} />
-          <span>{isKeyLinked ? 'GEMINI READY' : 'LOCAL RAG ONLY'}</span>
+          <span>{isKeyLinked ? 'GEMINI' : 'LOCAL RAG'}</span>
         </button>
-      </form>
 
-      {/* Right: Actions & User Quick Profile */}
-      <div className="flex items-center gap-2">
-        {/* Cloud Sync Status Pill */}
+        {/* Cloud Sync Status */}
         {onOpenCloudSync && (
           <button
             type="button"
             onClick={onOpenCloudSync}
-            title="Configure Firebase Spark Cloud Firestore Sync"
-            className="flex items-center gap-1.5 px-2 py-1 border border-[#333333] hover:border-[#FFFFFF] bg-[#121212] hover:bg-[#1A1A1A] text-xs font-mono text-[#A3A3A3] hover:text-[#FFFFFF] transition-all"
+            title="Firebase Cloud Firestore Sync"
+            className="flex items-center gap-1.5 px-2 py-1 border border-[#262626] hover:border-[#FFFFFF] bg-[#121212] hover:bg-[#181818] text-[10px] text-[#A3A3A3] hover:text-[#FFFFFF] transition-colors shrink-0"
           >
-            <Cloud size={12} className={isCloudAuthorized ? "text-[#FFFFFF]" : "text-[#737373]"} />
-            <span className="hidden sm:inline">{isCloudAuthorized ? 'CLOUD: SYNCED' : 'CLOUD: LOCAL'}</span>
+            <Cloud size={11} className={isCloudAuthorized ? "text-[#FFFFFF]" : "text-[#555555]"} />
+            <span className="hidden sm:inline">{isCloudAuthorized ? 'SYNCED' : 'LOCAL'}</span>
           </button>
         )}
 
-        {/* Live RAG Metrics Status Pill */}
+        {/* In-Memory Local RAG Metrics */}
         <button
           type="button"
           onClick={() => setRagInspectorOpen(true)}
-          title="Open Local RAG Context Inspector (< 1ms In-Memory Retrieval)"
-          className="flex items-center gap-1.5 px-2 py-1 border border-[#333333] hover:border-[#FFFFFF] bg-[#121212] hover:bg-[#1A1A1A] text-xs font-mono text-[#A3A3A3] hover:text-[#FFFFFF] transition-all"
+          title="Local RAG Context Inspector (<1ms)"
+          className="flex items-center gap-1.5 px-2 py-1 border border-[#262626] hover:border-[#FFFFFF] bg-[#121212] hover:bg-[#181818] text-[10px] text-[#A3A3A3] hover:text-[#FFFFFF] transition-colors shrink-0"
         >
-          <Database size={12} />
-          <span className="hidden sm:inline">RAG: &lt;1ms</span>
+          <Database size={11} />
+          <span>RAG</span>
           <span className="text-[#FFFFFF] font-bold">({totalChunksIndexed})</span>
         </button>
 
-        {/* Workspace Export & Local Agent Bridge */}
+        {/* Workspace Exporter */}
         {onOpenExport && (
           <button
             type="button"
             onClick={onOpenExport}
-            title="Export Context.md, Python Bridge, and Full Backups"
-            className="flex items-center gap-1.5 px-2 py-1 border border-[#333333] hover:border-[#FFFFFF] bg-[#121212] hover:bg-[#1A1A1A] text-xs font-mono text-[#A3A3A3] hover:text-[#FFFFFF] transition-all"
+            title="Export Context.md, Python Bridge & Backups"
+            className="flex items-center gap-1.5 px-2 py-1 border border-[#262626] hover:border-[#FFFFFF] bg-[#121212] hover:bg-[#181818] text-[10px] text-[#A3A3A3] hover:text-[#FFFFFF] transition-colors shrink-0"
           >
-            <Download size={12} />
-            <span className="hidden sm:inline">EXPORT</span>
+            <Download size={11} />
+            <span className="hidden md:inline">EXPORT</span>
           </button>
         )}
-
-        {/* Command Palette Trigger */}
-        <button
-          onClick={onOpenCommandPalette}
-          className="flex items-center gap-2 px-2.5 py-1 bg-[#121212] hover:bg-[#171717] border border-[#262626] hover:border-[#404040] text-xs font-mono text-[#A3A3A3] hover:text-[#FFFFFF] transition-all"
-        >
-          <Search size={12} />
-          <span className="hidden sm:inline">SEARCH</span>
-          <kbd className="px-1 py-0.2 bg-[#000000] border border-[#404040] text-[10px] text-[#FFFFFF]">CTRL+K</kbd>
-        </button>
 
         {/* AI Copilot Drawer Toggle */}
         {onToggleCopilotDrawer && (
           <button
+            type="button"
             onClick={onToggleCopilotDrawer}
             title="Toggle Right-Docked AI Copilot Drawer"
-            className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono border transition-all ${
+            className={`flex items-center gap-1.5 px-2 py-1 text-[10px] border transition-colors shrink-0 ${
               isCopilotDrawerOpen
                 ? 'bg-[#FFFFFF] text-[#000000] border-[#FFFFFF] font-bold'
-                : 'bg-[#121212] hover:bg-[#171717] border-[#262626] text-[#A3A3A3] hover:text-[#FFFFFF]'
+                : 'bg-[#121212] hover:bg-[#181818] border-[#262626] text-[#A3A3A3] hover:text-[#FFFFFF]'
             }`}
           >
-            <Bot size={13} />
-            <span className="hidden sm:inline">COPILOT</span>
+            <Bot size={12} />
+            <span className="hidden md:inline">COPILOT</span>
           </button>
         )}
 
-        {/* Member Switcher Trigger */}
+        {/* Active Member Quick Switcher */}
         <button
+          type="button"
           onClick={onUserClick}
-          className="flex items-center gap-1.5 pl-2 pr-1.5 py-1 bg-[#121212] hover:bg-[#171717] border border-[#262626] text-xs font-mono text-[#FFFFFF] transition-all"
+          className="flex items-center gap-1.5 pl-1.5 pr-2 py-1 bg-[#121212] hover:bg-[#181818] border border-[#262626] hover:border-[#404040] text-xs text-[#FFFFFF] transition-colors shrink-0"
           title="Switch Active Team Member"
         >
-          <span className="text-[11px] font-bold text-[#A3A3A3]">{activeMember.badge}</span>
-          <span className="hidden md:inline text-xs truncate max-w-[90px]">{activeMember.name}</span>
+          <span className="text-[10px] font-bold text-[#000000] bg-[#FFFFFF] px-1 py-0.2">{activeMember.badge}</span>
+          <span className="hidden lg:inline text-xs truncate max-w-[80px]">{activeMember.name}</span>
         </button>
 
-        {/* Frameless Desktop Window Controls (Min / Max / Close) */}
+        {/* Native Frameless Window Controls (Desktop Only) */}
         <WindowControls />
       </div>
     </header>

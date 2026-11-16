@@ -27,13 +27,7 @@ export const WindowControls: React.FC = () => {
   };
 
   if (!isDesktop) {
-    return (
-      <div className="flex items-center pl-1 text-[10px] text-[#525252] font-mono select-none">
-        <span className="hidden lg:inline border border-[#262626] bg-[#0D0D0D] px-1.5 py-0.5 tracking-wider">
-          WEB RUNTIME
-        </span>
-      </div>
-    );
+    return null;
   }
 
   return (
