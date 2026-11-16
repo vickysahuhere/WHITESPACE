@@ -14,7 +14,7 @@ White Collars (WHITESPACE) is built as a complete, high-speed, dual-target AI Wo
 - [x] **Phase 2: Multi-Space Knowledge Base, SOUL.MD & Live Document Editor** - Multi-space management, persistent per-space SOUL.MD, multi-format file ingestion, and Notion-style slash-command editor.
 - [x] **Phase 3: Sub-Millisecond In-Memory Local RAG Engine** - Client-side incremental chunking and token index providing < 1 ms similarity search across active or all spaces.
 - [x] **Phase 4: User Personalization, Chat Isolation & 3D Assistant (WHITE)** - 4-member session switcher + add user, strictly isolated chat histories, personal AI profiles, and reactive Three.js 3D assistant.
-- [ ] **Phase 5: Multi-Tab OSS Browser & Selective Tab Sharing** - Embedded multi-tab browser with per-tab privacy (PRIVATE vs SHARED), Team Shared Tabs strip, and web viewport with INDEX TO SPACE.
+- [x] **Phase 5: Multi-Tab OSS Browser & Selective Tab Sharing** - Embedded multi-tab browser with per-tab privacy (PRIVATE vs SHARED), Team Shared Tabs strip, and web viewport with INDEX TO SPACE.
 - [ ] **Phase 6: Built-in Developer Suite (GitHub OSS, Sandbox, Vector Board, REST Tester)** - GitHub repo search with CDN links, monochrome live code sandbox, interactive vector architecture canvas, and Hoppscotch-lite REST client.
 - [ ] **Phase 7: Uncompressed Studio WebRTC Stage & Hardware Audio Pod** - 48 kHz 510 kbps stereo Opus stage, 0–200% GainNode boost with soft limiter, live FFT spectrum canvas, 4K60 screen share, and BroadcastChannel/SDP signaling.
 - [ ] **Phase 8: OpenClaw Mission Control Kanban & Right-Docked AI Copilot** - 3-column task pipeline with one-click DISPATCH AI into right-docked AI Copilot drawer with RAG grounding.
@@ -113,8 +113,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 05-01: Build personal multi-tab browser shell with tab bar, URL input, navigation controls, and PRIVATE vs SHARED privacy toggles.
-- [ ] 05-02: Implement Team Shared Tabs strip with clone action and embedded web viewport with INDEX TO SPACE document snapshotter.
+- [x] 05-01: Build personal multi-tab browser shell with tab bar, URL input, navigation controls, and PRIVATE vs SHARED privacy toggles.
+- [x] 05-02: Implement Team Shared Tabs strip with clone action and embedded web viewport with INDEX TO SPACE document snapshotter.
 
 ### Phase 6: Built-in Developer Suite (GitHub OSS, Sandbox, Vector Board, REST Tester)
 **Goal**: Provide 4 first-class built-in developer tools accessible via browser tabs: GitHub OSS Explorer, Monochrome Code Sandbox, Vector Architecture Board, and REST API Tester.

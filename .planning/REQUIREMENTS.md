@@ -39,10 +39,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Multi-Tab OSS Developer Browser
 
-- [ ] **BRW-01**: Personal multi-tab browser per member with tab switching, URL navigation, and history.
-- [ ] **BRW-02**: Selective per-tab privacy (`PRIVATE (ONLY ME)` by default vs. `TAB: SHARED WITH TEAM`).
-- [ ] **BRW-03**: Team Shared Tabs strip displaying teammates' shared tabs with one-click preview and clone.
-- [ ] **BRW-04**: Embedded Web Viewport with one-click **INDEX TO SPACE** button to snapshot page content into Space Docs.
+- [x] **BRW-01**: Personal multi-tab browser per member with tab switching, URL navigation, and history.
+- [x] **BRW-02**: Selective per-tab privacy (`PRIVATE (ONLY ME)` by default vs. `TAB: SHARED WITH TEAM`).
+- [x] **BRW-03**: Team Shared Tabs strip displaying teammates' shared tabs with one-click preview and clone.
+- [x] **BRW-04**: Embedded Web Viewport with one-click **INDEX TO SPACE** button to snapshot page content into Space Docs.
 
 ### Built-in Developer Suite
 
