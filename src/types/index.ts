@@ -87,3 +87,31 @@ export interface AudioState {
   isMonitoring: boolean;
   currentDevice: string;
 }
+
+// Local RAG Types
+export type RAGSourceType = 'doc' | 'soul' | 'task' | 'tab';
+
+export interface RAGChunk {
+  id: string;
+  spaceId: string;
+  sourceId: string;
+  sourceType: RAGSourceType;
+  sourceTitle: string;
+  text: string;
+  tokenCount: number;
+  createdAt: string;
+}
+
+export interface RAGMatch {
+  chunk: RAGChunk;
+  score: number;
+  matchedTerms: string[];
+}
+
+export interface RAGSearchResult {
+  query: string;
+  durationMs: number;
+  totalChunksIndexed: number;
+  scope: 'active' | 'all';
+  matches: RAGMatch[];
+}
