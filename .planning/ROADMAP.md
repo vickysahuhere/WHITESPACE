@@ -12,7 +12,7 @@ White Collars (WHITESPACE) is built as a complete, high-speed, dual-target AI Wo
 
 - [x] **Phase 1: Monochrome Design Foundation & Triple-Paradigm Shell** - Establish strict black-and-white theme tokens, Discord space rail, Notion navigation, top-bar Gemini bar, audio pod, and CTRL+K palette.
 - [x] **Phase 2: Multi-Space Knowledge Base, SOUL.MD & Live Document Editor** - Multi-space management, persistent per-space SOUL.MD, multi-format file ingestion, and Notion-style slash-command editor.
-- [ ] **Phase 3: Sub-Millisecond In-Memory Local RAG Engine** - Client-side incremental chunking and token index providing < 1 ms similarity search across active or all spaces.
+- [x] **Phase 3: Sub-Millisecond In-Memory Local RAG Engine** - Client-side incremental chunking and token index providing < 1 ms similarity search across active or all spaces.
 - [ ] **Phase 4: User Personalization, Chat Isolation & 3D Assistant (WHITE)** - 4-member session switcher + add user, strictly isolated chat histories, personal AI profiles, and reactive Three.js 3D assistant.
 - [ ] **Phase 5: Multi-Tab OSS Browser & Selective Tab Sharing** - Embedded multi-tab browser with per-tab privacy (PRIVATE vs SHARED), Team Shared Tabs strip, and web viewport with INDEX TO SPACE.
 - [ ] **Phase 6: Built-in Developer Suite (GitHub OSS, Sandbox, Vector Board, REST Tester)** - GitHub repo search with CDN links, monochrome live code sandbox, interactive vector architecture canvas, and Hoppscotch-lite REST client.
@@ -80,8 +80,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 03-01: Build client-side document chunker, inverted token indexer, and sub-millisecond sparse cosine/BM25 ranker.
-- [ ] 03-02: Build RAG context inspector drawer and test query bench with sub-millisecond benchmark display.
+- [x] 03-01: Build client-side document chunker, inverted token indexer, and sub-millisecond sparse cosine/BM25 ranker.
+- [x] 03-02: Build RAG context inspector drawer and test query bench with sub-millisecond benchmark display.
 
 ### Phase 4: User Personalization, Chat Isolation & 3D Assistant (WHITE)
 **Goal**: Implement multi-member session switching with 4 pre-configured slots plus additions, strict chat history isolation per user per space, personal AI profiles, and reactive Three.js geometric 3D assistant.

@@ -26,9 +26,9 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Sub-Millisecond In-Memory Local RAG
 
-- [ ] **RAG-01**: Client-side chunking and incremental token index covering `SOUL.MD`, space docs, tasks, and shared tabs.
-- [ ] **RAG-02**: Sub-millisecond (`< 1 ms`) similarity search across active Space or All Spaces.
-- [ ] **RAG-03**: RAG context inspector displaying matched chunks, scores, and source documents.
+- [x] **RAG-01**: Client-side chunking and incremental token index covering `SOUL.MD`, space docs, tasks, and shared tabs.
+- [x] **RAG-02**: Sub-millisecond (`< 1 ms`) similarity search across active Space or All Spaces.
+- [x] **RAG-03**: RAG context inspector displaying matched chunks, scores, and source documents.
 
 ### User Personalization & Chat Isolation
 
