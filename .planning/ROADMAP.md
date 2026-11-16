@@ -37,8 +37,13 @@ White Collars (WHITESPACE) is built as a complete, high-speed, dual-target AI Wo
 **Plans**: 3 plans
 
 Plans:
+**Wave 1**
 - [ ] 01-01: Initialize Vite React TypeScript Tailwind project with strict monochrome design system, theme tokens, and typography.
+
+**Wave 2** *(blocked on Wave 1 completion)*
 - [ ] 01-02: Build Discord Space Rail, Notion Sidebar, Top-Bar Gemini Key Bar, and persistent Voice & User Pod.
+
+**Wave 3** *(blocked on Wave 2 completion)*
 - [ ] 01-03: Implement CTRL+K global command palette modal with keyboard navigation across spaces, documents, tools, and actions.
 
 ### Phase 2: Multi-Space Knowledge Base, SOUL.MD & Live Document Editor
