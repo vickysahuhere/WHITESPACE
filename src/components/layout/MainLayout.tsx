@@ -8,6 +8,7 @@ import { SpaceManagerModal } from '../spaces/SpaceManagerModal';
 import { NotionEditor } from '../editor/NotionEditor';
 import { RAGInspectorModal } from '../rag/RAGInspectorModal';
 import { MemberManagerModal } from '../members/MemberManagerModal';
+import { ChatView } from '../chat/ChatView';
 import { X, Sparkles, UserPlus, Plus } from 'lucide-react';
 
 export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
@@ -65,6 +66,8 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
           {children || (
             activeView === 'editor' ? (
               <NotionEditor />
+            ) : activeView === 'copilot' ? (
+              <ChatView />
             ) : (
               <div className="h-full border border-[#262626] bg-[#0A0A0A] p-6 flex flex-col justify-between">
                 <div>
