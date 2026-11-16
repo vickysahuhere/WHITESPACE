@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { useRAG } from '../../context/RAGContext';
-import { Key, Eye, EyeOff, Check, AlertCircle, Search, User, Database, Bot } from 'lucide-react';
+import { firebaseSync } from '../../services/firebaseSync';
+import { Key, Eye, EyeOff, Check, AlertCircle, Search, User, Database, Bot, Cloud } from 'lucide-react';
 
 export const TopBar: React.FC<{
   onUserClick: () => void;
@@ -9,12 +10,20 @@ export const TopBar: React.FC<{
   onToggleCopilotDrawer?: () => void;
   isCopilotDrawerOpen?: boolean;
   onOpenModelDiscovery?: () => void;
-}> = ({ onUserClick, onOpenCommandPalette, onToggleCopilotDrawer, isCopilotDrawerOpen, onOpenModelDiscovery }) => {
+  onOpenCloudSync?: () => void;
+}> = ({ onUserClick, onOpenCommandPalette, onToggleCopilotDrawer, isCopilotDrawerOpen, onOpenModelDiscovery, onOpenCloudSync }) => {
   const { activeSpace, activeView, activeMember, geminiKey, setGeminiKey, isKeyLinked } = useWorkspace();
   const { totalChunksIndexed, setRagInspectorOpen } = useRAG();
   const [inputKey, setInputKey] = useState(geminiKey);
   const [showKey, setShowKey] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [isCloudAuthorized, setIsCloudAuthorized] = useState(() => firebaseSync.isAuthorized());
+
+  useEffect(() => {
+    const checkSync = () => setIsCloudAuthorized(firebaseSync.isAuthorized());
+    window.addEventListener('storage', checkSync);
+    return () => window.removeEventListener('storage', checkSync);
+  }, []);
 
   const handleLink = (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,6 +96,19 @@ export const TopBar: React.FC<{
 
       {/* Right: Actions & User Quick Profile */}
       <div className="flex items-center gap-2">
+        {/* Cloud Sync Status Pill */}
+        {onOpenCloudSync && (
+          <button
+            type="button"
+            onClick={onOpenCloudSync}
+            title="Configure Firebase Spark Cloud Firestore Sync"
+            className="flex items-center gap-1.5 px-2 py-1 border border-[#333333] hover:border-[#FFFFFF] bg-[#121212] hover:bg-[#1A1A1A] text-xs font-mono text-[#A3A3A3] hover:text-[#FFFFFF] transition-all"
+          >
+            <Cloud size={12} className={isCloudAuthorized ? "text-[#FFFFFF]" : "text-[#737373]"} />
+            <span className="hidden sm:inline">{isCloudAuthorized ? 'CLOUD: SYNCED' : 'CLOUD: LOCAL'}</span>
+          </button>
+        )}
+
         {/* Live RAG Metrics Status Pill */}
         <button
           type="button"

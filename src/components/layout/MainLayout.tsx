@@ -15,6 +15,7 @@ import { StageView } from '../stage/StageView';
 import { KanbanView } from '../kanban/KanbanView';
 import { AudioHardwareModal } from '../stage/AudioHardwareModal';
 import { ModelDiscoveryModal } from '../common/ModelDiscoveryModal';
+import { CloudSyncModal } from '../common/CloudSyncModal';
 import { CopilotDrawer } from './CopilotDrawer';
 import { useAudio } from '../../context/AudioContext';
 import { Task } from '../../types';
@@ -40,6 +41,7 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
   const [showSoulModal, setShowSoulModal] = useState(false);
   const [showAssistantModal, setShowAssistantModal] = useState(false);
   const [showModelModal, setShowModelModal] = useState(false);
+  const [showCloudSyncModal, setShowCloudSyncModal] = useState(false);
   const [copilotDrawerOpen, setCopilotDrawerOpen] = useState(false);
   const [dispatchedTask, setDispatchedTask] = useState<Task | null>(null);
   const { showHardwareModal, setShowHardwareModal } = useAudio();
@@ -77,6 +79,7 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
           onToggleCopilotDrawer={() => setCopilotDrawerOpen(!copilotDrawerOpen)}
           isCopilotDrawerOpen={copilotDrawerOpen}
           onOpenModelDiscovery={() => setShowModelModal(true)}
+          onOpenCloudSync={() => setShowCloudSyncModal(true)}
         />
 
         {/* Viewport Content Host */}
@@ -187,6 +190,12 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
       <ModelDiscoveryModal 
         isOpen={showModelModal} 
         onClose={() => setShowModelModal(false)} 
+      />
+
+      {/* --- Cloud Firestore Spark Sync Modal --- */}
+      <CloudSyncModal 
+        isOpen={showCloudSyncModal} 
+        onClose={() => setShowCloudSyncModal(false)} 
       />
 
       {/* --- Audio Hardware Calibration Modal --- */}
