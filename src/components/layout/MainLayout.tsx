@@ -5,6 +5,7 @@ import { NotionSidebar } from './NotionSidebar';
 import { TopBar } from './TopBar';
 import { CommandPalette } from '../common/CommandPalette';
 import { SpaceManagerModal } from '../spaces/SpaceManagerModal';
+import { NotionEditor } from '../editor/NotionEditor';
 import { X, Sparkles, UserPlus, Plus } from 'lucide-react';
 
 export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
@@ -80,62 +81,66 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
         {/* Viewport Content Host */}
         <main className="flex-1 overflow-auto bg-[#000000] p-4">
           {children || (
-            <div className="h-full border border-[#262626] bg-[#0A0A0A] p-6 flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between pb-3 border-b border-[#262626] mb-4">
-                  <div className="flex items-center gap-2">
-                    <span className="border border-[#FFFFFF] bg-[#121212] px-2 py-0.5 text-xs font-bold">
-                      {activeSpace.badge}
-                    </span>
-                    <h1 className="text-sm font-bold text-[#FFFFFF] tracking-wider uppercase">
-                      {activeSpace.name} // {activeView.toUpperCase()}
-                    </h1>
+            activeView === 'editor' ? (
+              <NotionEditor />
+            ) : (
+              <div className="h-full border border-[#262626] bg-[#0A0A0A] p-6 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between pb-3 border-b border-[#262626] mb-4">
+                    <div className="flex items-center gap-2">
+                      <span className="border border-[#FFFFFF] bg-[#121212] px-2 py-0.5 text-xs font-bold">
+                        {activeSpace.badge}
+                      </span>
+                      <h1 className="text-sm font-bold text-[#FFFFFF] tracking-wider uppercase">
+                        {activeSpace.name} // {activeView.toUpperCase()}
+                      </h1>
+                    </div>
+                    <span className="text-[11px] text-[#A3A3A3]">ACTIVE MEMBER: {activeMember.name}</span>
                   </div>
-                  <span className="text-[11px] text-[#A3A3A3]">ACTIVE MEMBER: {activeMember.name}</span>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div className="border border-[#262626] bg-[#0F0F0F] p-4">
+                      <div className="text-[11px] text-[#A3A3A3] mb-1">PARADIGM 1 // DISCORD</div>
+                      <div className="text-xs font-bold text-[#FFFFFF] mb-2">Space Rail & Audio Pod</div>
+                      <p className="text-[11px] text-[#737373] leading-relaxed">
+                        Instant space switching, uncompressed 510 kbps WebRTC studio stage calling, and persistent hardware mic/mute pod.
+                      </p>
+                    </div>
+
+                    <div className="border border-[#262626] bg-[#0F0F0F] p-4">
+                      <div className="text-[11px] text-[#A3A3A3] mb-1">PARADIGM 2 // NOTION 3.0</div>
+                      <div className="text-xs font-bold text-[#FFFFFF] mb-2">Knowledge Base & Live Editor</div>
+                      <p className="text-[11px] text-[#737373] leading-relaxed">
+                        Distraction-free slash-command Markdown editor with multi-format file ingestion and per-space SOUL.MD prompts.
+                      </p>
+                    </div>
+
+                    <div className="border border-[#262626] bg-[#0F0F0F] p-4">
+                      <div className="text-[11px] text-[#A3A3A3] mb-1">PARADIGM 3 // OPENCLAW</div>
+                      <div className="text-xs font-bold text-[#FFFFFF] mb-2">Kanban & AI Copilot</div>
+                      <p className="text-[11px] text-[#737373] leading-relaxed">
+                        3-column engineering task pipeline with 1-click Dispatch AI execution grounded in sub-millisecond local RAG.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="border border-[#262626] bg-[#121212] p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-bold text-[#FFFFFF]">SPACE SYSTEM PROMPT (SOUL.MD)</span>
+                      <span className="text-[10px] text-[#737373]">INJECTED INTO GEMINI QUERIES</span>
+                    </div>
+                    <pre className="text-xs text-[#A3A3A3] font-mono whitespace-pre-wrap bg-[#000000] p-3 border border-[#262626] max-h-48 overflow-y-auto">
+                      {activeSpace.soulMd}
+                    </pre>
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                  <div className="border border-[#262626] bg-[#0F0F0F] p-4">
-                    <div className="text-[11px] text-[#A3A3A3] mb-1">PARADIGM 1 // DISCORD</div>
-                    <div className="text-xs font-bold text-[#FFFFFF] mb-2">Space Rail & Audio Pod</div>
-                    <p className="text-[11px] text-[#737373] leading-relaxed">
-                      Instant space switching, uncompressed 510 kbps WebRTC studio stage calling, and persistent hardware mic/mute pod.
-                    </p>
-                  </div>
-
-                  <div className="border border-[#262626] bg-[#0F0F0F] p-4">
-                    <div className="text-[11px] text-[#A3A3A3] mb-1">PARADIGM 2 // NOTION 3.0</div>
-                    <div className="text-xs font-bold text-[#FFFFFF] mb-2">Knowledge Base & Live Editor</div>
-                    <p className="text-[11px] text-[#737373] leading-relaxed">
-                      Distraction-free slash-command Markdown editor with multi-format file ingestion and per-space SOUL.MD prompts.
-                    </p>
-                  </div>
-
-                  <div className="border border-[#262626] bg-[#0F0F0F] p-4">
-                    <div className="text-[11px] text-[#A3A3A3] mb-1">PARADIGM 3 // OPENCLAW</div>
-                    <div className="text-xs font-bold text-[#FFFFFF] mb-2">Kanban & AI Copilot</div>
-                    <p className="text-[11px] text-[#737373] leading-relaxed">
-                      3-column engineering task pipeline with 1-click Dispatch AI execution grounded in sub-millisecond local RAG.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="border border-[#262626] bg-[#121212] p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-bold text-[#FFFFFF]">SPACE SYSTEM PROMPT (SOUL.MD)</span>
-                    <span className="text-[10px] text-[#737373]">INJECTED INTO GEMINI QUERIES</span>
-                  </div>
-                  <pre className="text-xs text-[#A3A3A3] font-mono whitespace-pre-wrap bg-[#000000] p-3 border border-[#262626] max-h-48 overflow-y-auto">
-                    {activeSpace.soulMd}
-                  </pre>
+                <div className="flex items-center justify-between pt-4 border-t border-[#262626] text-[11px] text-[#737373]">
+                  <span>KEYBOARD SHORTCUTS: <kbd className="px-1 border border-[#404040] text-[#FFFFFF]">CTRL+K</kbd> COMMAND PALETTE</span>
+                  <span>DUAL RUNTIME: WEB BROWSER + WINDOWS DESKTOP (.EXE)</span>
                 </div>
               </div>
-
-              <div className="flex items-center justify-between pt-4 border-t border-[#262626] text-[11px] text-[#737373]">
-                <span>KEYBOARD SHORTCUTS: <kbd className="px-1 border border-[#404040] text-[#FFFFFF]">CTRL+K</kbd> COMMAND PALETTE</span>
-                <span>DUAL RUNTIME: WEB BROWSER + WINDOWS DESKTOP (.EXE)</span>
-              </div>
-            </div>
+            )
           )}
         </main>
       </div>
