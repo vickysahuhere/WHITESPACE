@@ -11,6 +11,8 @@ import { MemberManagerModal } from '../members/MemberManagerModal';
 import { ChatView } from '../chat/ChatView';
 import { AssistantModal } from '../assistant/AssistantModal';
 import { BrowserView } from '../browser/BrowserView';
+import { AudioHardwareModal } from '../stage/AudioHardwareModal';
+import { useAudio } from '../../context/AudioContext';
 import { X, Sparkles, UserPlus, Plus } from 'lucide-react';
 
 export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
@@ -32,6 +34,7 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
   const [showMemberModal, setShowMemberModal] = useState(false);
   const [showSoulModal, setShowSoulModal] = useState(false);
   const [showAssistantModal, setShowAssistantModal] = useState(false);
+  const { showHardwareModal, setShowHardwareModal } = useAudio();
 
   // Editable SOUL.MD
   const [soulContent, setSoulContent] = useState(activeSpace.soulMd);
@@ -158,6 +161,12 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
       <AssistantModal 
         isOpen={showAssistantModal} 
         onClose={() => setShowAssistantModal(false)} 
+      />
+
+      {/* --- Audio Hardware Calibration Modal --- */}
+      <AudioHardwareModal 
+        isOpen={showHardwareModal} 
+        onClose={() => setShowHardwareModal(false)} 
       />
 
       {/* --- MODAL 3: Space SOUL.MD Editor --- */}
