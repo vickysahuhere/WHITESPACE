@@ -6,6 +6,7 @@ import { TopBar } from './TopBar';
 import { CommandPalette } from '../common/CommandPalette';
 import { SpaceManagerModal } from '../spaces/SpaceManagerModal';
 import { NotionEditor } from '../editor/NotionEditor';
+import { RAGInspectorModal } from '../rag/RAGInspectorModal';
 import { X, Sparkles, UserPlus, Plus } from 'lucide-react';
 
 export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
@@ -153,6 +154,9 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
         isOpen={showSpaceManagerModal} 
         onClose={() => setShowSpaceManagerModal(false)} 
       />
+
+      {/* --- RAG Context Inspector Modal --- */}
+      <RAGInspectorModal />
 
       {/* --- MODAL 2: User Profile & Session Switcher --- */}
       {showUserModal && (

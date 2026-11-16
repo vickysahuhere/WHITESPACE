@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useWorkspace } from '../../context/WorkspaceContext';
-import { Key, Eye, EyeOff, Check, AlertCircle, Search, User } from 'lucide-react';
+import { useRAG } from '../../context/RAGContext';
+import { Key, Eye, EyeOff, Check, AlertCircle, Search, User, Database } from 'lucide-react';
 
 export const TopBar: React.FC<{
   onUserClick: () => void;
   onOpenCommandPalette: () => void;
 }> = ({ onUserClick, onOpenCommandPalette }) => {
   const { activeSpace, activeView, activeMember, geminiKey, setGeminiKey, isKeyLinked } = useWorkspace();
+  const { totalChunksIndexed, setRagInspectorOpen } = useRAG();
   const [inputKey, setInputKey] = useState(geminiKey);
   const [showKey, setShowKey] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -80,6 +82,18 @@ export const TopBar: React.FC<{
 
       {/* Right: Actions & User Quick Profile */}
       <div className="flex items-center gap-2">
+        {/* Live RAG Metrics Status Pill */}
+        <button
+          type="button"
+          onClick={() => setRagInspectorOpen(true)}
+          title="Open Local RAG Context Inspector (< 1ms In-Memory Retrieval)"
+          className="flex items-center gap-1.5 px-2 py-1 border border-[#333333] hover:border-[#FFFFFF] bg-[#121212] hover:bg-[#1A1A1A] text-xs font-mono text-[#A3A3A3] hover:text-[#FFFFFF] transition-all"
+        >
+          <Database size={12} />
+          <span className="hidden sm:inline">RAG: &lt;1ms</span>
+          <span className="text-[#FFFFFF] font-bold">({totalChunksIndexed})</span>
+        </button>
+
         {/* Command Palette Trigger */}
         <button
           onClick={onOpenCommandPalette}

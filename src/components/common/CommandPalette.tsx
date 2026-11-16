@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useWorkspace } from '../../context/WorkspaceContext';
-import { Search, Compass, FileText, Kanban, Radio, Bot, Mic, Volume2, Key, Users } from 'lucide-react';
+import { useRAG } from '../../context/RAGContext';
+import { Search, Compass, FileText, Kanban, Radio, Bot, Mic, Volume2, Key, Users, Database } from 'lucide-react';
 
 interface PaletteItem {
   id: string;
@@ -28,6 +29,7 @@ export const CommandPalette: React.FC = () => {
     toggleStage,
     audioState
   } = useWorkspace();
+  const { setRagInspectorOpen } = useRAG();
 
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -152,6 +154,18 @@ export const CommandPalette: React.FC = () => {
     })),
 
     // Actions
+    {
+      id: 'action_rag',
+      category: 'ACTIONS',
+      title: 'Inspect: Local RAG Knowledge Context',
+      badge: 'RAG',
+      subtitle: 'Sub-millisecond Vector & Keyword Inverted Index Benchmark',
+      icon: <Database size={14} />,
+      action: () => {
+        setRagInspectorOpen(true);
+        setCommandPaletteOpen(false);
+      }
+    },
     {
       id: 'action_mic',
       category: 'ACTIONS',
