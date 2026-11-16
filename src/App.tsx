@@ -5,6 +5,7 @@ import { RAGProvider } from './context/RAGContext';
 import { ChatProvider } from './context/ChatContext';
 import { BrowserProvider } from './context/BrowserContext';
 import { AudioProvider } from './context/AudioContext';
+import { TaskProvider } from './context/TaskContext';
 import { MainLayout } from './components/layout/MainLayout';
 
 export default function App() {
@@ -15,7 +16,9 @@ export default function App() {
           <RAGProvider>
             <ChatProvider>
               <BrowserProvider>
-                <MainLayout />
+                <TaskProvider>
+                  <MainLayout />
+                </TaskProvider>
               </BrowserProvider>
             </ChatProvider>
           </RAGProvider>

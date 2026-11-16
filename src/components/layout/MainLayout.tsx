@@ -12,6 +12,7 @@ import { ChatView } from '../chat/ChatView';
 import { AssistantModal } from '../assistant/AssistantModal';
 import { BrowserView } from '../browser/BrowserView';
 import { StageView } from '../stage/StageView';
+import { KanbanView } from '../kanban/KanbanView';
 import { AudioHardwareModal } from '../stage/AudioHardwareModal';
 import { useAudio } from '../../context/AudioContext';
 import { X, Sparkles, UserPlus, Plus } from 'lucide-react';
@@ -80,6 +81,8 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
               <BrowserView />
             ) : activeView === 'stage' ? (
               <StageView />
+            ) : activeView === 'kanban' ? (
+              <KanbanView />
             ) : (
               <div className="h-full border border-[#262626] bg-[#0A0A0A] p-6 flex flex-col justify-between">
                 <div>
@@ -89,7 +92,7 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
                         {activeSpace.badge}
                       </span>
                       <h1 className="text-sm font-bold text-[#FFFFFF] tracking-wider uppercase">
-                        {activeSpace.name} // {activeView.toUpperCase()}
+                        {activeSpace.name} // {String(activeView).toUpperCase()}
                       </h1>
                     </div>
                     <span className="text-[11px] text-[#A3A3A3]">ACTIVE MEMBER: {activeMember.name}</span>
