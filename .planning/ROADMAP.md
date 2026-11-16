@@ -11,7 +11,7 @@ White Collars (WHITESPACE) is built as a complete, high-speed, dual-target AI Wo
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
 - [x] **Phase 1: Monochrome Design Foundation & Triple-Paradigm Shell** - Establish strict black-and-white theme tokens, Discord space rail, Notion navigation, top-bar Gemini bar, audio pod, and CTRL+K palette.
-- [ ] **Phase 2: Multi-Space Knowledge Base, SOUL.MD & Live Document Editor** - Multi-space management, persistent per-space SOUL.MD, multi-format file ingestion, and Notion-style slash-command editor.
+- [x] **Phase 2: Multi-Space Knowledge Base, SOUL.MD & Live Document Editor** - Multi-space management, persistent per-space SOUL.MD, multi-format file ingestion, and Notion-style slash-command editor.
 - [ ] **Phase 3: Sub-Millisecond In-Memory Local RAG Engine** - Client-side incremental chunking and token index providing < 1 ms similarity search across active or all spaces.
 - [ ] **Phase 4: User Personalization, Chat Isolation & 3D Assistant (WHITE)** - 4-member session switcher + add user, strictly isolated chat histories, personal AI profiles, and reactive Three.js 3D assistant.
 - [ ] **Phase 5: Multi-Tab OSS Browser & Selective Tab Sharing** - Embedded multi-tab browser with per-tab privacy (PRIVATE vs SHARED), Team Shared Tabs strip, and web viewport with INDEX TO SPACE.
@@ -60,13 +60,13 @@ Plans:
 
 Plans:
 **Wave 1**
-- [ ] 02-01: Implement Space management state machine, Space creation/switch/delete modals, and SOUL.MD persistent storage.
+- [x] 02-01: Implement Space management state machine, Space creation/switch/delete modals, and SOUL.MD persistent storage.
 
 **Wave 2** *(blocked on Wave 1 completion)*
-- [ ] 02-02: Build multi-format document ingestion pipeline supporting 10 file formats with drag-and-drop file upload.
+- [x] 02-02: Build multi-format document ingestion pipeline supporting 10 file formats with drag-and-drop file upload.
 
 **Wave 3** *(blocked on Wave 2 completion)*
-- [ ] 02-03: Build Notion 3.0 live slash-command document editor with inline formatting, block actions, and Markdown rendering.
+- [x] 02-03: Build Notion 3.0 live slash-command document editor with inline formatting, block actions, and Markdown rendering.
 
 ### Phase 3: Sub-Millisecond In-Memory Local RAG Engine
 **Goal**: Deliver an incremental in-memory chunking, token indexing, and vector similarity retrieval engine operating in < 1 ms over active or all spaces.

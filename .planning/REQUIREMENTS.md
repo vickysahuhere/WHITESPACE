@@ -19,10 +19,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Multi-Space Knowledge Base & Live Editor
 
-- [ ] **KB-01**: Create, switch, rename, and delete independent Spaces (*White Collars Core*, *SignBridge*, *Mai-Reads*).
-- [ ] **KB-02**: Persistent per-Space system prompt (`SOUL.MD`) injected into all AI queries and workspace exports.
-- [ ] **KB-03**: Multi-format document ingestion (`.md`, `.txt`, `.json`, `.csv`, `.py`, `.js`, `.ts`, `.html`, `.css`, `.yaml`).
-- [ ] **KB-04**: Notion 3.0 live slash-command markdown editor (`/H2`, `/TODO`, `/CODE`, `/TABLE`, `/AI-SYNTHESIZE`).
+- [x] **KB-01**: Create, switch, rename, and delete independent Spaces (*White Collars Core*, *SignBridge*, *Mai-Reads*).
+- [x] **KB-02**: Persistent per-Space system prompt (`SOUL.MD`) injected into all AI queries and workspace exports.
+- [x] **KB-03**: Multi-format document ingestion (`.md`, `.txt`, `.json`, `.csv`, `.py`, `.js`, `.ts`, `.html`, `.css`, `.yaml`).
+- [x] **KB-04**: Notion 3.0 live slash-command markdown editor (`/H2`, `/TODO`, `/CODE`, `/TABLE`, `/AI-SYNTHESIZE`).
 
 ### Sub-Millisecond In-Memory Local RAG
 
