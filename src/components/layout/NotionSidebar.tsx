@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { useWorkspace } from '../../context/WorkspaceContext';
+import { useDocuments } from '../../context/DocumentContext';
 import { WorkspaceView } from '../../types';
+import { FORMAT_BADGES } from '../../services/documentParser';
 import { VoicePod } from './VoicePod';
-import { FileText, Kanban, Globe, Radio, Bot, ChevronDown, ChevronRight, Sparkles, Plus, Settings } from 'lucide-react';
+import { DocumentUploader } from '../editor/DocumentUploader';
+import { FileText, Kanban, Globe, Radio, Bot, ChevronDown, ChevronRight, Sparkles, Plus, Settings, UploadCloud, Trash2 } from 'lucide-react';
 
 export const NotionSidebar: React.FC<{ 
   onUserClick: () => void;
@@ -10,7 +13,11 @@ export const NotionSidebar: React.FC<{
   onManageSpaces?: () => void;
 }> = ({ onUserClick, onSoulClick, onManageSpaces }) => {
   const { activeSpace, activeView, setActiveView } = useWorkspace();
+  const { getDocumentsForSpace, activeDocumentId, setActiveDocumentId, createDocument, deleteDocument } = useDocuments();
   const [docsExpanded, setDocsExpanded] = useState(true);
+  const [showUploader, setShowUploader] = useState(false);
+
+  const spaceDocs = getDocumentsForSpace(activeSpace.id);
 
   const navItems: { view: WorkspaceView; label: string; icon: React.ReactNode }[] = [
     { view: 'editor', label: 'KNOWLEDGE DOCS', icon: <FileText size={15} /> },
@@ -19,6 +26,17 @@ export const NotionSidebar: React.FC<{
     { view: 'stage', label: 'STUDIO STAGE', icon: <Radio size={15} /> },
     { view: 'copilot', label: 'AI COPILOT', icon: <Bot size={15} /> },
   ];
+
+  const handleCreateNewDoc = () => {
+    const doc = createDocument(activeSpace.id, 'UNTITLED_DOC', '', 'md');
+    setActiveDocumentId(doc.id);
+    setActiveView('editor');
+  };
+
+  const handleSelectDoc = (id: string) => {
+    setActiveDocumentId(id);
+    setActiveView('editor');
+  };
 
   return (
     <aside className="w-60 h-screen bg-[#0D0D0D] border-r border-[#262626] flex flex-col justify-between shrink-0 select-none">
@@ -87,43 +105,71 @@ export const NotionSidebar: React.FC<{
           >
             <div className="flex items-center gap-1">
               {docsExpanded ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
-              <span>SPACE DOCUMENTS</span>
+              <span>SPACE DOCUMENTS ({spaceDocs.length})</span>
             </div>
-            <button 
-              onClick={(e) => {
-                e.stopPropagation();
-                setActiveView('editor');
-              }}
-              className="hover:text-[#FFFFFF] p-0.5" 
-              title="New Document"
-            >
-              <Plus size={12} />
-            </button>
+            <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
+              <button 
+                onClick={() => setShowUploader(true)}
+                className="hover:text-[#FFFFFF] p-0.5 text-[#737373]" 
+                title="Upload Files (.md, .py, .ts, .json, .csv...)"
+              >
+                <UploadCloud size={12} />
+              </button>
+              <button 
+                onClick={handleCreateNewDoc}
+                className="hover:text-[#FFFFFF] p-0.5 text-[#737373]" 
+                title="New Markdown Document"
+              >
+                <Plus size={12} />
+              </button>
+            </div>
           </div>
 
           {docsExpanded && (
-            <div className="mt-1 pl-4 space-y-0.5 text-xs font-mono">
-              <div 
-                onClick={() => setActiveView('editor')}
-                className="px-2 py-1 text-[#A3A3A3] hover:text-[#FFFFFF] hover:bg-[#141414] cursor-pointer flex items-center gap-1.5 truncate border-l border-[#262626]"
-              >
-                <span className="text-[10px] text-[#737373]">MD</span>
-                <span className="truncate">Architecture Specs</span>
-              </div>
-              <div 
-                onClick={() => setActiveView('editor')}
-                className="px-2 py-1 text-[#A3A3A3] hover:text-[#FFFFFF] hover:bg-[#141414] cursor-pointer flex items-center gap-1.5 truncate border-l border-[#262626]"
-              >
-                <span className="text-[10px] text-[#737373]">MD</span>
-                <span className="truncate">SOUL.MD (System Prompt)</span>
-              </div>
-              <div 
-                onClick={() => setActiveView('editor')}
-                className="px-2 py-1 text-[#A3A3A3] hover:text-[#FFFFFF] hover:bg-[#141414] cursor-pointer flex items-center gap-1.5 truncate border-l border-[#262626]"
-              >
-                <span className="text-[10px] text-[#737373]">TS</span>
-                <span className="truncate">Audio & WebRTC Pipeline</span>
-              </div>
+            <div className="mt-1 pl-2 space-y-0.5 text-xs font-mono max-h-56 overflow-y-auto no-scrollbar">
+              {spaceDocs.length === 0 ? (
+                <div className="px-2 py-2 text-[10px] text-[#555555]">
+                  NO DOCUMENTS // CLICK + OR UPLOAD
+                </div>
+              ) : (
+                spaceDocs.map(doc => {
+                  const isDocActive = activeView === 'editor' && doc.id === activeDocumentId;
+                  const formatBadge = FORMAT_BADGES[doc.format] || doc.format.toUpperCase();
+                  return (
+                    <div 
+                      key={doc.id}
+                      onClick={() => handleSelectDoc(doc.id)}
+                      className={`group px-2 py-1 cursor-pointer flex items-center justify-between border-l transition-all ${
+                        isDocActive
+                          ? 'border-[#FFFFFF] bg-[#1A1A1A] text-[#FFFFFF] font-bold'
+                          : 'border-[#262626] text-[#A3A3A3] hover:text-[#FFFFFF] hover:bg-[#141414]'
+                      }`}
+                    >
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <span className={`px-1 py-0.2 text-[9px] font-bold border ${
+                          isDocActive 
+                            ? 'bg-[#FFFFFF] text-[#000000] border-[#FFFFFF]' 
+                            : 'bg-[#000000] text-[#737373] border-[#333333]'
+                        }`}>
+                          {formatBadge}
+                        </span>
+                        <span className="truncate">{doc.title}</span>
+                      </div>
+
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteDocument(doc.id);
+                        }}
+                        title="Delete Document"
+                        className="opacity-0 group-hover:opacity-100 hover:text-[#FFFFFF] p-0.5 text-[#737373] transition-opacity"
+                      >
+                        <Trash2 size={11} />
+                      </button>
+                    </div>
+                  );
+                })
+              )}
             </div>
           )}
         </div>
@@ -131,6 +177,12 @@ export const NotionSidebar: React.FC<{
 
       {/* Bottom Persistent Voice & User Pod */}
       <VoicePod onUserClick={onUserClick} />
+
+      {/* Document Uploader Modal */}
+      <DocumentUploader 
+        isOpen={showUploader} 
+        onClose={() => setShowUploader(false)} 
+      />
     </aside>
   );
 };
