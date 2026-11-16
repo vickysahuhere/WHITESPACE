@@ -3,11 +3,42 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "main": "electron/main.cjs",
   "description": "White Collars (WHITESPACE) // Autonomous Workspace OS",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "electron:start": "electron electron/main.cjs",
+    "electron:dev": "concurrently -k \"vite\" \"wait-on http://localhost:5173 && cross-env NODE_ENV=development electron electron/main.cjs\"",
+    "electron:build": "npm run build && electron-builder --win --x64",
+    "electron:pack": "npm run build && electron-builder --dir"
+  },
+  "build": {
+    "appId": "com.whitecollars.whitespace",
+    "productName": "WhiteCollarsOS",
+    "copyright": "Copyright (C) 2026 White Collars",
+    "directories": {
+      "output": "dist-electron"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*"
+    ],
+    "win": {
+      "target": [
+        "portable",
+        "nsis"
+      ],
+      "artifactName": "${productName}_v${version}_${arch}.${ext}"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "tar.gz"
+      ],
+      "category": "Development"
+    }
   },
   "dependencies": {
     "lucide-react": "^0.475.0",
