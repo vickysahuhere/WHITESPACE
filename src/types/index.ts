@@ -79,6 +79,9 @@ export interface ChatMessage {
   }[];
 }
 
+// Multi-User Multi-Space Isolated Chat Store: [userId][spaceId] -> ChatMessage[]
+export type ChatHistoryStore = Record<string, Record<string, ChatMessage[]>>;
+
 export interface AudioState {
   micActive: boolean;
   muted: boolean;

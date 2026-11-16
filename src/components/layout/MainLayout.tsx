@@ -7,6 +7,7 @@ import { CommandPalette } from '../common/CommandPalette';
 import { SpaceManagerModal } from '../spaces/SpaceManagerModal';
 import { NotionEditor } from '../editor/NotionEditor';
 import { RAGInspectorModal } from '../rag/RAGInspectorModal';
+import { MemberManagerModal } from '../members/MemberManagerModal';
 import { X, Sparkles, UserPlus, Plus } from 'lucide-react';
 
 export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
@@ -25,31 +26,11 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
 
   // Modals
   const [showSpaceManagerModal, setShowSpaceManagerModal] = useState(false);
-  const [showUserModal, setShowUserModal] = useState(false);
+  const [showMemberModal, setShowMemberModal] = useState(false);
   const [showSoulModal, setShowSoulModal] = useState(false);
-
-  // New Member Form
-  const [newUserName, setNewUserName] = useState('');
-  const [newUserRole, setNewUserRole] = useState('');
-  const [newUserHardware, setNewUserHardware] = useState('');
 
   // Editable SOUL.MD
   const [soulContent, setSoulContent] = useState(activeSpace.soulMd);
-
-  const handleCreateMember = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newUserName.trim()) return;
-    addMember(
-      newUserName,
-      newUserRole || 'ENGINEER',
-      newUserHardware || 'Windows PC',
-      'Execute autonomous workspace directives with precision.'
-    );
-    setNewUserName('');
-    setNewUserRole('');
-    setNewUserHardware('');
-    setShowUserModal(false);
-  };
 
   const handleSaveSoul = () => {
     updateSpace(activeSpace.id, { soulMd: soulContent });
@@ -63,7 +44,7 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
 
       {/* 2. Notion Navigation Sidebar */}
       <NotionSidebar 
-        onUserClick={() => setShowUserModal(true)} 
+        onUserClick={() => setShowMemberModal(true)} 
         onSoulClick={() => {
           setSoulContent(activeSpace.soulMd);
           setShowSoulModal(true);
@@ -75,7 +56,7 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
       <div className="flex-1 flex flex-col min-w-0 bg-[#000000] overflow-hidden">
         {/* TopBar with instant Gemini API Key wiring */}
         <TopBar 
-          onUserClick={() => setShowUserModal(true)} 
+          onUserClick={() => setShowMemberModal(true)} 
           onOpenCommandPalette={() => setCommandPaletteOpen(true)}
         />
 
@@ -158,81 +139,11 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
       {/* --- RAG Context Inspector Modal --- */}
       <RAGInspectorModal />
 
-      {/* --- MODAL 2: User Profile & Session Switcher --- */}
-      {showUserModal && (
-        <div className="fixed inset-0 bg-[#000000]/80 backdrop-blur-xs flex items-center justify-center z-50 p-4">
-          <div className="w-full max-w-lg bg-[#0F0F0F] border border-[#404040] p-5 shadow-2xl">
-            <div className="flex items-center justify-between pb-3 border-b border-[#262626] mb-4">
-              <span className="text-xs font-bold tracking-wider text-[#FFFFFF]">MEMBER SESSIONS // SWITCH USER</span>
-              <button onClick={() => setShowUserModal(false)} className="text-[#A3A3A3] hover:text-[#FFFFFF]">
-                <X size={15} />
-              </button>
-            </div>
-
-            <div className="space-y-2 mb-5">
-              <div className="text-[11px] text-[#737373] uppercase mb-1">Active Team Members (Chat & RAG Isolated)</div>
-              {members.map(member => (
-                <div
-                  key={member.id}
-                  onClick={() => {
-                    setActiveMemberId(member.id);
-                    setShowUserModal(false);
-                  }}
-                  className={`p-2.5 border flex items-center justify-between cursor-pointer transition-all ${
-                    member.id === activeMember.id
-                      ? 'border-[#FFFFFF] bg-[#1A1A1A]'
-                      : 'border-[#262626] bg-[#121212] hover:border-[#404040] hover:bg-[#171717]'
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="w-8 h-8 bg-[#000000] border border-[#404040] flex items-center justify-center text-xs font-bold text-[#FFFFFF]">
-                      {member.badge}
-                    </span>
-                    <div>
-                      <div className="text-xs font-bold text-[#FFFFFF]">{member.name}</div>
-                      <div className="text-[10px] text-[#A3A3A3]">{member.role}</div>
-                      <div className="text-[9px] text-[#737373] truncate max-w-xs">{member.hardware}</div>
-                    </div>
-                  </div>
-                  {member.id === activeMember.id && (
-                    <span className="border border-[#FFFFFF] px-1.5 py-0.5 text-[9px] font-bold bg-[#FFFFFF] text-[#000000]">
-                      ACTIVE
-                    </span>
-                  )}
-                </div>
-              ))}
-            </div>
-
-            {/* Quick Add Member Form */}
-            <form onSubmit={handleCreateMember} className="border-t border-[#262626] pt-3 text-xs font-mono space-y-2">
-              <span className="text-[10px] text-[#A3A3A3] block font-bold uppercase">+ Add New Team Member</span>
-              <div className="grid grid-cols-2 gap-2">
-                <input
-                  type="text"
-                  placeholder="Full Name"
-                  required
-                  value={newUserName}
-                  onChange={e => setNewUserName(e.target.value)}
-                  className="bg-[#171717] border border-[#262626] p-1.5 text-[#FFFFFF] outline-none"
-                />
-                <input
-                  type="text"
-                  placeholder="Role (e.g. SYSTEMS ENG)"
-                  value={newUserRole}
-                  onChange={e => setNewUserRole(e.target.value)}
-                  className="bg-[#171717] border border-[#262626] p-1.5 text-[#FFFFFF] outline-none"
-                />
-              </div>
-              <button
-                type="submit"
-                className="w-full py-1.5 bg-[#171717] hover:bg-[#FFFFFF] text-[#FFFFFF] hover:text-[#000000] border border-[#404040] text-xs font-bold transition-all"
-              >
-                ADD TEAM MEMBER
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
+      {/* --- Member Management & Switcher Modal --- */}
+      <MemberManagerModal 
+        isOpen={showMemberModal} 
+        onClose={() => setShowMemberModal(false)} 
+      />
 
       {/* --- MODAL 3: Space SOUL.MD Editor --- */}
       {showSoulModal && (

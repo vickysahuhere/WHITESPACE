@@ -17,6 +17,9 @@ interface WorkspaceContextType {
   activeMemberId: string;
   setActiveMemberId: (id: string) => void;
   addMember: (name: string, role: string, hardware: string, instructions: string) => Member;
+  updateMember: (id: string, partial: Partial<Member>) => void;
+  deleteMember: (id: string) => void;
+  duplicateMember: (id: string) => Member | null;
 
   activeView: WorkspaceView;
   setActiveView: (view: WorkspaceView) => void;
@@ -158,6 +161,34 @@ export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     return newMember;
   };
 
+  const updateMember = (id: string, partial: Partial<Member>) => {
+    setMembers(prev => prev.map(m => m.id === id ? { ...m, ...partial } : m));
+  };
+
+  const deleteMember = (id: string) => {
+    if (members.length <= 1) return;
+    const remaining = members.filter(m => m.id !== id);
+    setMembers(remaining);
+    if (activeMemberId === id) {
+      setActiveMemberId(remaining[0].id);
+    }
+  };
+
+  const duplicateMember = (id: string): Member | null => {
+    const target = members.find(m => m.id === id);
+    if (!target) return null;
+    const cloned: Member = {
+      ...target,
+      id: `user_${Date.now()}`,
+      name: `${target.name} (Clone)`,
+      badge: `${target.badge}+`.slice(0, 2),
+      isCustom: true
+    };
+    setMembers(prev => [...prev, cloned]);
+    setActiveMemberId(cloned.id);
+    return cloned;
+  };
+
   // 3. View Switcher
   const [activeView, setActiveView] = useState<WorkspaceView>('editor');
 
@@ -227,6 +258,9 @@ export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         activeMemberId,
         setActiveMemberId,
         addMember,
+        updateMember,
+        deleteMember,
+        duplicateMember,
 
         activeView,
         setActiveView,
