@@ -63,10 +63,10 @@ export const NotionSidebar: React.FC<{
             title="Manage Space Configuration"
             className="flex items-center gap-2.5 min-w-0 cursor-pointer group"
           >
-            <span className="border border-[#2F2F3E] group-hover:border-[#FFFFFF] bg-[#1E1E26] px-2 py-1 rounded-lg text-xs font-bold text-[#FFFFFF] shrink-0 transition-colors shadow-xs">
+            <span className="border border-[#2F2F3E] group-hover:border-[#FFFFFF] bg-[#1E1E26] px-2 py-1 rounded-lg text-xs font-mono font-bold text-[#FFFFFF] shrink-0 transition-colors shadow-xs">
               {activeSpace.badge}
             </span>
-            <span className="text-sm font-semibold text-[#FFFFFF] truncate group-hover:text-emerald-400 transition-colors">
+            <span className="text-sm font-display font-bold text-[#FFFFFF] truncate group-hover:text-emerald-400 transition-colors tracking-tight">
               {activeSpace.name}
             </span>
           </div>
@@ -91,7 +91,7 @@ export const NotionSidebar: React.FC<{
 
         {/* Navigation Channels with Rounded Items and Bigger Text */}
         <nav className="p-2.5 space-y-1.5 shrink-0">
-          <div className="px-2.5 py-1 text-xs font-semibold text-[#8E8E9E] uppercase tracking-wider">
+          <div className="px-2.5 py-1 text-[11px] font-mono font-bold text-[#8E8E9E] uppercase tracking-wider">
             Workspace Views
           </div>
           {navItems.map(item => {
@@ -100,9 +100,9 @@ export const NotionSidebar: React.FC<{
               <button
                 key={item.view}
                 onClick={() => setActiveView(item.view)}
-                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium transition-all border ${
+                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-sans font-semibold tracking-tight transition-all border ${
                   isActive
-                    ? 'bg-[#1E1E26] text-[#FFFFFF] border-[#3F3F50] font-semibold shadow-xs'
+                    ? 'bg-[#1E1E26] text-[#FFFFFF] border-[#3F3F50] shadow-xs'
                     : 'bg-transparent text-[#D4D4DC] border-transparent hover:text-[#FFFFFF] hover:bg-[#17171D] hover:border-[#242430]'
                 }`}
               >
@@ -126,7 +126,7 @@ export const NotionSidebar: React.FC<{
             onClick={() => setDocsExpanded(!docsExpanded)}
             className="flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs text-[#8E8E9E] hover:text-[#FFFFFF] hover:bg-[#17171D] cursor-pointer shrink-0 transition-colors"
           >
-            <div className="flex items-center gap-2 font-semibold uppercase tracking-wider">
+            <div className="flex items-center gap-2 font-mono font-bold text-[11px] uppercase tracking-wider">
               {docsExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
               <span>Documents ({spaceDocs.length})</span>
             </div>

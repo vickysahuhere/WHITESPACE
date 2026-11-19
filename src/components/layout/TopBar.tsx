@@ -42,13 +42,13 @@ export const TopBar: React.FC<{
         className="flex items-center gap-2 text-sm text-[#D4D4DC] shrink-0 whitespace-nowrap overflow-hidden max-w-[280px] sm:max-w-[360px]"
         style={{ WebkitAppRegion: 'no-drag' } as any}
       >
-        <span className="text-[#FFFFFF] font-bold tracking-tight text-sm">WHITESPACE</span>
+        <span className="text-[#FFFFFF] font-display font-extrabold tracking-tight text-sm">WHITESPACE</span>
         <span className="text-[#454558]">/</span>
-        <span className="text-[#D4D4DC] font-medium truncate text-sm" title={activeSpace.name}>
+        <span className="text-[#D4D4DC] font-display font-semibold truncate text-sm" title={activeSpace.name}>
           {activeSpace.name}
         </span>
         <span className="text-[#454558]">/</span>
-        <span className="text-[#8E8E9E] uppercase shrink-0 text-xs tracking-wider font-semibold bg-[#1E1E26] px-2 py-0.5 rounded-md border border-[#2F2F3E]">
+        <span className="text-[#8E8E9E] font-mono uppercase shrink-0 text-[11px] tracking-wider font-bold bg-[#1E1E26] px-2 py-0.5 rounded-md border border-[#2F2F3E]">
           {activeView}
         </span>
       </div>
@@ -64,11 +64,11 @@ export const TopBar: React.FC<{
           className="w-full max-w-[380px] h-8 flex items-center justify-between px-3.5 bg-[#17171D] hover:bg-[#1E1E26] border border-[#2F2F3E] hover:border-[#454558] rounded-full text-xs text-[#8E8E9E] hover:text-[#FFFFFF] transition-all shadow-xs"
           title="Open Command Palette (CTRL+K)"
         >
-          <span className="flex items-center gap-2.5 truncate">
+          <span className="flex items-center gap-2.5 truncate font-sans">
             <Search size={14} className="text-[#8E8E9E] shrink-0" />
-            <span className="text-xs truncate">Search commands, docs, tasks...</span>
+            <span className="text-xs truncate font-sans">Search commands, docs, tasks...</span>
           </span>
-          <kbd className="text-[10px] bg-[#121216] border border-[#2F2F3E] rounded-md px-1.5 py-0.5 text-[#8E8E9E] shrink-0 font-mono font-semibold">CTRL+K</kbd>
+          <kbd className="text-[10px] bg-[#121216] border border-[#2F2F3E] rounded-md px-1.5 py-0.5 text-[#8E8E9E] shrink-0 font-mono font-bold">CTRL+K</kbd>
         </button>
       </div>
 
@@ -81,7 +81,7 @@ export const TopBar: React.FC<{
         <button
           type="button"
           onClick={() => setGuideModalOpen(true)}
-          className={`h-8 flex items-center gap-1.5 px-3 rounded-xl border text-xs font-semibold shrink-0 transition-all cursor-pointer ${
+          className={`h-8 flex items-center gap-1.5 px-3 rounded-xl border text-xs font-sans font-semibold shrink-0 transition-all cursor-pointer ${
             guideModalOpen
               ? 'bg-[#FFFFFF] text-[#0B0B0E] border-[#FFFFFF] shadow-sm'
               : 'border-[#2F2F3E] bg-[#17171D] hover:bg-[#1E1E26] text-[#D4D4DC] hover:text-[#FFFFFF] hover:border-[#454558]'
@@ -89,7 +89,7 @@ export const TopBar: React.FC<{
           title="Open App Guide & Interactive Help (F1 or Ctrl+H)"
         >
           <BookOpen size={13} className={guideModalOpen ? "text-[#0B0B0E]" : "text-emerald-400"} />
-          <span>GUIDE</span>
+          <span className="font-display font-bold tracking-tight">GUIDE</span>
         </button>
 
         {/* Gemini AI Status Pill */}
@@ -104,7 +104,7 @@ export const TopBar: React.FC<{
           title="Google Gemini Models & REST API Key"
         >
           <div className={`w-2 h-2 rounded-full ${isKeyLinked ? 'bg-emerald-400 shadow-xs shadow-emerald-400/50 animate-pulse' : 'bg-[#52525B]'}`} />
-          <span className="font-semibold text-xs">{isKeyLinked ? 'GEMINI' : 'LOCAL RAG'}</span>
+          <span className="font-display font-bold text-xs tracking-tight">{isKeyLinked ? 'GEMINI' : 'LOCAL RAG'}</span>
         </button>
 
         {/* In-Memory Local RAG Metrics */}
@@ -112,11 +112,11 @@ export const TopBar: React.FC<{
           type="button"
           onClick={() => setRagInspectorOpen(true)}
           title="Local RAG Context Inspector (<1ms retrieval)"
-          className="h-8 flex items-center gap-1.5 px-3 rounded-xl border border-[#2F2F3E] hover:border-[#FFFFFF] bg-[#17171D] hover:bg-[#1E1E26] text-xs text-[#D4D4DC] hover:text-[#FFFFFF] transition-all shrink-0"
+          className="h-8 flex items-center gap-1.5 px-3 rounded-xl border border-[#2F2F3E] hover:border-[#FFFFFF] bg-[#17171D] hover:bg-[#1E1E26] text-xs text-[#D4D4DC] hover:text-[#FFFFFF] transition-all shrink-0 font-sans"
         >
           <Database size={13} className="text-[#8E8E9E]" />
-          <span>RAG</span>
-          <span className="text-[#FFFFFF] font-bold">({totalChunksIndexed})</span>
+          <span className="font-display font-bold text-xs">RAG</span>
+          <span className="text-[#FFFFFF] font-mono font-bold text-xs">({totalChunksIndexed})</span>
         </button>
 
         {/* Consolidated Rounded Utility Strip */}
@@ -169,8 +169,8 @@ export const TopBar: React.FC<{
           className="h-8 px-2 flex items-center gap-2 bg-[#17171D] hover:bg-[#1E1E26] border border-[#2F2F3E] hover:border-[#FFFFFF] rounded-xl text-xs text-[#FFFFFF] transition-all shrink-0 shadow-xs"
           title={`Team Member: ${activeMember.name} (${activeMember.role})`}
         >
-          <span className="text-xs font-bold text-[#0B0B0E] bg-[#FFFFFF] px-1.5 py-0.5 rounded-lg">{activeMember.badge}</span>
-          <span className="hidden xl:inline text-xs truncate max-w-[90px] font-medium">{activeMember.name}</span>
+          <span className="text-xs font-mono font-bold text-[#0B0B0E] bg-[#FFFFFF] px-1.5 py-0.5 rounded-lg">{activeMember.badge}</span>
+          <span className="hidden xl:inline text-xs truncate max-w-[90px] font-display font-semibold">{activeMember.name}</span>
         </button>
 
         {/* Native Frameless Window Controls (Desktop Only) */}

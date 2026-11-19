@@ -25,14 +25,14 @@ export const VoicePod: React.FC<{
         className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-[#1E1E26] cursor-pointer border border-transparent hover:border-[#2F2F3E] transition-all"
         title="Switch or Edit Personal AI Profile"
       >
-        <div className="w-9 h-9 rounded-xl bg-[#1E1E26] border border-[#2F2F3E] flex items-center justify-center text-xs font-bold text-[#FFFFFF] shrink-0 shadow-xs">
+        <div className="w-9 h-9 rounded-xl bg-[#1E1E26] border border-[#2F2F3E] flex items-center justify-center text-xs font-mono font-bold text-[#FFFFFF] shrink-0 shadow-xs">
           {activeMember.badge}
         </div>
         <div className="flex-1 min-w-0">
-          <div className="text-sm font-semibold text-[#FFFFFF] truncate tracking-tight">
+          <div className="text-sm font-display font-bold text-[#FFFFFF] truncate tracking-tight">
             {activeMember.name}
           </div>
-          <div className="text-xs text-[#8E8E9E] truncate font-medium">
+          <div className="text-xs font-sans text-[#8E8E9E] truncate font-medium">
             {activeMember.role}
           </div>
         </div>
@@ -51,11 +51,11 @@ export const VoicePod: React.FC<{
           <div className="w-6 h-6 rounded-lg bg-[#0B0B0E] border border-[#2F2F3E] group-hover:border-[#FFFFFF] flex items-center justify-center overflow-hidden">
             <Box size={13} className={isLive ? 'text-[#FFFFFF] animate-pulse' : 'text-[#8E8E9E]'} />
           </div>
-          <span className="text-xs text-[#D4D4DC] group-hover:text-[#FFFFFF] font-medium">
-            WHITE 3D // <span className={isLive ? 'text-emerald-400 font-semibold' : 'text-[#8E8E9E]'}>{isLive ? 'PULSING' : 'IDLE'}</span>
+          <span className="text-xs font-mono text-[#D4D4DC] group-hover:text-[#FFFFFF] font-medium">
+            WHITE 3D // <span className={isLive ? 'text-emerald-400 font-bold' : 'text-[#8E8E9E]'}>{isLive ? 'PULSING' : 'IDLE'}</span>
           </span>
         </div>
-        <span className="text-[10px] uppercase tracking-wider text-[#71717A] group-hover:text-[#A1A1AA] font-bold bg-[#121216] px-1.5 py-0.5 rounded-md border border-[#242430]">
+        <span className="text-[10px] uppercase font-mono tracking-wider text-[#71717A] group-hover:text-[#A1A1AA] font-bold bg-[#121216] px-1.5 py-0.5 rounded-md border border-[#242430]">
           Studio
         </span>
       </div>
@@ -71,7 +71,7 @@ export const VoicePod: React.FC<{
         <button
           onClick={handleMicToggle}
           title={isMicOn ? "Microphone is Active (Click to Turn Off)" : "Microphone is Inactive (Click to Turn On)"}
-          className={`flex-1 py-1.5 px-2.5 rounded-lg flex items-center justify-center gap-1.5 text-xs font-semibold border transition-all ${
+          className={`flex-1 py-1.5 px-2.5 rounded-lg flex items-center justify-center gap-1.5 text-xs font-display font-bold tracking-tight border transition-all ${
             isLive
               ? 'bg-[#FFFFFF] text-[#0B0B0E] border-[#FFFFFF] shadow-xs'
               : !isMicOn
@@ -114,7 +114,7 @@ export const VoicePod: React.FC<{
             setActiveView('stage');
           }}
           title={audioState.stageActive ? "Disconnect from Stage" : "Connect to Uncompressed Studio Stage"}
-          className={`px-2.5 py-1.5 rounded-lg border text-xs font-semibold flex items-center gap-1.5 transition-all ${
+          className={`px-2.5 py-1.5 rounded-lg border text-xs font-display font-bold tracking-tight flex items-center gap-1.5 transition-all ${
             audioState.stageActive
               ? 'bg-[#FFFFFF] text-[#0B0B0E] border-[#FFFFFF] shadow-xs'
               : 'bg-[#1E1E26] text-[#8E8E9E] border-[#2F2F3E] hover:text-[#FFFFFF] hover:border-[#454558]'

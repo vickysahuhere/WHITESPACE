@@ -34,8 +34,8 @@ export const AssistantModal: React.FC<AssistantModalProps> = ({ isOpen, onClose 
             <div className="w-7 h-7 rounded-lg bg-[#22222E] border border-[#353547] flex items-center justify-center text-[#FFFFFF]">
               <Box size={15} />
             </div>
-            <span className="text-sm font-bold tracking-wider text-[#FFFFFF]">WHITE // 3D VOICE ASSISTANT STUDIO</span>
-            <span className="border border-[#2F2F3E] bg-[#1E1E28] px-2 py-0.5 rounded-md text-[10px] text-[#A1A1B4] font-bold">
+            <span className="text-sm font-display font-bold tracking-wider text-[#FFFFFF]">WHITE // 3D VOICE ASSISTANT STUDIO</span>
+            <span className="border border-[#2F2F3E] bg-[#1E1E28] px-2 py-0.5 rounded-md text-[10px] text-[#A1A1B4] font-mono font-bold">
               THREE.JS WEBGL
             </span>
           </div>
@@ -59,7 +59,7 @@ export const AssistantModal: React.FC<AssistantModalProps> = ({ isOpen, onClose 
 
           {/* Real-Time Telemetry HUD Overlay */}
           <div className="absolute top-4 left-4 p-3.5 border border-[#2F2F3E] bg-[#14141C]/90 backdrop-blur-md rounded-2xl text-xs space-y-1.5 pointer-events-none shadow-xl">
-            <div className="flex items-center gap-2 font-bold text-[#FFFFFF]">
+            <div className="flex items-center gap-2 font-display font-bold text-[#FFFFFF]">
               <Activity size={13} className="text-emerald-400" />
               <span>TELEMETRY METRICS</span>
             </div>
@@ -86,7 +86,7 @@ export const AssistantModal: React.FC<AssistantModalProps> = ({ isOpen, onClose 
             <div className="flex rounded-xl p-0.5 bg-[#1E1E28] border border-[#2F2F3E] gap-1">
               <button
                 onClick={() => setGeometryMode('sphere')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all ${
                   geometryMode === 'sphere'
                     ? 'bg-[#FFFFFF] text-[#000000] shadow-sm'
                     : 'text-[#8E8E9E] hover:text-[#FFFFFF]'
@@ -96,7 +96,7 @@ export const AssistantModal: React.FC<AssistantModalProps> = ({ isOpen, onClose 
               </button>
               <button
                 onClick={() => setGeometryMode('monogram')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all ${
                   geometryMode === 'monogram'
                     ? 'bg-[#FFFFFF] text-[#000000] shadow-sm'
                     : 'text-[#8E8E9E] hover:text-[#FFFFFF]'
@@ -110,13 +110,13 @@ export const AssistantModal: React.FC<AssistantModalProps> = ({ isOpen, onClose 
           {/* Rotation Speed & Audio Test */}
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
-              <span className="text-[11px] text-[#8E8E9E] uppercase font-bold tracking-wider">SPEED:</span>
+              <span className="text-[11px] font-display font-bold text-[#8E8E9E] uppercase tracking-wider">SPEED:</span>
               <div className="flex rounded-xl p-0.5 bg-[#1E1E28] border border-[#2F2F3E] gap-0.5">
                 {[0.5, 1.0, 2.0].map(s => (
                   <button
                     key={s}
                     onClick={() => setRotationSpeed(s)}
-                    className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all ${
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold transition-all ${
                       rotationSpeed === s 
                         ? 'bg-[#FFFFFF] text-[#000000] shadow-sm' 
                         : 'text-[#8E8E9E] hover:text-[#FFFFFF]'
@@ -131,7 +131,7 @@ export const AssistantModal: React.FC<AssistantModalProps> = ({ isOpen, onClose 
             {/* Test Audio Button */}
             <button
               onClick={() => setSimulatedAudio(!simulatedAudio)}
-              className={`px-3.5 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-2 transition-all ${
+              className={`px-3.5 py-1.5 rounded-xl border text-xs font-display font-bold flex items-center gap-2 transition-all ${
                 simulatedAudio
                   ? 'border-emerald-500 bg-emerald-500 text-[#000000]'
                   : 'border-[#2F2F3E] bg-[#1E1E28] text-[#FFFFFF] hover:border-[#FFFFFF]'

@@ -227,13 +227,13 @@ export const ChatView: React.FC = () => {
             return (
               <div 
                 key={msg.id}
-                className="max-w-2xl mx-auto my-2 border border-[#242430] bg-[#161620] p-3.5 rounded-2xl text-xs text-[#D4D4DC]"
+                className="max-w-2xl mx-auto my-2 border border-[#242430] bg-[#161620] p-3.5 rounded-2xl text-xs text-[#D4D4DC] font-mono"
               >
-                <div className="flex items-center gap-1.5 text-xs text-[#8E8E9E] mb-1 font-bold">
+                <div className="flex items-center gap-1.5 text-xs text-emerald-400 mb-1.5 font-bold font-mono">
                   <Terminal size={14} />
                   <span>SESSION SYSTEM NOTICE</span>
                 </div>
-                <div className="whitespace-pre-wrap leading-relaxed">{msg.content}</div>
+                <div className="whitespace-pre-wrap leading-relaxed text-xs font-mono text-[#A1A1B4]">{msg.content}</div>
               </div>
             );
           }
@@ -252,13 +252,13 @@ export const ChatView: React.FC = () => {
               <div className="space-y-1.5 max-w-2xl">
                 {/* Meta Header */}
                 <div className={`flex items-center gap-2 text-xs ${isUser ? 'justify-end text-[#8E8E9E]' : 'text-[#8E8E9E]'}`}>
-                  <span className="font-semibold text-[#FFFFFF]">{isUser ? activeMember.name : 'WHITE AI COPILOT'}</span>
-                  <span>{new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                  <span className="font-display font-bold text-xs text-[#FFFFFF]">{isUser ? activeMember.name : 'WHITE AI COPILOT'}</span>
+                  <span className="font-mono text-[10px] text-[#717182]">{new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                 </div>
 
                 {/* Message Bubble */}
                 <div
-                  className={`p-4 text-sm rounded-2xl border leading-relaxed whitespace-pre-wrap ${
+                  className={`p-4 text-sm font-sans rounded-2xl border leading-relaxed whitespace-pre-wrap ${
                     isUser
                       ? 'bg-[#1E1E2A] border-[#333346] text-[#FFFFFF]'
                       : 'bg-[#14141C] border-[#242430] text-[#E4E4E7]'
@@ -269,7 +269,7 @@ export const ChatView: React.FC = () => {
                   {/* Grounded Sources Pills */}
                   {msg.ragSources && msg.ragSources.length > 0 && (
                     <div className="mt-3 pt-2.5 border-t border-[#242430] space-y-1.5">
-                      <div className="text-[10px] text-[#8E8E9E] uppercase tracking-wider font-bold">
+                      <div className="text-[10px] font-mono text-[#8E8E9E] uppercase tracking-wider font-bold">
                         GROUNDED RAG REFERENCES:
                       </div>
                       <div className="flex flex-wrap gap-2">
@@ -277,7 +277,7 @@ export const ChatView: React.FC = () => {
                           <div 
                             key={sIdx}
                             title={s.chunk}
-                            className="px-2.5 py-1 rounded-lg border border-[#2F2F3E] bg-[#1E1E26] text-xs text-[#D4D4DC] flex items-center gap-1.5"
+                            className="px-2.5 py-1 rounded-lg border border-[#2F2F3E] bg-[#1E1E26] text-xs font-mono text-[#D4D4DC] flex items-center gap-1.5"
                           >
                             <Database size={11} className="text-emerald-400" />
                             <span className="truncate max-w-[200px]">{s.title}</span>
@@ -291,7 +291,7 @@ export const ChatView: React.FC = () => {
               </div>
 
               {isUser && (
-                <div className="w-8 h-8 rounded-xl bg-[#1E1E28] border border-[#2F2F3E] flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold text-[#FFFFFF]">
+                <div className="w-8 h-8 rounded-xl bg-[#1E1E28] border border-[#2F2F3E] flex items-center justify-center shrink-0 mt-0.5 text-xs font-mono font-bold text-[#FFFFFF]">
                   {activeMember.badge}
                 </div>
               )}

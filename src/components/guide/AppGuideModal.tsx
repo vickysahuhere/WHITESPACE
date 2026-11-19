@@ -55,10 +55,10 @@ export const AppGuideModal: React.FC<AppGuideModalProps> = ({ isOpen, onClose })
               <BookOpen size={18} />
             </div>
             <div>
-              <h2 className="text-base sm:text-lg font-bold text-[#FFFFFF] tracking-tight">
+              <h2 className="text-base sm:text-lg font-display font-bold text-[#FFFFFF] tracking-tight">
                 White Collars // User Guide & Documentation
               </h2>
-              <p className="text-xs text-[#8E8E9E]">
+              <p className="text-xs font-sans text-[#8E8E9E]">
                 Clear, step-by-step guidance for voice calls, video sharing, AI assistance, and knowledge management.
               </p>
             </div>
@@ -76,15 +76,15 @@ export const AppGuideModal: React.FC<AppGuideModalProps> = ({ isOpen, onClose })
         <div className="flex-1 flex flex-col md:flex-row min-h-0 overflow-hidden">
           {/* Navigation Sidebar */}
           <div className="w-full md:w-64 bg-[#111117] border-r border-[#242430] p-3 flex flex-col gap-1.5 shrink-0 overflow-y-auto">
-            <div className="px-3 py-1.5 text-xs font-semibold text-[#8E8E9E] uppercase tracking-wider">
+            <div className="px-3 py-1.5 text-[11px] font-mono font-bold text-[#8E8E9E] uppercase tracking-wider">
               Topics
             </div>
 
             <button
               onClick={() => setActiveSection('QUICK_START')}
-              className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all text-left ${
+              className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-display font-bold tracking-tight transition-all text-left ${
                 activeSection === 'QUICK_START'
-                  ? 'bg-[#1E1E2A] text-[#FFFFFF] font-semibold border border-[#3A3A4E] shadow-sm'
+                  ? 'bg-[#1E1E2A] text-[#FFFFFF] border border-[#3A3A4E] shadow-sm'
                   : 'text-[#D4D4DC] hover:text-[#FFFFFF] hover:bg-[#171720]'
               }`}
             >
@@ -94,9 +94,9 @@ export const AppGuideModal: React.FC<AppGuideModalProps> = ({ isOpen, onClose })
 
             <button
               onClick={() => setActiveSection('CALLING')}
-              className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all text-left ${
+              className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-display font-bold tracking-tight transition-all text-left ${
                 activeSection === 'CALLING'
-                  ? 'bg-[#1E1E2A] text-[#FFFFFF] font-semibold border border-[#3A3A4E] shadow-sm'
+                  ? 'bg-[#1E1E2A] text-[#FFFFFF] border border-[#3A3A4E] shadow-sm'
                   : 'text-[#D4D4DC] hover:text-[#FFFFFF] hover:bg-[#171720]'
               }`}
             >
@@ -106,9 +106,9 @@ export const AppGuideModal: React.FC<AppGuideModalProps> = ({ isOpen, onClose })
 
             <button
               onClick={() => setActiveSection('AI_COPILOT')}
-              className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all text-left ${
+              className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-display font-bold tracking-tight transition-all text-left ${
                 activeSection === 'AI_COPILOT'
-                  ? 'bg-[#1E1E2A] text-[#FFFFFF] font-semibold border border-[#3A3A4E] shadow-sm'
+                  ? 'bg-[#1E1E2A] text-[#FFFFFF] border border-[#3A3A4E] shadow-sm'
                   : 'text-[#D4D4DC] hover:text-[#FFFFFF] hover:bg-[#171720]'
               }`}
             >
@@ -118,9 +118,9 @@ export const AppGuideModal: React.FC<AppGuideModalProps> = ({ isOpen, onClose })
 
             <button
               onClick={() => setActiveSection('DOCUMENTS')}
-              className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all text-left ${
+              className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-display font-bold tracking-tight transition-all text-left ${
                 activeSection === 'DOCUMENTS'
-                  ? 'bg-[#1E1E2A] text-[#FFFFFF] font-semibold border border-[#3A3A4E] shadow-sm'
+                  ? 'bg-[#1E1E2A] text-[#FFFFFF] border border-[#3A3A4E] shadow-sm'
                   : 'text-[#D4D4DC] hover:text-[#FFFFFF] hover:bg-[#171720]'
               }`}
             >
@@ -130,9 +130,9 @@ export const AppGuideModal: React.FC<AppGuideModalProps> = ({ isOpen, onClose })
 
             <button
               onClick={() => setActiveSection('KANBAN')}
-              className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all text-left ${
+              className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-display font-bold tracking-tight transition-all text-left ${
                 activeSection === 'KANBAN'
-                  ? 'bg-[#1E1E2A] text-[#FFFFFF] font-semibold border border-[#3A3A4E] shadow-sm'
+                  ? 'bg-[#1E1E2A] text-[#FFFFFF] border border-[#3A3A4E] shadow-sm'
                   : 'text-[#D4D4DC] hover:text-[#FFFFFF] hover:bg-[#171720]'
               }`}
             >
@@ -142,9 +142,9 @@ export const AppGuideModal: React.FC<AppGuideModalProps> = ({ isOpen, onClose })
 
             <button
               onClick={() => setActiveSection('SHORTCUTS')}
-              className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all text-left ${
+              className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-display font-bold tracking-tight transition-all text-left ${
                 activeSection === 'SHORTCUTS'
-                  ? 'bg-[#1E1E2A] text-[#FFFFFF] font-semibold border border-[#3A3A4E] shadow-sm'
+                  ? 'bg-[#1E1E2A] text-[#FFFFFF] border border-[#3A3A4E] shadow-sm'
                   : 'text-[#D4D4DC] hover:text-[#FFFFFF] hover:bg-[#171720]'
               }`}
             >
@@ -154,7 +154,7 @@ export const AppGuideModal: React.FC<AppGuideModalProps> = ({ isOpen, onClose })
           </div>
 
           {/* Section Body */}
-          <div className="flex-1 p-6 overflow-y-auto custom-scrollbar space-y-6">
+          <div className="flex-1 p-6 overflow-y-auto custom-scrollbar space-y-6 font-sans">
             {activeSection === 'QUICK_START' && (
               <div className="space-y-6">
                 <div>

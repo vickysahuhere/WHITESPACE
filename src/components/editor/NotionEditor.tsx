@@ -291,7 +291,7 @@ export const NotionEditor: React.FC = () => {
       // Headers
       if (line.startsWith('# ')) {
         elements.push(
-          <h1 key={i} className="text-base font-bold text-[#FFFFFF] mt-5 mb-2 pb-1.5 border-b border-[#1F1F1F] tracking-tight">
+          <h1 key={i} className="text-xl font-display font-extrabold text-[#FFFFFF] mt-6 mb-3 pb-2 border-b border-[#242432] tracking-tight">
             {line.substring(2)}
           </h1>
         );
@@ -299,7 +299,7 @@ export const NotionEditor: React.FC = () => {
       }
       if (line.startsWith('## ')) {
         elements.push(
-          <h2 key={i} className="text-sm font-bold text-[#FFFFFF] mt-4 mb-2 pb-1 border-b border-[#1F1F1F] tracking-tight">
+          <h2 key={i} className="text-base font-display font-bold text-[#FFFFFF] mt-5 mb-2 pb-1 border-b border-[#242432] tracking-tight">
             {line.substring(3)}
           </h2>
         );
@@ -307,7 +307,7 @@ export const NotionEditor: React.FC = () => {
       }
       if (line.startsWith('### ')) {
         elements.push(
-          <h3 key={i} className="text-xs font-bold text-[#E4E4E7] mt-3 mb-1 tracking-tight">
+          <h3 key={i} className="text-sm font-display font-bold text-[#E4E4E7] mt-4 mb-1.5 tracking-tight">
             {line.substring(4)}
           </h3>
         );
@@ -322,16 +322,16 @@ export const NotionEditor: React.FC = () => {
           <div 
             key={i} 
             onClick={() => toggleTodoItem(line)}
-            className="flex items-center gap-2 py-0.5 text-xs text-[#FFFFFF] cursor-pointer hover:text-[#A1A1AA] select-none transition-colors"
+            className="flex items-center gap-2.5 py-1 text-sm font-sans text-[#FFFFFF] cursor-pointer hover:text-[#A1A1B4] select-none transition-colors"
           >
             {isChecked ? (
-              <span className="p-0.5 border border-[#FFFFFF] bg-[#FFFFFF] text-[#000000]">
-                <Check size={11} strokeWidth={3} />
+              <span className="p-0.5 border border-emerald-400 bg-emerald-400 rounded text-[#000000]">
+                <Check size={12} strokeWidth={3} />
               </span>
             ) : (
-              <span className="w-3.5 h-3.5 border border-[#3F3F46] bg-[#000000] inline-block" />
+              <span className="w-4 h-4 border border-[#3F3F50] rounded bg-[#171720] inline-block" />
             )}
-            <span className={isChecked ? 'line-through text-[#71717A]' : 'text-[#FFFFFF]'}>
+            <span className={isChecked ? 'line-through text-[#717182]' : 'text-[#FFFFFF]'}>
               {text}
             </span>
           </div>
@@ -342,7 +342,7 @@ export const NotionEditor: React.FC = () => {
       // Blockquote
       if (line.startsWith('> ')) {
         elements.push(
-          <blockquote key={i} className="my-2 pl-3 border-l-2 border-[#FFFFFF] bg-[#0A0A0A] py-1 text-xs text-[#A1A1AA] font-mono">
+          <blockquote key={i} className="my-2.5 pl-3.5 border-l-2 border-[#FFFFFF] bg-[#14141C] py-2 rounded-r-xl text-xs font-mono text-[#A1A1B4]">
             {line.substring(2)}
           </blockquote>
         );
@@ -352,8 +352,8 @@ export const NotionEditor: React.FC = () => {
       // Bullet List
       if (line.trim().startsWith('- ') || line.trim().startsWith('* ')) {
         elements.push(
-          <div key={i} className="flex items-start gap-2 py-0.5 text-xs text-[#A1A1AA] pl-2">
-            <span className="text-[#71717A] mt-0.5">-</span>
+          <div key={i} className="flex items-start gap-2.5 py-0.5 text-sm font-sans text-[#D4D4DC] pl-2">
+            <span className="text-emerald-400 font-bold mt-0.5">•</span>
             <span>{line.trim().substring(2)}</span>
           </div>
         );
@@ -362,13 +362,13 @@ export const NotionEditor: React.FC = () => {
 
       // Empty Line
       if (!line.trim()) {
-        elements.push(<div key={i} className="h-2" />);
+        elements.push(<div key={i} className="h-2.5" />);
         continue;
       }
 
       // Normal paragraph
       elements.push(
-        <p key={i} className="text-xs text-[#A1A1AA] leading-relaxed my-0.5">
+        <p key={i} className="text-sm font-sans text-[#D4D4DC] leading-relaxed my-1.5">
           {line}
         </p>
       );
@@ -421,14 +421,14 @@ export const NotionEditor: React.FC = () => {
             value={title}
             onChange={e => setTitle(e.target.value)}
             placeholder="DOCUMENT TITLE..."
-            className="bg-transparent border-b border-transparent focus:border-[#FFFFFF] text-xs font-bold text-[#FFFFFF] tracking-wider outline-none py-1 flex-1 min-w-[120px] transition-colors"
+            className="bg-transparent border-b border-transparent focus:border-[#FFFFFF] font-display text-sm font-bold text-[#FFFFFF] tracking-wide outline-none py-1 flex-1 min-w-[120px] transition-colors"
           />
         </div>
 
         {/* View Controls & Metrics */}
         <div className="flex items-center gap-3 shrink-0">
           {/* Word/Char Metrics */}
-          <div className="text-[10px] text-[#8E8E9E] hidden sm:flex items-center gap-2 font-medium">
+          <div className="text-[10px] font-mono text-[#8E8E9E] hidden sm:flex items-center gap-2 font-medium">
             <span>{metrics.words} WORDS</span>
             <span>{metrics.chars} CHARS</span>
             <span>{metrics.lines} LINES</span>

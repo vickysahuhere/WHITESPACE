@@ -127,24 +127,24 @@ export const StageView: React.FC = () => {
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             <Radio size={16} className="text-emerald-400 animate-pulse" />
-            <span className="text-sm font-bold tracking-tight text-[#FFFFFF]">
+            <span className="text-sm font-display font-bold tracking-tight text-[#FFFFFF]">
               {activeSpace.name} // Voice & Video Stage
             </span>
           </div>
-          <span className="bg-[#1E1E26] border border-[#2F2F3E] text-xs font-semibold px-2.5 py-0.5 rounded-full text-[#D4D4DC]">
+          <span className="bg-[#1E1E26] border border-[#2F2F3E] text-xs font-mono font-bold px-2.5 py-0.5 rounded-full text-[#D4D4DC]">
             {peers.length} in stage
           </span>
-          <span className="text-xs text-[#8E8E9E] font-mono font-medium">
+          <span className="text-xs text-[#8E8E9E] font-mono font-semibold">
             {formatCallTime(callDuration)}
           </span>
         </div>
 
         {/* Studio Specs Indicator */}
         <div className="hidden md:flex items-center gap-2 text-xs">
-          <span className="bg-[#17171E] px-2.5 py-1 rounded-lg border border-[#242430] text-[#D4D4DC] font-medium">
+          <span className="bg-[#17171E] px-2.5 py-1 rounded-lg border border-[#242430] text-[#D4D4DC] font-mono font-medium text-xs">
             48 kHz @ 510 kbps Opus Stereo
           </span>
-          <span className="bg-[#17171E] px-2.5 py-1 rounded-lg border border-[#242430] text-emerald-400 font-semibold">
+          <span className="bg-[#17171E] px-2.5 py-1 rounded-lg border border-[#242430] text-emerald-400 font-mono font-bold text-xs">
             {currentQualityConfig.label} ({currentQualityConfig.fps}fps)
           </span>
         </div>
@@ -197,14 +197,14 @@ export const StageView: React.FC = () => {
               />
             ) : (
               <div className="flex flex-col items-center justify-center gap-3">
-                <div className={`w-20 h-20 rounded-full bg-[#181822] border-2 flex items-center justify-center text-xl font-bold text-[#FFFFFF] shadow-2xl transition-all ${
+                <div className={`w-20 h-20 rounded-full bg-[#181822] border-2 flex items-center justify-center text-xl font-mono font-bold text-[#FFFFFF] shadow-2xl transition-all ${
                   isLive ? 'border-emerald-400 scale-105' : 'border-[#333344]'
                 }`}>
                   {activeMember.badge}
                 </div>
                 <div className="text-center">
-                  <div className="text-sm font-bold text-[#FFFFFF]">{activeMember.name}</div>
-                  <div className="text-xs text-[#8E8E9E]">Host & Presenter</div>
+                  <div className="text-sm font-display font-bold text-[#FFFFFF] tracking-tight">{activeMember.name}</div>
+                  <div className="text-xs font-sans text-[#8E8E9E]">Host & Presenter</div>
                 </div>
               </div>
             )}
@@ -215,7 +215,7 @@ export const StageView: React.FC = () => {
             </div>
 
             {/* User Name Tag Badge */}
-            <div className="absolute bottom-3 left-3 bg-[#0B0B0E]/80 backdrop-blur-md px-3 py-1 rounded-full border border-[#2F2F3E] flex items-center gap-2 text-xs font-semibold text-[#FFFFFF] z-10">
+            <div className="absolute bottom-3 left-3 bg-[#0B0B0E]/80 backdrop-blur-md px-3 py-1 rounded-full border border-[#2F2F3E] flex items-center gap-2 text-xs font-sans font-semibold text-[#FFFFFF] z-10">
               {isLive ? (
                 <Mic size={12} className="text-emerald-400" />
               ) : (
@@ -223,7 +223,7 @@ export const StageView: React.FC = () => {
               )}
               <span>{activeMember.name} (You)</span>
               {cameraStream && (
-                <span className="text-[10px] bg-[#22C55E]/20 text-emerald-300 px-1.5 py-0.2 rounded-md font-bold">
+                <span className="text-[10px] bg-[#22C55E]/20 text-emerald-300 px-1.5 py-0.2 rounded-md font-mono font-bold">
                   {qualityPreset.toUpperCase()}
                 </span>
               )}
@@ -233,16 +233,16 @@ export const StageView: React.FC = () => {
           {/* Remote Peer 1 */}
           <div className="h-64 sm:h-72 rounded-3xl bg-gradient-to-b from-[#1C1C24] to-[#121217] border border-[#2F2F3E] relative overflow-hidden flex flex-col items-center justify-center shadow-xl">
             <div className="flex flex-col items-center justify-center gap-3">
-              <div className="w-20 h-20 rounded-full bg-[#181822] border-2 border-[#333344] flex items-center justify-center text-xl font-bold text-[#FFFFFF] shadow-2xl">
+              <div className="w-20 h-20 rounded-full bg-[#181822] border-2 border-[#333344] flex items-center justify-center text-xl font-mono font-bold text-[#FFFFFF] shadow-2xl">
                 AS
               </div>
               <div className="text-center">
-                <div className="text-sm font-bold text-[#FFFFFF]">Arnav Suryavanshi</div>
-                <div className="text-xs text-[#8E8E9E]">AI Research & RAG Infra</div>
+                <div className="text-sm font-display font-bold text-[#FFFFFF] tracking-tight">Arnav Suryavanshi</div>
+                <div className="text-xs font-sans text-[#8E8E9E]">AI Research & RAG Infra</div>
               </div>
             </div>
 
-            <div className="absolute bottom-3 left-3 bg-[#0B0B0E]/80 backdrop-blur-md px-3 py-1 rounded-full border border-[#2F2F3E] flex items-center gap-2 text-xs font-semibold text-[#FFFFFF]">
+            <div className="absolute bottom-3 left-3 bg-[#0B0B0E]/80 backdrop-blur-md px-3 py-1 rounded-full border border-[#2F2F3E] flex items-center gap-2 text-xs font-sans font-semibold text-[#FFFFFF]">
               <Mic size={12} className="text-emerald-400" />
               <span>Arnav</span>
             </div>
@@ -251,12 +251,12 @@ export const StageView: React.FC = () => {
           {/* Remote Peer 2 */}
           <div className="h-64 sm:h-72 rounded-3xl bg-gradient-to-b from-[#1C1C24] to-[#121217] border border-[#2F2F3E] relative overflow-hidden flex flex-col items-center justify-center shadow-xl">
             <div className="flex flex-col items-center justify-center gap-3">
-              <div className="w-20 h-20 rounded-full bg-[#181822] border-2 border-[#333344] flex items-center justify-center text-xl font-bold text-[#FFFFFF] shadow-2xl">
+              <div className="w-20 h-20 rounded-full bg-[#181822] border-2 border-[#333344] flex items-center justify-center text-xl font-mono font-bold text-[#FFFFFF] shadow-2xl">
                 LA
               </div>
               <div className="text-center">
-                <div className="text-sm font-bold text-[#FFFFFF]">Lakshay Arora</div>
-                <div className="text-xs text-[#8E8E9E]">Realtime WebRTC Audio Lead</div>
+                <div className="text-sm font-display font-bold text-[#FFFFFF] tracking-tight">Lakshay Arora</div>
+                <div className="text-xs font-sans text-[#8E8E9E]">Realtime WebRTC Audio Lead</div>
               </div>
             </div>
 
@@ -314,7 +314,7 @@ export const StageView: React.FC = () => {
           <div className="relative">
             <button
               onClick={() => setShowQualityMenu(!showQualityMenu)}
-              className="px-3.5 py-2 rounded-full bg-[#242432] hover:bg-[#2F2F3E] text-[#D4D4DC] hover:text-[#FFFFFF] flex items-center gap-1.5 text-xs font-bold border border-[#333344] transition-all"
+              className="px-3.5 py-2 rounded-full bg-[#242432] hover:bg-[#2F2F3E] text-[#D4D4DC] hover:text-[#FFFFFF] flex items-center gap-1.5 text-xs font-mono font-bold border border-[#333344] transition-all"
               title="Select Video Stream Quality (240p - 2K)"
             >
               <span>{currentQualityConfig.label}</span>
@@ -324,7 +324,7 @@ export const StageView: React.FC = () => {
             {/* Quality Popup Menu */}
             {showQualityMenu && (
               <div className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 w-64 bg-[#181822] border border-[#2F2F3E] rounded-2xl shadow-2xl p-2 z-50 flex flex-col gap-1 backdrop-blur-xl">
-                <div className="px-3 py-1.5 text-[11px] font-bold text-[#8E8E9E] uppercase tracking-wider border-b border-[#242430]">
+                <div className="px-3 py-1.5 text-[11px] font-display font-bold text-[#8E8E9E] uppercase tracking-wider border-b border-[#242430]">
                   Stream Resolution
                 </div>
                 {(Object.keys(STAGE_QUALITY_PRESETS) as StageQualityPreset[]).map(key => {
@@ -341,8 +341,8 @@ export const StageView: React.FC = () => {
                       }`}
                     >
                       <div>
-                        <div className="font-semibold">{cfg.label} ({cfg.fps}fps)</div>
-                        <div className={`text-[10px] ${isSelected ? 'text-[#333333]' : 'text-[#8E8E9E]'}`}>
+                        <div className="font-mono font-bold text-xs">{cfg.label} ({cfg.fps}fps)</div>
+                        <div className={`text-[11px] font-sans ${isSelected ? 'text-[#333333]' : 'text-[#8E8E9E]'}`}>
                           {cfg.description}
                         </div>
                       </div>
