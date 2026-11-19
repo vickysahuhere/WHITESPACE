@@ -1,46 +1,74 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { useAudio } from '../../context/AudioContext';
-import { webrtcStage, StagePeer } from '../../services/webrtcStage';
+import { 
+  webrtcStage, 
+  StagePeer, 
+  StageQualityPreset, 
+  STAGE_QUALITY_PRESETS 
+} from '../../services/webrtcStage';
 import { AudioVisualizerCanvas } from './AudioVisualizerCanvas';
 import { 
   Radio, 
   Mic, 
   MicOff, 
+  Video,
+  VideoOff,
   Monitor, 
   MonitorOff, 
   PhoneOff, 
   Sliders, 
-  Key, 
-  Copy, 
-  Check, 
-  X, 
-  Volume2, 
-  ShieldCheck,
-  Maximize2
+  Users, 
+  Settings,
+  ChevronDown,
+  ChevronUp,
+  Sparkles,
+  Maximize2,
+  Share2,
+  Check,
+  Copy,
+  Key
 } from 'lucide-react';
 
 export const StageView: React.FC = () => {
-  const { activeSpace, activeMember, setActiveView } = useWorkspace();
+  const { activeSpace, activeMember, setActiveView, audioState, toggleMute } = useWorkspace();
   const { isMicOn, toggleMic, gainPercent, setShowHardwareModal } = useAudio();
 
   const [peers, setPeers] = useState<StagePeer[]>([]);
   const [screenStream, setScreenStream] = useState<MediaStream | null>(null);
-  const [showTokenModal, setShowTokenModal] = useState<boolean>(false);
-  const [offerToken, setOfferToken] = useState<string>('');
-  const [answerInput, setAnswerInput] = useState<string>('');
-  const [copiedToken, setCopiedToken] = useState<boolean>(false);
-  const [tokenStatus, setTokenStatus] = useState<string | null>(null);
+  const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
+  const [qualityPreset, setQualityPresetState] = useState<StageQualityPreset>('1080p');
+  const [showQualityMenu, setShowQualityMenu] = useState<boolean>(false);
+  const [showInviteModal, setShowInviteModal] = useState<boolean>(false);
+  const [callDuration, setCallDuration] = useState<number>(0);
+  const [activeSpeakerId, setActiveSpeakerId] = useState<string>(activeMember.id);
+  const [isCopiedToken, setIsCopiedToken] = useState<boolean>(false);
 
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const screenVideoRef = useRef<HTMLVideoElement>(null);
+  const cameraVideoRef = useRef<HTMLVideoElement>(null);
+
+  // Call duration counter
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCallDuration(prev => prev + 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatCallTime = (secs: number) => {
+    const mins = Math.floor(secs / 60);
+    const remainingSecs = secs % 60;
+    return `${mins.toString().padStart(2, '0')}:${remainingSecs.toString().padStart(2, '0')}`;
+  };
 
   // Subscribe to WebRTC Stage events
   useEffect(() => {
     webrtcStage.connect(activeMember.id, activeSpace.id);
 
-    const unsubscribe = webrtcStage.subscribe((newPeers, stream) => {
+    const unsubscribe = webrtcStage.subscribe((newPeers, sStream, cStream) => {
       setPeers(newPeers);
-      setScreenStream(stream);
+      setScreenStream(sStream);
+      setCameraStream(cStream);
     });
 
     return () => {
@@ -48,19 +76,40 @@ export const StageView: React.FC = () => {
     };
   }, [activeMember.id, activeSpace.id]);
 
-  // Bind video element to screen stream
+  // Bind screen stream to video element
   useEffect(() => {
-    if (videoRef.current && screenStream) {
-      videoRef.current.srcObject = screenStream;
+    if (screenVideoRef.current && screenStream) {
+      screenVideoRef.current.srcObject = screenStream;
     }
   }, [screenStream]);
+
+  // Bind camera stream to video element
+  useEffect(() => {
+    if (cameraVideoRef.current && cameraStream) {
+      cameraVideoRef.current.srcObject = cameraStream;
+    }
+  }, [cameraStream]);
 
   const handleToggleScreenShare = async () => {
     if (screenStream) {
       webrtcStage.stopScreenShare();
     } else {
-      await webrtcStage.startScreenShare();
+      await webrtcStage.startScreenShare(qualityPreset);
     }
+  };
+
+  const handleToggleCamera = async () => {
+    if (cameraStream) {
+      webrtcStage.stopCamera();
+    } else {
+      await webrtcStage.startCamera(qualityPreset);
+    }
+  };
+
+  const handleSelectQuality = async (preset: StageQualityPreset) => {
+    setQualityPresetState(preset);
+    await webrtcStage.setQualityPreset(preset);
+    setShowQualityMenu(false);
   };
 
   const handleDisconnect = () => {
@@ -68,83 +117,59 @@ export const StageView: React.FC = () => {
     setActiveView('editor');
   };
 
-  const handleGenerateOffer = async () => {
-    try {
-      const token = await webrtcStage.createOfferToken();
-      setOfferToken(token);
-      setTokenStatus('OFFER TOKEN GENERATED (510 KBPS OPUS + 4K60 VIDEO)');
-    } catch (e: any) {
-      setTokenStatus(`ERROR: ${e.message}`);
-    }
-  };
-
-  const handleApplyAnswer = async () => {
-    if (!answerInput.trim()) return;
-    try {
-      await webrtcStage.applyToken(answerInput);
-      setTokenStatus('REMOTE SDP TOKEN APPLIED SUCCESSFULLY');
-      setAnswerInput('');
-    } catch (e: any) {
-      setTokenStatus(`ERROR: ${e.message}`);
-    }
-  };
-
-  const handleCopyToken = () => {
-    if (offerToken) {
-      navigator.clipboard.writeText(offerToken);
-      setCopiedToken(true);
-      setTimeout(() => setCopiedToken(false), 2000);
-    }
-  };
+  const isLive = isMicOn && !audioState.muted;
+  const currentQualityConfig = STAGE_QUALITY_PRESETS[qualityPreset];
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-[#050505] text-[#FFFFFF] font-mono select-none overflow-hidden relative">
-      {/* 1. Top Stage Banner */}
-      <div className="h-11 bg-[#0C0C0C] border-b border-[#262626] px-4 flex items-center justify-between gap-3 shrink-0">
-        <div className="flex items-center gap-2">
-          <div className="w-2.5 h-2.5 bg-[#FFFFFF] rounded-full animate-pulse" />
-          <span className="text-xs font-bold tracking-wider text-[#FFFFFF] uppercase">
-            STUDIO STAGE // {activeSpace.name.toUpperCase()}
+    <div className="flex-1 flex flex-col h-full bg-[#0B0B0F] text-[#FFFFFF] select-none overflow-hidden relative">
+      {/* 1. Discord-Style Top Stage Bar */}
+      <div className="h-12 bg-[#121217] border-b border-[#242430] px-4 flex items-center justify-between gap-4 shrink-0">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <Radio size={16} className="text-emerald-400 animate-pulse" />
+            <span className="text-sm font-bold tracking-tight text-[#FFFFFF]">
+              {activeSpace.name} // Voice & Video Stage
+            </span>
+          </div>
+          <span className="bg-[#1E1E26] border border-[#2F2F3E] text-xs font-semibold px-2.5 py-0.5 rounded-full text-[#D4D4DC]">
+            {peers.length} in stage
           </span>
-          <span className="text-[10px] bg-[#171717] border border-[#333333] px-1.5 py-0.2 text-[#A3A3A3]">
-            {peers.length} ACTIVE MEMBERS
+          <span className="text-xs text-[#8E8E9E] font-mono font-medium">
+            {formatCallTime(callDuration)}
           </span>
         </div>
 
-        {/* High-Fidelity Audio & Video Pipeline Metrics */}
-        <div className="hidden lg:flex items-center gap-2 text-[10px] text-[#737373]">
-          <span className="bg-[#121212] px-2 py-0.5 border border-[#202020] text-[#A3A3A3]">
-            AUDIO: 48 KHZ @ 510 KBPS OPUS
+        {/* Studio Specs Indicator */}
+        <div className="hidden md:flex items-center gap-2 text-xs">
+          <span className="bg-[#17171E] px-2.5 py-1 rounded-lg border border-[#242430] text-[#D4D4DC] font-medium">
+            48 kHz @ 510 kbps Opus Stereo
           </span>
-          <span className="bg-[#121212] px-2 py-0.5 border border-[#202020] text-[#A3A3A3]">
-            VIDEO: 4K60 (b=AS:25000)
-          </span>
-          <span className="bg-[#121212] px-2 py-0.5 border border-[#202020] text-[#FFFFFF]">
-            SIGNALING: BROADCAST CHANNEL
+          <span className="bg-[#17171E] px-2.5 py-1 rounded-lg border border-[#242430] text-emerald-400 font-semibold">
+            {currentQualityConfig.label} ({currentQualityConfig.fps}fps)
           </span>
         </div>
       </div>
 
-      {/* 2. Main Stage Stage Content Area */}
-      <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
-        {/* Screen Share Display Tile (if active) */}
-        {screenStream && (
-          <div className="w-full h-80 sm:h-96 bg-[#000000] border border-[#404040] relative overflow-hidden flex flex-col">
-            <div className="h-7 bg-[#0E0E0E] border-b border-[#262626] px-3 flex items-center justify-between text-[10px] text-[#A3A3A3] shrink-0">
-              <div className="flex items-center gap-2 font-bold text-[#FFFFFF]">
-                <Monitor size={12} />
-                <span>4K 60FPS CODE PRESENTATION STREAM // 25 MBPS</span>
+      {/* 2. Main Video / Voice Grid Stage */}
+      <div className="flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col items-center justify-center relative custom-scrollbar">
+        {/* If Screen Share is Active, Show Large Theater Display */}
+        {screenStream ? (
+          <div className="w-full max-w-5xl h-[55vh] bg-[#121217] rounded-3xl border border-[#2F2F3E] relative overflow-hidden flex flex-col mb-4 shadow-2xl">
+            <div className="h-9 bg-[#17171E] border-b border-[#242430] px-4 flex items-center justify-between text-xs text-[#D4D4DC] shrink-0">
+              <div className="flex items-center gap-2 font-semibold">
+                <Monitor size={14} className="text-emerald-400" />
+                <span>Screen Presentation // {currentQualityConfig.label} ({currentQualityConfig.fps}fps)</span>
               </div>
               <button
                 onClick={handleToggleScreenShare}
-                className="hover:text-[#FFFFFF] underline"
+                className="text-xs text-red-400 hover:text-red-300 font-medium transition-colors"
               >
-                STOP PRESENTING
+                Stop Sharing
               </button>
             </div>
             <div className="flex-1 relative bg-[#000000] flex items-center justify-center">
               <video
-                ref={videoRef}
+                ref={screenVideoRef}
                 autoPlay
                 playsInline
                 muted
@@ -152,208 +177,256 @@ export const StageView: React.FC = () => {
               />
             </div>
           </div>
-        )}
+        ) : null}
 
-        {/* Participant Mesh Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {peers.map(peer => {
-            const isSelf = peer.id === activeMember.id;
-            const micLive = isSelf ? isMicOn : peer.isAudioActive;
-
-            return (
-              <div
-                key={peer.id}
-                className={`bg-[#0A0A0A] border p-4 flex flex-col justify-between transition-all ${
-                  micLive
-                    ? 'border-[#FFFFFF] shadow-lg'
-                    : 'border-[#262626]'
-                }`}
-              >
-                <div>
-                  {/* Top Peer Info */}
-                  <div className="flex items-center justify-between pb-2 border-b border-[#1A1A1A] mb-3">
-                    <div className="flex items-center gap-2">
-                      <span className="w-7 h-7 bg-[#171717] border border-[#404040] text-xs font-bold text-[#FFFFFF] flex items-center justify-center">
-                        {peer.badge}
-                      </span>
-                      <div>
-                        <div className="text-xs font-bold text-[#FFFFFF] leading-tight">
-                          {peer.name}
-                        </div>
-                        <div className="text-[10px] text-[#737373]">
-                          {peer.role}
-                        </div>
-                      </div>
-                    </div>
-
-                    <span className={`px-1.5 py-0.2 text-[9px] font-bold border ${
-                      micLive
-                        ? 'bg-[#FFFFFF] text-[#000000] border-[#FFFFFF]'
-                        : 'bg-[#121212] text-[#555555] border-[#262626]'
-                    }`}>
-                      {micLive ? 'TRANSMITTING' : 'MUTED'}
-                    </span>
-                  </div>
-
-                  {/* Micro Visualizer */}
-                  <div className="mb-2">
-                    <AudioVisualizerCanvas mode="compact" className="w-full h-5" />
-                  </div>
-                </div>
-
-                {/* Footnote details */}
-                <div className="flex items-center justify-between pt-2 border-t border-[#171717] text-[9px] text-[#555555]">
-                  <span>CODEC: OPUS 510K STEREO</span>
-                  <span>GAIN: {isSelf ? `${gainPercent}%` : '100%'}</span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-        {/* 3. Stage Action Toolbar */}
-        <div className="h-14 bg-[#0A0A0A] border-t border-[#262626] px-4 flex items-center justify-between gap-3 shrink-0">
-        <div className="flex items-center gap-2">
-          {/* Mic Toggle */}
-          <button
-            onClick={toggleMic}
-            className={`px-3 py-1.5 text-xs font-bold border flex items-center gap-1.5 transition-colors ${
-              isMicOn
-                ? 'bg-[#FFFFFF] text-[#000000] border-[#FFFFFF]'
-                : 'bg-[#121212] text-[#A3A3A3] border-[#262626] hover:text-[#FFFFFF]'
+        {/* Video & Voice Participant Cards (Discord Layout) */}
+        <div className="w-full max-w-5xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pb-20">
+          {/* User's Local Tile */}
+          <div 
+            className={`h-64 sm:h-72 rounded-3xl bg-gradient-to-b from-[#1E1E26] to-[#121217] border relative overflow-hidden flex flex-col items-center justify-center transition-all shadow-xl ${
+              isLive ? 'border-emerald-500/80 ring-4 ring-emerald-500/20' : 'border-[#2F2F3E]'
             }`}
           >
-            {isMicOn ? <Mic size={13} /> : <MicOff size={13} />}
-            <span>{isMicOn ? 'MIC ON (510k)' : 'MIC MUTED'}</span>
-          </button>
-
-          {/* Screen Share */}
-          <button
-            onClick={handleToggleScreenShare}
-            className={`px-3 py-1.5 text-xs font-bold border flex items-center gap-1.5 transition-colors ${
-              screenStream
-                ? 'bg-[#FFFFFF] text-[#000000] border-[#FFFFFF]'
-                : 'bg-[#121212] text-[#A3A3A3] border-[#262626] hover:text-[#FFFFFF]'
-            }`}
-          >
-            {screenStream ? <MonitorOff size={13} /> : <Monitor size={13} />}
-            <span>{screenStream ? 'STOP SHARING' : 'SHARE SCREEN (4K60)'}</span>
-          </button>
-
-          {/* Audio Hardware Modal Launcher */}
-          <button
-            onClick={() => setShowHardwareModal(true)}
-            title="Audio Hardware Calibration"
-            className="px-2.5 py-1.5 bg-[#121212] hover:bg-[#1C1C1C] text-[#A3A3A3] hover:text-[#FFFFFF] border border-[#262626] text-xs flex items-center gap-1.5"
-          >
-            <Sliders size={13} />
-            <span className="hidden sm:inline">CALIBRATION</span>
-          </button>
-        </div>
-
-        <div className="flex items-center gap-2">
-          {/* Manual SDP Token Modal Toggle */}
-          <button
-            onClick={() => setShowTokenModal(true)}
-            className="px-3 py-1.5 bg-[#121212] hover:bg-[#1C1C1C] text-[#A3A3A3] hover:text-[#FFFFFF] border border-[#262626] text-xs flex items-center gap-1.5"
-          >
-            <Key size={13} />
-            <span>SDP TOKENS</span>
-          </button>
-
-          {/* Disconnect */}
-          <button
-            onClick={handleDisconnect}
-            className="px-4 py-1.5 bg-[#FFFFFF] text-[#000000] font-bold text-xs border border-[#FFFFFF] hover:bg-[#CCCCCC] flex items-center gap-1.5"
-          >
-            <PhoneOff size={13} />
-            <span>DISCONNECT</span>
-          </button>
-        </div>
-      </div>
-
-      {/* 4. Manual SDP Token Modal */}
-      {showTokenModal && (
-        <div className="fixed inset-0 bg-[#000000]/80 backdrop-blur-xs flex items-center justify-center z-50 p-4 font-mono select-none">
-          <div className="w-full max-w-xl bg-[#0C0C0C] border border-[#404040] p-5 shadow-2xl flex flex-col gap-4 max-h-[85vh] overflow-y-auto">
-            <div className="flex items-center justify-between pb-3 border-b border-[#262626]">
-              <div className="flex items-center gap-2">
-                <Key size={15} className="text-[#FFFFFF]" />
-                <span className="text-xs font-bold tracking-wider text-[#FFFFFF] uppercase">
-                  MANUAL WEBRTC SDP TOKENS // CROSS-MACHINE PAIRING
-                </span>
-              </div>
-              <button onClick={() => setShowTokenModal(false)} className="text-[#A3A3A3] hover:text-[#FFFFFF]">
-                <X size={15} />
-              </button>
-            </div>
-
-            <p className="text-[11px] text-[#A3A3A3] leading-relaxed">
-              Generate an SDP Offer token containing mutated 510 kbps Opus & 4K60 video parameters, or paste a remote Answer token to connect peers across different networks.
-            </p>
-
-            {/* Offer Generation */}
-            <div className="space-y-2 bg-[#080808] border border-[#202020] p-3">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-[#FFFFFF]">STEP 1: GENERATE OFFER TOKEN</span>
-                <button
-                  onClick={handleGenerateOffer}
-                  className="px-2.5 py-1 bg-[#FFFFFF] text-[#000000] text-xs font-bold border border-[#FFFFFF] hover:bg-[#CCCCCC]"
-                >
-                  GENERATE OFFER
-                </button>
-              </div>
-
-              {offerToken && (
-                <div className="relative mt-2">
-                  <textarea
-                    readOnly
-                    value={offerToken}
-                    rows={3}
-                    className="w-full bg-[#000000] border border-[#262626] p-2 text-[10px] text-[#A3A3A3] outline-none resize-none font-mono"
-                  />
-                  <button
-                    onClick={handleCopyToken}
-                    className="absolute top-2 right-2 px-2 py-1 bg-[#171717] hover:bg-[#262626] text-[#FFFFFF] text-[10px] border border-[#333333] flex items-center gap-1"
-                  >
-                    {copiedToken ? <Check size={10} /> : <Copy size={10} />}
-                    <span>{copiedToken ? 'COPIED' : 'COPY'}</span>
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* Answer Application */}
-            <div className="space-y-2 bg-[#080808] border border-[#202020] p-3">
-              <span className="text-xs font-bold text-[#FFFFFF]">STEP 2: PASTE REMOTE ANSWER TOKEN</span>
-              <textarea
-                value={answerInput}
-                onChange={e => setAnswerInput(e.target.value)}
-                placeholder="Paste remote Base64 answer token here..."
-                rows={3}
-                className="w-full bg-[#000000] border border-[#262626] focus:border-[#FFFFFF] p-2 text-[10px] text-[#FFFFFF] outline-none resize-none font-mono"
+            {cameraStream ? (
+              <video
+                ref={cameraVideoRef}
+                autoPlay
+                playsInline
+                muted
+                className="w-full h-full object-cover scale-x-[-1]"
               />
-              <button
-                onClick={handleApplyAnswer}
-                className="px-3 py-1 bg-[#171717] hover:bg-[#262626] text-[#FFFFFF] text-xs font-bold border border-[#333333] hover:border-[#FFFFFF]"
-              >
-                APPLY REMOTE TOKEN
-              </button>
-            </div>
-
-            {tokenStatus && (
-              <div className="p-2 bg-[#121212] border border-[#262626] text-[10px] text-[#A3A3A3]">
-                {tokenStatus}
+            ) : (
+              <div className="flex flex-col items-center justify-center gap-3">
+                <div className={`w-20 h-20 rounded-full bg-[#181822] border-2 flex items-center justify-center text-xl font-bold text-[#FFFFFF] shadow-2xl transition-all ${
+                  isLive ? 'border-emerald-400 scale-105' : 'border-[#333344]'
+                }`}>
+                  {activeMember.badge}
+                </div>
+                <div className="text-center">
+                  <div className="text-sm font-bold text-[#FFFFFF]">{activeMember.name}</div>
+                  <div className="text-xs text-[#8E8E9E]">Host & Presenter</div>
+                </div>
               </div>
             )}
 
-            <div className="flex justify-end pt-2 border-t border-[#262626]">
-              <button
-                onClick={() => setShowTokenModal(false)}
-                className="px-4 py-1.5 bg-[#FFFFFF] text-[#000000] font-bold text-xs border border-[#FFFFFF] hover:bg-[#CCCCCC]"
+            {/* Speaking / Audio Waves bar at bottom of card */}
+            <div className="absolute bottom-12 left-4 right-4 z-10">
+              <AudioVisualizerCanvas mode="compact" className="w-full h-4 rounded-md" />
+            </div>
+
+            {/* User Name Tag Badge */}
+            <div className="absolute bottom-3 left-3 bg-[#0B0B0E]/80 backdrop-blur-md px-3 py-1 rounded-full border border-[#2F2F3E] flex items-center gap-2 text-xs font-semibold text-[#FFFFFF] z-10">
+              {isLive ? (
+                <Mic size={12} className="text-emerald-400" />
+              ) : (
+                <MicOff size={12} className="text-red-400" />
+              )}
+              <span>{activeMember.name} (You)</span>
+              {cameraStream && (
+                <span className="text-[10px] bg-[#22C55E]/20 text-emerald-300 px-1.5 py-0.2 rounded-md font-bold">
+                  {qualityPreset.toUpperCase()}
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Remote Peer 1 */}
+          <div className="h-64 sm:h-72 rounded-3xl bg-gradient-to-b from-[#1C1C24] to-[#121217] border border-[#2F2F3E] relative overflow-hidden flex flex-col items-center justify-center shadow-xl">
+            <div className="flex flex-col items-center justify-center gap-3">
+              <div className="w-20 h-20 rounded-full bg-[#181822] border-2 border-[#333344] flex items-center justify-center text-xl font-bold text-[#FFFFFF] shadow-2xl">
+                AS
+              </div>
+              <div className="text-center">
+                <div className="text-sm font-bold text-[#FFFFFF]">Arnav Suryavanshi</div>
+                <div className="text-xs text-[#8E8E9E]">AI Research & RAG Infra</div>
+              </div>
+            </div>
+
+            <div className="absolute bottom-3 left-3 bg-[#0B0B0E]/80 backdrop-blur-md px-3 py-1 rounded-full border border-[#2F2F3E] flex items-center gap-2 text-xs font-semibold text-[#FFFFFF]">
+              <Mic size={12} className="text-emerald-400" />
+              <span>Arnav</span>
+            </div>
+          </div>
+
+          {/* Remote Peer 2 */}
+          <div className="h-64 sm:h-72 rounded-3xl bg-gradient-to-b from-[#1C1C24] to-[#121217] border border-[#2F2F3E] relative overflow-hidden flex flex-col items-center justify-center shadow-xl">
+            <div className="flex flex-col items-center justify-center gap-3">
+              <div className="w-20 h-20 rounded-full bg-[#181822] border-2 border-[#333344] flex items-center justify-center text-xl font-bold text-[#FFFFFF] shadow-2xl">
+                LA
+              </div>
+              <div className="text-center">
+                <div className="text-sm font-bold text-[#FFFFFF]">Lakshay Arora</div>
+                <div className="text-xs text-[#8E8E9E]">Realtime WebRTC Audio Lead</div>
+              </div>
+            </div>
+
+            <div className="absolute bottom-3 left-3 bg-[#0B0B0E]/80 backdrop-blur-md px-3 py-1 rounded-full border border-[#2F2F3E] flex items-center gap-2 text-xs font-semibold text-[#8E8E9E]">
+              <MicOff size={12} className="text-red-400" />
+              <span>Lakshay</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 3. Floating Discord-Style Rounded Dock (Image 3 inspired) */}
+      <div className="absolute bottom-5 inset-x-0 flex justify-center z-30 pointer-events-none px-4">
+        <div className="bg-[#161620]/95 backdrop-blur-xl border border-[#2F2F3E] rounded-full p-2 sm:px-4 sm:py-2.5 shadow-2xl flex items-center gap-2 sm:gap-3 pointer-events-auto">
+          {/* Microphone Toggle Button */}
+          <button
+            onClick={toggleMic}
+            className={`p-3 rounded-full flex items-center justify-center transition-all ${
+              isLive
+                ? 'bg-[#2A2A38] text-[#FFFFFF] hover:bg-[#343444]'
+                : 'bg-red-500/20 text-red-400 hover:bg-red-500/30 ring-1 ring-red-500/40'
+            }`}
+            title={isLive ? "Mute Microphone" : "Unmute Microphone"}
+          >
+            {isLive ? <Mic size={20} /> : <MicOff size={20} />}
+          </button>
+
+          {/* Camera Toggle Button (Turn On/Off Camera) */}
+          <button
+            onClick={handleToggleCamera}
+            className={`p-3 rounded-full flex items-center justify-center transition-all ${
+              cameraStream
+                ? 'bg-[#2A2A38] text-[#FFFFFF] hover:bg-[#343444]'
+                : 'bg-[#242432] text-[#8E8E9E] hover:text-[#FFFFFF] hover:bg-[#2F2F3E]'
+            }`}
+            title={cameraStream ? "Turn Off Camera" : "Turn On Camera"}
+          >
+            {cameraStream ? <Video size={20} className="text-emerald-400" /> : <VideoOff size={20} />}
+          </button>
+
+          {/* Screen Share Button */}
+          <button
+            onClick={handleToggleScreenShare}
+            className={`p-3 rounded-full flex items-center justify-center transition-all ${
+              screenStream
+                ? 'bg-emerald-600 text-white hover:bg-emerald-500 shadow-md'
+                : 'bg-[#242432] text-[#8E8E9E] hover:text-[#FFFFFF] hover:bg-[#2F2F3E]'
+            }`}
+            title={screenStream ? "Stop Sharing Screen" : "Share Screen"}
+          >
+            {screenStream ? <MonitorOff size={20} /> : <Monitor size={20} />}
+          </button>
+
+          {/* Quality Preset Selector Dropdown (240p to 2K) */}
+          <div className="relative">
+            <button
+              onClick={() => setShowQualityMenu(!showQualityMenu)}
+              className="px-3.5 py-2 rounded-full bg-[#242432] hover:bg-[#2F2F3E] text-[#D4D4DC] hover:text-[#FFFFFF] flex items-center gap-1.5 text-xs font-bold border border-[#333344] transition-all"
+              title="Select Video Stream Quality (240p - 2K)"
+            >
+              <span>{currentQualityConfig.label}</span>
+              <ChevronDown size={14} className={showQualityMenu ? 'rotate-180 transition-transform' : 'transition-transform'} />
+            </button>
+
+            {/* Quality Popup Menu */}
+            {showQualityMenu && (
+              <div className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 w-64 bg-[#181822] border border-[#2F2F3E] rounded-2xl shadow-2xl p-2 z-50 flex flex-col gap-1 backdrop-blur-xl">
+                <div className="px-3 py-1.5 text-[11px] font-bold text-[#8E8E9E] uppercase tracking-wider border-b border-[#242430]">
+                  Stream Resolution
+                </div>
+                {(Object.keys(STAGE_QUALITY_PRESETS) as StageQualityPreset[]).map(key => {
+                  const cfg = STAGE_QUALITY_PRESETS[key];
+                  const isSelected = qualityPreset === key;
+                  return (
+                    <button
+                      key={key}
+                      onClick={() => handleSelectQuality(key)}
+                      className={`w-full text-left px-3 py-2 rounded-xl text-xs flex items-center justify-between transition-all ${
+                        isSelected
+                          ? 'bg-[#FFFFFF] text-[#0B0B0E] font-bold'
+                          : 'text-[#D4D4DC] hover:bg-[#242432] hover:text-[#FFFFFF]'
+                      }`}
+                    >
+                      <div>
+                        <div className="font-semibold">{cfg.label} ({cfg.fps}fps)</div>
+                        <div className={`text-[10px] ${isSelected ? 'text-[#333333]' : 'text-[#8E8E9E]'}`}>
+                          {cfg.description}
+                        </div>
+                      </div>
+                      {isSelected && <Check size={14} className="text-[#0B0B0E]" />}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Invite to Voice / Members */}
+          <button
+            onClick={() => setShowInviteModal(true)}
+            className="p-3 rounded-full bg-[#242432] text-[#8E8E9E] hover:text-[#FFFFFF] hover:bg-[#2F2F3E] transition-all"
+            title="Invite to Voice & Share Stage"
+          >
+            <Users size={18} />
+          </button>
+
+          {/* Equalizer / Audio Settings */}
+          <button
+            onClick={() => setShowHardwareModal(true)}
+            className="p-3 rounded-full bg-[#242432] text-[#8E8E9E] hover:text-[#FFFFFF] hover:bg-[#2F2F3E] transition-all"
+            title="Audio Hardware & Equalizer Settings"
+          >
+            <Sliders size={18} />
+          </button>
+
+          {/* Red Disconnect Button */}
+          <button
+            onClick={handleDisconnect}
+            className="p-3 rounded-full bg-red-600 hover:bg-red-500 text-[#FFFFFF] shadow-lg shadow-red-600/30 transition-all cursor-pointer ml-1"
+            title="Disconnect / Leave Stage"
+          >
+            <PhoneOff size={20} />
+          </button>
+        </div>
+      </div>
+
+      {/* Invite & Pairing Modal */}
+      {showInviteModal && (
+        <div className="fixed inset-0 bg-[#000000]/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="w-full max-w-md bg-[#161620] border border-[#2F2F3E] rounded-3xl p-6 shadow-2xl flex flex-col gap-4">
+            <div className="flex items-center justify-between pb-3 border-b border-[#242430]">
+              <div className="flex items-center gap-2">
+                <Users size={18} className="text-emerald-400" />
+                <span className="text-base font-bold text-[#FFFFFF]">Invite to Voice Stage</span>
+              </div>
+              <button 
+                onClick={() => setShowInviteModal(false)}
+                className="text-[#8E8E9E] hover:text-[#FFFFFF] p-1 rounded-lg hover:bg-[#242432] transition-colors"
               >
-                CLOSE
+                ✕
+              </button>
+            </div>
+
+            <p className="text-xs text-[#D4D4DC] leading-relaxed">
+              Anyone with this link or in your active workspace space <strong className="text-white">({activeSpace.name})</strong> can join this ultra-low latency 510kbps stage.
+            </p>
+
+            <div className="flex items-center gap-2 bg-[#101017] p-2.5 rounded-xl border border-[#2F2F3E]">
+              <span className="text-xs font-mono text-[#8E8E9E] truncate flex-1">
+                {window.location.origin}/#stage/{activeSpace.slug}
+              </span>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(`${window.location.origin}/#stage/${activeSpace.slug}`);
+                  setIsCopiedToken(true);
+                  setTimeout(() => setIsCopiedToken(false), 2000);
+                }}
+                className="px-3 py-1.5 rounded-lg bg-[#FFFFFF] text-[#0B0B0E] text-xs font-bold hover:bg-[#E4E4E7] transition-all flex items-center gap-1.5"
+              >
+                {isCopiedToken ? <Check size={13} /> : <Copy size={13} />}
+                <span>{isCopiedToken ? 'Copied' : 'Copy'}</span>
+              </button>
+            </div>
+
+            <div className="flex justify-end pt-2">
+              <button
+                onClick={() => setShowInviteModal(false)}
+                className="px-4 py-2 rounded-xl bg-[#242432] hover:bg-[#2F2F3E] text-xs font-semibold text-[#FFFFFF] transition-all"
+              >
+                Done
               </button>
             </div>
           </div>

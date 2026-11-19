@@ -61,14 +61,14 @@ export const RAGInspectorModal: React.FC = () => {
     >
       <div 
         onClick={e => e.stopPropagation()}
-        className="w-full max-w-4xl h-[700px] bg-[#0A0A0A] border border-[#404040] shadow-2xl flex flex-col overflow-hidden"
+        className="w-full max-w-4xl h-[700px] bg-[#0A0A0A] border border-[#1F1F1F] shadow-2xl flex flex-col overflow-hidden"
       >
         {/* Top Header */}
-        <div className="h-12 border-b border-[#262626] px-4 flex items-center justify-between bg-[#0F0F0F] shrink-0">
+        <div className="h-12 border-b border-[#1F1F1F] px-4 flex items-center justify-between bg-[#0A0A0A] shrink-0">
           <div className="flex items-center gap-2">
             <Database size={15} className="text-[#FFFFFF]" />
             <span className="text-xs font-bold tracking-widest text-[#FFFFFF]">LOCAL RAG CONTEXT INSPECTOR</span>
-            <span className="border border-[#333333] bg-[#141414] px-1.5 py-0.5 text-[10px] text-[#A3A3A3] font-bold">
+            <span className="border border-[#1F1F1F] bg-[#141414] px-1.5 py-0.5 text-[10px] text-[#A1A1AA] font-bold">
               {totalChunksIndexed} CHUNKS INDEXED
             </span>
           </div>
@@ -77,14 +77,14 @@ export const RAGInspectorModal: React.FC = () => {
             <button
               onClick={() => rebuildAllIndices()}
               title="Force Rebuild In-Memory Index"
-              className="p-1.5 border border-[#262626] hover:border-[#FFFFFF] text-[#A3A3A3] hover:text-[#FFFFFF] flex items-center gap-1 text-[10px]"
+              className="p-1.5 border border-[#1F1F1F] hover:border-[#FFFFFF] text-[#A1A1AA] hover:text-[#FFFFFF] flex items-center gap-1 text-[10px] transition-colors"
             >
               <RefreshCw size={11} className={isIndexing ? 'animate-spin' : ''} />
               <span>REINDEX</span>
             </button>
             <button 
               onClick={() => setRagInspectorOpen(false)}
-              className="text-[#A3A3A3] hover:text-[#FFFFFF] p-1 border border-transparent hover:border-[#262626]"
+              className="text-[#71717A] hover:text-[#FFFFFF] p-1 border border-transparent hover:border-[#1F1F1F] transition-colors"
             >
               <X size={15} />
             </button>
@@ -92,22 +92,22 @@ export const RAGInspectorModal: React.FC = () => {
         </div>
 
         {/* Search & Query Bench Controls */}
-        <div className="p-4 bg-[#0D0D0D] border-b border-[#262626] space-y-3 shrink-0">
+        <div className="p-4 bg-[#0A0A0A] border-b border-[#1F1F1F] space-y-3 shrink-0">
           {/* Query Bar */}
           <div className="relative flex items-center">
-            <Search size={14} className="absolute left-3 text-[#737373]" />
+            <Search size={14} className="absolute left-3 text-[#71717A]" />
             <input
               type="text"
               value={query}
               onChange={e => setQuery(e.target.value)}
               placeholder="Search local knowledge index (BM25 + Cosine similarity)..."
               autoFocus
-              className="w-full bg-[#000000] border border-[#262626] focus:border-[#FFFFFF] pl-9 pr-3 py-2 text-xs font-mono text-[#FFFFFF] outline-none"
+              className="w-full bg-[#000000] border border-[#1F1F1F] focus:border-[#FFFFFF] pl-9 pr-3 py-2 text-xs font-mono text-[#FFFFFF] outline-none"
             />
             {query && (
               <button
                 onClick={() => setQuery('')}
-                className="absolute right-3 text-[#737373] hover:text-[#FFFFFF]"
+                className="absolute right-3 text-[#71717A] hover:text-[#FFFFFF]"
               >
                 <X size={12} />
               </button>
@@ -117,38 +117,38 @@ export const RAGInspectorModal: React.FC = () => {
           {/* Controls Strip: Scope, TopK, Latency Benchmark */}
           <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
             <div className="flex items-center gap-2">
-              <span className="text-[10px] text-[#737373] uppercase">SEARCH SCOPE:</span>
-              <div className="flex border border-[#262626]">
+              <span className="text-[10px] text-[#71717A] uppercase">SEARCH SCOPE:</span>
+              <div className="flex border border-[#1F1F1F]">
                 <button
                   onClick={() => setScope('active')}
                   className={`px-2.5 py-1 text-[11px] font-bold transition-all ${
                     scope === 'active'
                       ? 'bg-[#FFFFFF] text-[#000000]'
-                      : 'bg-[#121212] text-[#A3A3A3] hover:text-[#FFFFFF]'
+                      : 'bg-[#141414] text-[#A1A1AA] hover:text-[#FFFFFF]'
                   }`}
                 >
                   ACTIVE SPACE [{activeSpace.badge}]
                 </button>
                 <button
                   onClick={() => setScope('all')}
-                  className={`px-2.5 py-1 text-[11px] font-bold border-l border-[#262626] transition-all ${
+                  className={`px-2.5 py-1 text-[11px] font-bold border-l border-[#1F1F1F] transition-all ${
                     scope === 'all'
                       ? 'bg-[#FFFFFF] text-[#000000]'
-                      : 'bg-[#121212] text-[#A3A3A3] hover:text-[#FFFFFF]'
+                      : 'bg-[#141414] text-[#A1A1AA] hover:text-[#FFFFFF]'
                   }`}
                 >
                   ALL SPACES
                 </button>
               </div>
 
-              <span className="text-[10px] text-[#737373] uppercase ml-2">TOP-K:</span>
-              <div className="flex border border-[#262626]">
+              <span className="text-[10px] text-[#71717A] uppercase ml-2">TOP-K:</span>
+              <div className="flex border border-[#1F1F1F]">
                 {[3, 5, 8, 12].map(k => (
                   <button
                     key={k}
                     onClick={() => setTopK(k)}
-                    className={`px-2 py-0.5 text-[10px] font-bold border-r border-[#262626] last:border-r-0 ${
-                      topK === k ? 'bg-[#FFFFFF] text-[#000000]' : 'bg-[#121212] text-[#A3A3A3] hover:text-[#FFFFFF]'
+                    className={`px-2 py-0.5 text-[10px] font-bold border-r border-[#1F1F1F] last:border-r-0 ${
+                      topK === k ? 'bg-[#FFFFFF] text-[#000000]' : 'bg-[#141414] text-[#A1A1AA] hover:text-[#FFFFFF]'
                     }`}
                   >
                     {k}
@@ -159,26 +159,26 @@ export const RAGInspectorModal: React.FC = () => {
 
             {/* Sub-Millisecond Benchmark Pill */}
             {results && (
-              <div className="flex items-center gap-1.5 border border-[#333333] bg-[#121212] px-2.5 py-1 text-[10px]">
-                <span className="text-[#A3A3A3]">RETRIEVAL LATENCY:</span>
-                <span className={`font-bold ${results.durationMs < 1.0 ? 'text-[#FFFFFF]' : 'text-[#A3A3A3]'}`}>
+              <div className="flex items-center gap-1.5 border border-[#1F1F1F] bg-[#111111] px-2.5 py-1 text-[10px]">
+                <span className="text-[#A1A1AA]">RETRIEVAL LATENCY:</span>
+                <span className={`font-bold ${results.durationMs < 1.0 ? 'text-[#FFFFFF]' : 'text-[#A1A1AA]'}`}>
                   {results.durationMs} ms
                 </span>
-                <span className="text-[#737373]">({results.matches.length} MATCHES)</span>
+                <span className="text-[#71717A]">({results.matches.length} MATCHES)</span>
               </div>
             )}
           </div>
         </div>
 
         {/* Results Matches List */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-[#080808]">
+        <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-[#000000]">
           {!results || results.matches.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center p-8">
-              <Database size={32} className="text-[#333333] mb-3" />
+              <Database size={32} className="text-[#262626] mb-3" />
               <div className="text-xs font-bold text-[#FFFFFF] mb-1">
                 {query.trim() ? 'NO RELEVANT CHUNKS FOUND' : 'ENTER A QUERY TO BENCHMARK LOCAL RAG'}
               </div>
-              <p className="text-[11px] text-[#737373] max-w-sm">
+              <p className="text-[11px] text-[#71717A] max-w-sm">
                 In-memory BM25 index parses workspace documentation, space SOUL.MD prompts, tasks, and shared tabs for instant injection into Google Gemini queries.
               </p>
             </div>
@@ -189,15 +189,15 @@ export const RAGInspectorModal: React.FC = () => {
               return (
                 <div 
                   key={chunk.id}
-                  className="border border-[#262626] bg-[#0E0E0E] p-3 text-xs space-y-2 hover:border-[#404040] transition-colors"
+                  className="border border-[#1F1F1F] bg-[#0A0A0A] p-3 text-xs space-y-2 hover:border-[#3F3F46] transition-colors"
                 >
                   {/* Match Top Bar */}
-                  <div className="flex items-center justify-between pb-1 border-b border-[#1A1A1A]">
+                  <div className="flex items-center justify-between pb-1 border-b border-[#1F1F1F]">
                     <div className="flex items-center gap-2">
-                      <span className="px-1.5 py-0.2 text-[9px] font-bold border border-[#FFFFFF] bg-[#FFFFFF] text-[#000000]">
+                      <span className="px-1.5 py-0.5 text-[9px] font-bold border border-[#FFFFFF] bg-[#FFFFFF] text-[#000000]">
                         #{idx + 1}
                       </span>
-                      <span className="border border-[#333333] bg-[#171717] px-1.5 py-0.2 text-[9px] font-bold text-[#A3A3A3] uppercase">
+                      <span className="border border-[#1F1F1F] bg-[#141414] px-1.5 py-0.5 text-[9px] font-bold text-[#A1A1AA] uppercase">
                         {chunk.sourceType}
                       </span>
                       <span className="font-bold text-[#FFFFFF] truncate max-w-md">
@@ -207,11 +207,11 @@ export const RAGInspectorModal: React.FC = () => {
 
                     <div className="flex items-center gap-2">
                       {/* Score Percentage */}
-                      <span className="text-[10px] text-[#A3A3A3] font-bold">
+                      <span className="text-[10px] text-[#A1A1AA] font-bold">
                         {relevancePercent}% RELEVANCE
                       </span>
                       {/* Score Bar */}
-                      <div className="w-16 h-1.5 bg-[#1F1F1F] border border-[#333333] overflow-hidden">
+                      <div className="w-16 h-1.5 bg-[#141414] border border-[#1F1F1F] overflow-hidden">
                         <div 
                           className="h-full bg-[#FFFFFF]" 
                           style={{ width: `${relevancePercent}%` }} 
@@ -221,12 +221,12 @@ export const RAGInspectorModal: React.FC = () => {
                   </div>
 
                   {/* Matched Text Snippet */}
-                  <pre className="text-xs text-[#CCCCCC] font-mono whitespace-pre-wrap leading-relaxed max-h-36 overflow-y-auto bg-[#070707] p-2 border border-[#1F1F1F]">
+                  <pre className="text-xs text-[#A1A1AA] font-mono whitespace-pre-wrap leading-relaxed max-h-36 overflow-y-auto bg-[#111111] p-2.5 border border-[#1F1F1F]">
                     {chunk.text}
                   </pre>
 
                   {/* Bottom Meta */}
-                  <div className="flex items-center justify-between text-[10px] text-[#737373] pt-1">
+                  <div className="flex items-center justify-between text-[10px] text-[#71717A] pt-1">
                     <div className="flex items-center gap-3">
                       <span>SPACE ID: {chunk.spaceId}</span>
                       <span>TOKENS: {chunk.tokenCount}</span>
@@ -243,15 +243,15 @@ export const RAGInspectorModal: React.FC = () => {
         </div>
 
         {/* Bottom Action Footer */}
-        <div className="h-12 border-t border-[#262626] px-4 bg-[#0F0F0F] flex items-center justify-between shrink-0">
-          <div className="text-[10px] text-[#737373]">
+        <div className="h-12 border-t border-[#1F1F1F] px-4 bg-[#0A0A0A] flex items-center justify-between shrink-0">
+          <div className="text-[10px] text-[#71717A]">
             LATENCY GUARANTEE: &lt; 1 MS // IN-MEMORY INVERTED INDEX // ZERO SERVER CALLS
           </div>
 
           <div className="flex items-center gap-2">
             <button
               onClick={() => setRagInspectorOpen(false)}
-              className="px-3 py-1.5 border border-[#262626] hover:bg-[#171717] text-[#A3A3A3] text-xs"
+              className="px-3 py-1.5 border border-[#1F1F1F] hover:bg-[#18181B] text-[#A1A1AA] text-xs transition-colors"
             >
               CLOSE
             </button>
@@ -260,8 +260,8 @@ export const RAGInspectorModal: React.FC = () => {
               disabled={!results || results.matches.length === 0}
               className={`px-4 py-1.5 border text-xs font-bold flex items-center gap-1.5 transition-all ${
                 !results || results.matches.length === 0
-                  ? 'opacity-40 cursor-not-allowed border-[#262626] text-[#737373]'
-                  : 'bg-[#FFFFFF] text-[#000000] border-[#FFFFFF] hover:bg-[#A3A3A3]'
+                  ? 'opacity-30 cursor-not-allowed border-[#1F1F1F] text-[#71717A]'
+                  : 'bg-[#FFFFFF] text-[#000000] border-[#FFFFFF] hover:bg-[#A1A1AA]'
               }`}
             >
               {copied ? <Check size={12} strokeWidth={3} /> : <Copy size={12} />}

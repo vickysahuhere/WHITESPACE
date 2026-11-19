@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useWorkspace } from './WorkspaceContext';
 import { useDocuments } from './DocumentContext';
+import { useTasks } from './TaskContext';
+import { useBrowser } from './BrowserContext';
 import { RAGSearchResult, RAGMatch } from '../types';
 import { ragEngine } from '../services/ragEngine';
 
@@ -20,6 +22,8 @@ const RAGContext = createContext<RAGContextType | null>(null);
 export const RAGProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { spaces, activeSpace } = useWorkspace();
   const { documents } = useDocuments();
+  const { tasks } = useTasks();
+  const { tabs } = useBrowser();
 
   const [totalChunksIndexed, setTotalChunksIndexed] = useState<number>(0);
   const [isIndexing, setIsIndexing] = useState<boolean>(false);
@@ -41,11 +45,23 @@ export const RAGProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       ragEngine.indexDocument(doc);
     });
 
+    // 3. Index all workspace tasks
+    tasks.forEach(task => {
+      ragEngine.indexTask(task);
+    });
+
+    // 4. Index all team-shared browser tabs
+    tabs.forEach(tab => {
+      if (tab.isShared) {
+        ragEngine.indexTab(tab);
+      }
+    });
+
     setTotalChunksIndexed(ragEngine.totalChunks);
     setIsIndexing(false);
-  }, [spaces, documents]);
+  }, [spaces, documents, tasks, tabs]);
 
-  // Synchronize index whenever spaces or documents change
+  // Synchronize index whenever spaces, documents, tasks, or tabs change
   useEffect(() => {
     rebuildAllIndices();
   }, [rebuildAllIndices]);

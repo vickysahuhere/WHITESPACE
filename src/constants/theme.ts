@@ -1,20 +1,37 @@
-// White Collars (WHITESPACE) // Strict Monochrome Theme Tokens & Initial Defaults
+// White Collars (WHITESPACE) // Modern Charcoal & Slate Dark Theme Tokens & Initial Defaults
 import { Member, Space } from '../types';
 
 export const THEME = {
   colors: {
-    pureBlack: '#000000',
-    surfaceDark: '#0A0A0A',
-    surfacePanel: '#121212',
-    surfaceHover: '#171717',
-    borderMuted: '#262626',
-    borderBright: '#404040',
-    textMuted: '#A3A3A3',
-    textBright: '#FFFFFF',
+    // Rich Charcoal, Slate and Dark Grey Palette (referenced from modern IDEs and Discord)
+    pureBlack: '#0B0B0E',
+    surfaceDark: '#121216',
+    surfacePanel: '#17171D',
+    surfaceCard: '#1E1E26',
+    surfaceHover: '#282834',
+    surfaceElevated: '#323242',
+    borderMuted: '#242430',
+    borderDefault: '#2F2F3E',
+    borderBright: '#454558',
+    borderActive: '#FFFFFF',
+    textPrimary: '#FFFFFF',
+    textSecondary: '#D4D4DC',
+    textMuted: '#8E8E9E',
+    accentMuted: '#3A3A4C',
+    accentActive: '#5865F2', // Discord subtle blurple or white
+    accentRed: '#EF4444',
+    accentGreen: '#22C55E'
   },
   typography: {
-    mono: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
-    sans: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+    mono: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+    sans: 'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+  },
+  radii: {
+    sm: '8px',
+    md: '12px',
+    lg: '16px',
+    xl: '20px',
+    full: '9999px'
   }
 } as const;
 
@@ -55,7 +72,7 @@ export const DEFAULT_MEMBERS: Member[] = [
 
 export const DEFAULT_SPACES: Space[] = [
   {
-    id: 'space_wc_core',
+    id: 'wc-core',
     name: 'White Collars Core',
     slug: 'wc-core',
     badge: 'WC',
@@ -70,7 +87,7 @@ You are WHITE, the autonomous core intelligence for White Collars (WHITERs).
     updatedAt: '2026-11-16T00:00:00.000Z'
   },
   {
-    id: 'space_signbridge',
+    id: 'signbridge',
     name: 'SignBridge (Sanket)',
     slug: 'signbridge',
     badge: 'SB',
@@ -83,7 +100,7 @@ Domain: Multimodal Vision, Gesture Recognition, and WebRTC streaming.
     updatedAt: '2026-11-16T00:00:00.000Z'
   },
   {
-    id: 'space_mai_reads',
+    id: 'mai-reads',
     name: 'Mai-Reads',
     slug: 'mai-reads',
     badge: 'MR',

@@ -1,1192 +1,434 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useWorkspace } from '../../context/WorkspaceContext';
-import { useDocuments } from '../../context/DocumentContext';
-import { useTasks } from '../../context/TaskContext';
-import { useBrowser } from '../../context/BrowserContext';
-import { useRAG } from '../../context/RAGContext';
-import { useAudio } from '../../context/AudioContext';
-import { runFeatureAudit, SystemAuditSummary, FeatureAuditResult, FeatureStatus } from '../../services/featureAudit';
+import { WorkspaceView } from '../../types';
 import { 
   X, 
   HelpCircle, 
   BookOpen, 
   CheckCircle2, 
-  AlertCircle, 
-  Play, 
-  RotateCcw, 
-  Copy, 
   ArrowRight, 
   ChevronRight, 
   FileText, 
   Kanban, 
-  Compass, 
+  Globe, 
   Radio, 
   Bot, 
-  Database, 
   Sparkles, 
-  Users, 
-  Download, 
-  Cloud, 
-  Key, 
-  Terminal, 
-  Layers, 
-  Check, 
-  ExternalLink 
+  Search,
+  Video,
+  Monitor,
+  Mic,
+  MicOff,
+  Sliders,
+  Layers,
+  Key,
+  ShieldCheck,
+  Check
 } from 'lucide-react';
-import { WorkspaceView } from '../../types';
 
 interface AppGuideModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-type GuideTab = 'CURRENT_PAGE' | 'ALL_PAGES' | 'FEATURE_AUDIT' | 'INTERACTIVE_TOUR';
-
-interface PageGuideInfo {
-  view: WorkspaceView;
-  title: string;
-  badge: string;
-  subtitle: string;
-  whatToDo: string[];
-  howToDoIt: { step: string; detail: string }[];
-  shortcuts: { key: string; action: string }[];
-  proTips: string[];
-}
-
-const PAGE_GUIDES: Record<WorkspaceView, PageGuideInfo> = {
-  editor: {
-    view: 'editor',
-    title: 'Notion 3.0 Slash-Command Editor & Knowledge Base',
-    badge: 'DOCS',
-    subtitle: 'Distraction-free markdown workspace with 10-format ingestion & sub-millisecond local RAG indexing.',
-    whatToDo: [
-      'Create and maintain workspace engineering specifications, technical PRDs, and documentation.',
-      'Upload external code and data files (supports 10 formats: .md, .txt, .json, .csv, .py, .js, .ts, .html, .css, .yaml).',
-      'Ground AI Copilot in real workspace knowledge with zero-latency BM25 inverted index tokenization.'
-    ],
-    howToDoIt: [
-      { step: '1. Use Slash Commands', detail: 'Type "/" on any blank line to invoke the menu. Select Headings (H1-H3), Bullet list, Code block, Task checkbox, Quote, or Divider.' },
-      { step: '2. Ingest Files', detail: 'Click "UPLOAD FILE" in the sidebar or drag-and-drop any code or data file up to 5 MB. Content is parsed and indexed instantly.' },
-      { step: '3. Inspect RAG Index', detail: 'Click the [RAG] badge in the top bar to inspect how your document is chunked and tokenized for Gemini context retrieval.' },
-      { step: '4. Export or Sync', detail: 'Use [EXPORT] in the TopBar to download the full context.md package or sync to Firebase Cloud Firestore.' }
-    ],
-    shortcuts: [
-      { key: '/', action: 'Open Slash Command Menu' },
-      { key: 'Ctrl + K', action: 'Open Command Palette' },
-      { key: 'Ctrl + S + D + F', action: 'Open Contextual Page Guide' }
-    ],
-    proTips: [
-      'Every document created in this space is automatically partitioned from other spaces.',
-      'Markdown checklists are interactive — click checkboxes to track spec delivery directly inside documents.'
-    ]
-  },
-  kanban: {
-    view: 'kanban',
-    title: 'OpenClaw Kanban Task Board & Dispatch AI Copilot',
-    badge: 'KANBAN',
-    subtitle: 'High-speed engineering task pipeline with 1-click Dispatch to autonomous Gemini Copilot.',
-    whatToDo: [
-      'Organize engineering work across 3 strict workflow columns: QUEUED, ACTIVE, and SHIPPED.',
-      'Assign task priorities using geometric badges: P0 (Urgent), P1 (High), P2 (Normal).',
-      'Dispatch any task directly to the AI Copilot Drawer for autonomous plan and code execution.'
-    ],
-    howToDoIt: [
-      { step: '1. Create a Task', detail: 'Click "+ NEW TASK" in any column header. Enter Title, Specification, Priority (P0/P1/P2), and assign a team member.' },
-      { step: '2. Drag & Drop Pipeline', detail: 'Drag task cards between columns as work progresses from QUEUED to ACTIVE to SHIPPED.' },
-      { step: '3. One-Click Dispatch AI', detail: 'Click the "DISPATCH AI" button on any task card. The right-docked Copilot Drawer opens with full context pre-populated for execution.' },
-      { step: '4. Review & Ship', detail: 'Inspect generated code or task results in Copilot, then drag the task card to SHIPPED.' }
-    ],
-    shortcuts: [
-      { key: 'Click DISPATCH', action: 'Load Task into Copilot Drawer' },
-      { key: 'Drag Card', action: 'Update Task Column Status' },
-      { key: 'Ctrl + S + D + F', action: 'Open Kanban Guide & Diagnostics' }
-    ],
-    proTips: [
-      'P0 tasks are highlighted with high-contrast borders for immediate executive focus.',
-      'Tasks in the active space are bundled into context.md exports and local Python bridge scripts.'
-    ]
-  },
-  browser: {
-    view: 'browser',
-    title: 'Multi-Tab Developer Browser & Integrated Tools Suite',
-    badge: 'DEV-BROWSER',
-    subtitle: 'Integrated multi-tab developer workspace with 5 built-in tools and selective team sharing.',
-    whatToDo: [
-      'Browse web apps and documentation with Electron security header stripping (X-Frame-Options/CSP).',
-      'Explore GitHub repositories, view file trees, and copy CDN links directly with GitHub Explorer.',
-      'Run isolated HTML5, CSS3, and JavaScript snippets with live preview in Code Sandbox.',
-      'Design distributed systems and microservice topologies on the 2D Vector Architecture Board.',
-      'Test HTTP APIs, endpoints, headers, and payloads with the built-in REST Tester (Hoppscotch-lite).'
-    ],
-    howToDoIt: [
-      { step: '1. Create New Tab', detail: 'Click the "+" button in the tab bar. Choose from Web Viewport, GitHub Explorer, Code Sandbox, Vector Board, or REST Tester.' },
-      { step: '2. Toggle Team Sharing', detail: 'Click the "PRIVATE (ONLY ME)" vs "TAB: SHARED WITH TEAM" badge on any tab. Shared tabs appear in the top strip for all team members.' },
-      { step: '3. Use Vector Board', detail: 'Click "ADD NODE" to place Client, Server, DB, AI, or Cache nodes. Drag nodes to position and click connectors to draw architecture paths.' },
-      { step: '4. Execute Code in Sandbox', detail: 'Write or paste HTML/CSS/JS into the editor panes and click "RUN". Output renders inside an isolated iframe with console capture.' },
-      { step: '5. Test REST Endpoints', detail: 'Select HTTP method (GET, POST, PUT, DELETE), enter endpoint URL, configure headers and JSON body, and click "SEND".' }
-    ],
-    shortcuts: [
-      { key: 'Click +', action: 'Open New Developer Tool Tab' },
-      { key: 'Toggle SHARE', action: 'Broadcast Tab to Team Strip' },
-      { key: 'Ctrl + S + D + F', action: 'Open Developer Browser Guide' }
-    ],
-    proTips: [
-      'Shared tabs are automatically indexed into local RAG so AI Copilot can answer questions about active research URLs.',
-      'In the Windows Electron Desktop (.exe) build, web tabs load without iframe framing restrictions.'
-    ]
-  },
-  stage: {
-    view: 'stage',
-    title: 'Uncompressed Studio WebRTC Voice & Video Stage',
-    badge: 'STUDIO-STAGE',
-    subtitle: 'Hardware 48 kHz Web Audio API pipeline, 510 kbps stereo Opus codec, and 60fps FFT visualizer.',
-    whatToDo: [
-      'Host zero-latency peer mesh audio and video calls with team members in the active space.',
-      'Calibrate hardware microphone audio with 0% to 200% GainNode boost and dynamics compressor limiter.',
-      'Share screens in high-definition (up to 4K60) with sub-second latency.',
-      'Monitor live audio frequency spectrum on the HTML5 2D Canvas 60fps FFT spectrum analyzer.'
-    ],
-    howToDoIt: [
-      { step: '1. Join Studio Stage', detail: 'Click "JOIN STAGE" or toggle the Stage button in the persistent bottom VoicePod to activate WebRTC calling.' },
-      { step: '2. Hardware Calibration', detail: 'Click "AUDIO HARDWARE" in VoicePod to select your microphone, toggle GainNode boost up to 200%, and enable loopback monitoring.' },
-      { step: '3. Broadcast Media', detail: 'Toggle Microphone, Video Camera, or Screen Share buttons in the Stage toolbar to broadcast to connected peers.' },
-      { step: '4. Instant Peer Mesh', detail: 'Signaling runs through BroadcastChannel across browser tabs and WebRTC mesh with zero server infrastructure costs.' }
-    ],
-    shortcuts: [
-      { key: 'Mute Button', action: 'Hardware Mic Mute Toggle' },
-      { key: 'Boost Slider', action: '0% to 200% Web Audio GainNode' },
-      { key: 'Ctrl + S + D + F', action: 'Open WebRTC Stage Guide' }
-    ],
-    proTips: [
-      'Opus SDP is modified in real-time to enforce maxaveragebitrate=510000;stereo=1 for studio-grade audio.',
-      'The VoicePod is persistent across all views, so your call stays active even while editing docs or code.'
-    ]
-  },
-  copilot: {
-    view: 'copilot',
-    title: 'Isolated Member AI Chat & 3D Assistant (WHITE)',
-    badge: 'AI-COPILOT',
-    subtitle: 'Zero-latency Gemini reasoning grounded in space SOUL.MD, member directives, and local RAG context.',
-    whatToDo: [
-      'Query Google Gemini models with automatic space knowledge grounding and member persona adaptation.',
-      'Interact with the Three.js audio-reactive 3D assistant canvas ("WHITE") with live wireframe vertex displacement.',
-      'Maintain separate, isolated conversation histories for each team member within each space.'
-    ],
-    howToDoIt: [
-      { step: '1. Configure Gemini Key', detail: 'Click the [GEMINI] badge in the TopBar to enter a free Google Gemini API key or explore available models.' },
-      { step: '2. Ask Questions', detail: 'Type any technical question, code request, or architectural inquiry. Copilot retrieves relevant local chunks and answers concisely.' },
-      { step: '3. Inspect RAG Grounding', detail: 'Expand the "RETRIEVED KNOWLEDGE SOURCES" pill under assistant responses to inspect exact source chunks and scores.' },
-      { step: '4. Member Isolation', detail: 'Switch user profiles (VS, AS, LA, SG) via TopBar. Each user retains their own private conversation stream per space.' }
-    ],
-    shortcuts: [
-      { key: 'Enter', action: 'Send Query to Gemini' },
-      { key: 'Shift + Enter', action: 'Insert Newline in Prompt' },
-      { key: 'Ctrl + S + D + F', action: 'Open AI Copilot Guide' }
-    ],
-    proTips: [
-      'Prompt assembler automatically injects the active space SOUL.MD master system prompt before every query.',
-      'Click the 3D Assistant icon in NotionSidebar to open the dedicated Three.js studio modal.'
-    ]
-  }
-};
+type GuideSection = 'QUICK_START' | 'CALLING' | 'AI_COPILOT' | 'DOCUMENTS' | 'KANBAN' | 'SHORTCUTS';
 
 export const AppGuideModal: React.FC<AppGuideModalProps> = ({ isOpen, onClose }) => {
-  const { 
-    activeView, 
-    setActiveView, 
-    activeSpace, 
-    spaces, 
-    setActiveSpaceId, 
-    activeMember, 
-    geminiKey, 
-    isKeyLinked 
-  } = useWorkspace();
-  const { createDocument } = useDocuments();
-  const { createTask } = useTasks();
-  const { createTab } = useBrowser();
-  const { totalChunksIndexed } = useRAG();
-
-  const [activeTab, setActiveTab] = useState<GuideTab>('CURRENT_PAGE');
-  const [selectedViewGuide, setSelectedViewGuide] = useState<WorkspaceView>(activeView);
-  const [auditSummary, setAuditSummary] = useState<SystemAuditSummary | null>(null);
-  const [isAuditing, setIsAuditing] = useState(false);
-  const [auditFilter, setAuditFilter] = useState<'ALL' | 'WORKING' | 'REQUIRES_KEY' | 'FAILED'>('ALL');
-  const [copiedReport, setCopiedReport] = useState(false);
-  const [demoActionNotice, setDemoActionNotice] = useState<string | null>(null);
-  const [tourStep, setTourStep] = useState(0);
-
-  // Keep selectedViewGuide in sync when modal opens
-  useEffect(() => {
-    if (isOpen) {
-      setSelectedViewGuide(activeView);
-    }
-  }, [isOpen, activeView]);
-
-  // Run initial background audit once on mount/open
-  useEffect(() => {
-    if (isOpen && !auditSummary && !isAuditing) {
-      handleRunAudit();
-    }
-  }, [isOpen]);
-
-  const handleRunAudit = async () => {
-    setIsAuditing(true);
-    try {
-      const summary = await runFeatureAudit(geminiKey);
-      setAuditSummary(summary);
-    } catch (err) {
-      console.error('Audit failed', err);
-    } finally {
-      setIsAuditing(false);
-    }
-  };
-
-  const handleCopyReport = () => {
-    if (!auditSummary) return;
-    const reportText = JSON.stringify(auditSummary, null, 2);
-    navigator.clipboard.writeText(reportText);
-    setCopiedReport(true);
-    setTimeout(() => setCopiedReport(false), 2000);
-  };
-
-  const showNotice = (msg: string) => {
-    setDemoActionNotice(msg);
-    setTimeout(() => setDemoActionNotice(null), 3500);
-  };
-
-  // Interactive Live Demo Actions
-  const handleDemoCreateDoc = () => {
-    const doc = createDocument(
-      activeSpace.id,
-      'DEMO_ARCHITECTURE_OVERVIEW',
-      `# White Collars Architecture Spec // Live Demo\n\n- Runtime: Dual-Target Web & Windows Native Desktop (.exe)\n- Design: Strict Monochrome Discipline (#000000 - #FFFFFF)\n- Latency: Sub-millisecond Local RAG (< 1ms)\n- Audio: 48 kHz Web Audio GainNode & 510 kbps Opus WebRTC\n\n## Checklist\n- [x] Multi-Space Partitioning\n- [x] Member Chat Isolation\n- [ ] Deploy Live Production Bridge`,
-      'md'
-    );
-    setActiveView('editor');
-    showNotice(`Created demo document: "${doc.title}" in ${activeSpace.name}. Switch to Editor to view.`);
-  };
-
-  const handleDemoCreateTask = () => {
-    const task = createTask(
-      activeSpace.id,
-      'P0: Audio Hardware 200% Gain Calibration',
-      'Verify 48,000 Hz hardware AudioContext, calibrate GainNode multiplier from 0 to 200%, and test dynamics limiter soft clipping.',
-      'P0',
-      activeMember.id
-    );
-    setActiveView('kanban');
-    showNotice(`Created P0 task: "${task.title}". Switched to Kanban pipeline.`);
-  };
-
-  const handleDemoOpenTool = (tool: 'sandbox' | 'vector' | 'rest') => {
-    const titleMap = {
-      sandbox: 'Live Code Sandbox Runner',
-      vector: 'Vector Architecture Board Canvas',
-      rest: 'REST API Tester'
-    };
-    createTab(activeMember.id, activeSpace.id, {
-      title: titleMap[tool],
-      type: tool,
-      url: `${tool}://workspace`
-    });
-    setActiveView('browser');
-    showNotice(`Launched ${titleMap[tool]} tab in Developer Browser.`);
-  };
+  const { setActiveView, activeSpace } = useWorkspace();
+  const [activeSection, setActiveSection] = useState<GuideSection>('QUICK_START');
+  const [searchQuery, setSearchQuery] = useState('');
 
   if (!isOpen) return null;
 
-  const currentGuide = PAGE_GUIDES[selectedViewGuide] || PAGE_GUIDES.editor;
-
-  // Filter audit items
-  const filteredAuditResults = (auditSummary?.results || []).filter(item => {
-    if (auditFilter === 'ALL') return true;
-    return item.status === auditFilter;
-  });
+  const navigateToView = (view: WorkspaceView) => {
+    setActiveView(view);
+    onClose();
+  };
 
   return (
-    <div className="fixed inset-0 bg-[#000000]/90 backdrop-blur-md flex items-center justify-center z-50 p-3 lg:p-6 font-mono select-none">
-      <div className="w-full max-w-5xl bg-[#0A0A0A] border border-[#333333] shadow-2xl flex flex-col h-[90vh] max-h-[820px] overflow-hidden">
-        
-        {/* --- Top Modal Header --- */}
-        <header className="h-13 bg-[#121212] border-b border-[#262626] px-4 flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-3 min-w-0">
-            <span className="bg-[#FFFFFF] text-[#000000] text-[10px] font-bold px-2 py-0.5 tracking-wider shrink-0">
-              DEMO // GUIDE
-            </span>
-            <div className="truncate">
-              <h2 className="text-xs font-bold text-[#FFFFFF] tracking-wider truncate uppercase">
-                WHITESPACE OS // INTERACTIVE APP DEMO & FEATURE AUDIT
+    <div className="fixed inset-0 bg-[#0B0B0E]/85 backdrop-blur-md flex items-center justify-center z-50 p-4 sm:p-6 animate-fade-in">
+      <div className="w-full max-w-4xl bg-[#14141C] border border-[#2F2F3E] rounded-3xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden text-[#FFFFFF]">
+        {/* Header */}
+        <div className="px-6 py-4 border-b border-[#242430] flex items-center justify-between bg-[#171722] shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-[#20202E] border border-[#333346] flex items-center justify-center text-emerald-400">
+              <BookOpen size={18} />
+            </div>
+            <div>
+              <h2 className="text-base sm:text-lg font-bold text-[#FFFFFF] tracking-tight">
+                White Collars // User Guide & Documentation
               </h2>
-              <p className="text-[10px] text-[#737373] truncate">
-                EVERY-PAGE INSTRUCTIONS // LIVE FEATURE DIAGNOSTICS // ZERO EMOJI DISCIPLINE
+              <p className="text-xs text-[#8E8E9E]">
+                Clear, step-by-step guidance for voice calls, video sharing, AI assistance, and knowledge management.
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
-            <div className="hidden sm:flex items-center gap-1.5 px-2 py-1 bg-[#000000] border border-[#262626] text-[10px] text-[#A3A3A3]">
-              <span>SHORTCUT:</span>
-              <kbd className="text-[#FFFFFF] font-bold">CTRL+S+D+F</kbd>
+          <button 
+            onClick={onClose}
+            className="w-8 h-8 rounded-full bg-[#1E1E28] hover:bg-[#2A2A38] text-[#8E8E9E] hover:text-[#FFFFFF] flex items-center justify-center transition-all border border-[#2F2F3E]"
+          >
+            <X size={16} />
+          </button>
+        </div>
+
+        {/* Content Layout: Sidebar + Main Content */}
+        <div className="flex-1 flex flex-col md:flex-row min-h-0 overflow-hidden">
+          {/* Navigation Sidebar */}
+          <div className="w-full md:w-64 bg-[#111117] border-r border-[#242430] p-3 flex flex-col gap-1.5 shrink-0 overflow-y-auto">
+            <div className="px-3 py-1.5 text-xs font-semibold text-[#8E8E9E] uppercase tracking-wider">
+              Topics
             </div>
+
             <button
-              onClick={onClose}
-              className="p-1.5 text-[#737373] hover:text-[#FFFFFF] hover:bg-[#1A1A1A] border border-transparent hover:border-[#333333] transition-colors"
-              title="Close Guide (ESC)"
+              onClick={() => setActiveSection('QUICK_START')}
+              className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all text-left ${
+                activeSection === 'QUICK_START'
+                  ? 'bg-[#1E1E2A] text-[#FFFFFF] font-semibold border border-[#3A3A4E] shadow-sm'
+                  : 'text-[#D4D4DC] hover:text-[#FFFFFF] hover:bg-[#171720]'
+              }`}
             >
-              <X size={16} />
+              <Sparkles size={16} className={activeSection === 'QUICK_START' ? "text-emerald-400" : "text-[#8E8E9E]"} />
+              <span>1-Minute Quick Start</span>
+            </button>
+
+            <button
+              onClick={() => setActiveSection('CALLING')}
+              className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all text-left ${
+                activeSection === 'CALLING'
+                  ? 'bg-[#1E1E2A] text-[#FFFFFF] font-semibold border border-[#3A3A4E] shadow-sm'
+                  : 'text-[#D4D4DC] hover:text-[#FFFFFF] hover:bg-[#171720]'
+              }`}
+            >
+              <Radio size={16} className={activeSection === 'CALLING' ? "text-emerald-400" : "text-[#8E8E9E]"} />
+              <span>Voice & Video Calling</span>
+            </button>
+
+            <button
+              onClick={() => setActiveSection('AI_COPILOT')}
+              className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all text-left ${
+                activeSection === 'AI_COPILOT'
+                  ? 'bg-[#1E1E2A] text-[#FFFFFF] font-semibold border border-[#3A3A4E] shadow-sm'
+                  : 'text-[#D4D4DC] hover:text-[#FFFFFF] hover:bg-[#171720]'
+              }`}
+            >
+              <Bot size={16} className={activeSection === 'AI_COPILOT' ? "text-emerald-400" : "text-[#8E8E9E]"} />
+              <span>WHITE AI Assistant</span>
+            </button>
+
+            <button
+              onClick={() => setActiveSection('DOCUMENTS')}
+              className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all text-left ${
+                activeSection === 'DOCUMENTS'
+                  ? 'bg-[#1E1E2A] text-[#FFFFFF] font-semibold border border-[#3A3A4E] shadow-sm'
+                  : 'text-[#D4D4DC] hover:text-[#FFFFFF] hover:bg-[#171720]'
+              }`}
+            >
+              <FileText size={16} className={activeSection === 'DOCUMENTS' ? "text-emerald-400" : "text-[#8E8E9E]"} />
+              <span>Knowledge Docs & RAG</span>
+            </button>
+
+            <button
+              onClick={() => setActiveSection('KANBAN')}
+              className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all text-left ${
+                activeSection === 'KANBAN'
+                  ? 'bg-[#1E1E2A] text-[#FFFFFF] font-semibold border border-[#3A3A4E] shadow-sm'
+                  : 'text-[#D4D4DC] hover:text-[#FFFFFF] hover:bg-[#171720]'
+              }`}
+            >
+              <Kanban size={16} className={activeSection === 'KANBAN' ? "text-emerald-400" : "text-[#8E8E9E]"} />
+              <span>Kanban & Dispatch</span>
+            </button>
+
+            <button
+              onClick={() => setActiveSection('SHORTCUTS')}
+              className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all text-left ${
+                activeSection === 'SHORTCUTS'
+                  ? 'bg-[#1E1E2A] text-[#FFFFFF] font-semibold border border-[#3A3A4E] shadow-sm'
+                  : 'text-[#D4D4DC] hover:text-[#FFFFFF] hover:bg-[#171720]'
+              }`}
+            >
+              <Layers size={16} className={activeSection === 'SHORTCUTS' ? "text-emerald-400" : "text-[#8E8E9E]"} />
+              <span>Keyboard Shortcuts</span>
             </button>
           </div>
-        </header>
 
-        {/* --- Navigation Tabs --- */}
-        <nav className="h-10 bg-[#0F0F0F] border-b border-[#262626] px-4 flex items-center gap-2 overflow-x-auto shrink-0">
-          <button
-            onClick={() => setActiveTab('CURRENT_PAGE')}
-            className={`flex items-center gap-2 px-3 py-1.5 text-xs font-bold border transition-colors whitespace-nowrap cursor-pointer ${
-              activeTab === 'CURRENT_PAGE'
-                ? 'bg-[#FFFFFF] text-[#000000] border-[#FFFFFF]'
-                : 'bg-[#141414] text-[#A3A3A3] hover:text-[#FFFFFF] border-[#262626] hover:border-[#404040]'
-            }`}
-          >
-            <BookOpen size={13} />
-            <span>PAGE GUIDE: {selectedViewGuide.toUpperCase()}</span>
-          </button>
+          {/* Section Body */}
+          <div className="flex-1 p-6 overflow-y-auto custom-scrollbar space-y-6">
+            {activeSection === 'QUICK_START' && (
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-xl font-bold text-[#FFFFFF] mb-1">
+                    Welcome to White Collars (WHITESPACE)
+                  </h3>
+                  <p className="text-sm text-[#D4D4DC] leading-relaxed">
+                    WHITESPACE is an all-in-one autonomous workspace engineered for speed, privacy, and team collaboration.
+                  </p>
+                </div>
 
-          <button
-            onClick={() => setActiveTab('ALL_PAGES')}
-            className={`flex items-center gap-2 px-3 py-1.5 text-xs font-bold border transition-colors whitespace-nowrap cursor-pointer ${
-              activeTab === 'ALL_PAGES'
-                ? 'bg-[#FFFFFF] text-[#000000] border-[#FFFFFF]'
-                : 'bg-[#141414] text-[#A3A3A3] hover:text-[#FFFFFF] border-[#262626] hover:border-[#404040]'
-            }`}
-          >
-            <Layers size={13} />
-            <span>ALL 10 APP MODULES</span>
-          </button>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="bg-[#1A1A24] border border-[#2F2F3E] p-4 rounded-2xl flex flex-col justify-between">
+                    <div>
+                      <span className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold flex items-center justify-center mb-2">1</span>
+                      <h4 className="text-sm font-bold text-[#FFFFFF] mb-1">Switch Spaces</h4>
+                      <p className="text-xs text-[#8E8E9E]">
+                        Click on the left vertical rail to toggle between spaces (Core, SignBridge, Mai-Reads). Each space keeps its own notes and tasks.
+                      </p>
+                    </div>
+                  </div>
 
-          <button
-            onClick={() => setActiveTab('FEATURE_AUDIT')}
-            className={`flex items-center gap-2 px-3 py-1.5 text-xs font-bold border transition-colors whitespace-nowrap cursor-pointer ${
-              activeTab === 'FEATURE_AUDIT'
-                ? 'bg-[#FFFFFF] text-[#000000] border-[#FFFFFF]'
-                : 'bg-[#141414] text-[#A3A3A3] hover:text-[#FFFFFF] border-[#262626] hover:border-[#404040]'
-            }`}
-          >
-            <Terminal size={13} />
-            <span>FEATURE AUDIT & TESTS</span>
-            {auditSummary && (
-              <span className={`text-[10px] px-1.5 py-0.2 font-bold ${
-                activeTab === 'FEATURE_AUDIT' ? 'bg-[#000000] text-[#FFFFFF]' : 'bg-[#222222] text-[#CCCCCC]'
-              }`}>
-                {auditSummary.workingCount}/{auditSummary.totalFeatures} WORKING
-              </span>
+                  <div className="bg-[#1A1A24] border border-[#2F2F3E] p-4 rounded-2xl flex flex-col justify-between">
+                    <div>
+                      <span className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold flex items-center justify-center mb-2">2</span>
+                      <h4 className="text-sm font-bold text-[#FFFFFF] mb-1">Voice & Video Call</h4>
+                      <p className="text-xs text-[#8E8E9E]">
+                        Click STAGE or the radio button to join the call. Turn on webcam, share screen with quality presets (240p to 2K), and mute with 1 click.
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => navigateToView('stage')}
+                      className="mt-3 text-xs font-semibold text-emerald-400 hover:text-emerald-300 flex items-center gap-1"
+                    >
+                      Try Stage Call <ArrowRight size={12} />
+                    </button>
+                  </div>
+
+                  <div className="bg-[#1A1A24] border border-[#2F2F3E] p-4 rounded-2xl flex flex-col justify-between">
+                    <div>
+                      <span className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold flex items-center justify-center mb-2">3</span>
+                      <h4 className="text-sm font-bold text-[#FFFFFF] mb-1">AI Copilot</h4>
+                      <p className="text-xs text-[#8E8E9E]">
+                        Linked with Gemini API for instant answering, coding, and autonomous Kanban task execution.
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => navigateToView('copilot')}
+                      className="mt-3 text-xs font-semibold text-emerald-400 hover:text-emerald-300 flex items-center gap-1"
+                    >
+                      Open Copilot <ArrowRight size={12} />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="bg-[#181822] border border-[#2F2F3E] rounded-2xl p-4">
+                  <h4 className="text-sm font-bold text-[#FFFFFF] mb-2 flex items-center gap-2">
+                    <ShieldCheck size={16} className="text-emerald-400" />
+                    Strict Privacy & Local Execution
+                  </h4>
+                  <p className="text-xs text-[#D4D4DC] leading-relaxed">
+                    Documents are indexed locally using in-memory BM25 retrieval (&lt;1ms latency). Audio runs direct WebRTC peer mesh with 510kbps Opus stereo fidelity. No third-party tracking.
+                  </p>
+                </div>
+              </div>
             )}
-          </button>
 
-          <button
-            onClick={() => setActiveTab('INTERACTIVE_TOUR')}
-            className={`flex items-center gap-2 px-3 py-1.5 text-xs font-bold border transition-colors whitespace-nowrap cursor-pointer ${
-              activeTab === 'INTERACTIVE_TOUR'
-                ? 'bg-[#FFFFFF] text-[#000000] border-[#FFFFFF]'
-                : 'bg-[#141414] text-[#A3A3A3] hover:text-[#FFFFFF] border-[#262626] hover:border-[#404040]'
-            }`}
-          >
-            <Sparkles size={13} />
-            <span>5-PILLAR TOUR</span>
-          </button>
-        </nav>
+            {activeSection === 'CALLING' && (
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-xl font-bold text-[#FFFFFF] mb-1">
+                    Voice & Video Calling (Studio Stage)
+                  </h3>
+                  <p className="text-sm text-[#D4D4DC] leading-relaxed">
+                    Discord-style calling designed for zero latency, crystal-clear 510kbps Opus stereo audio, webcam streaming, and 60fps screen sharing.
+                  </p>
+                </div>
 
-        {/* --- Global Action Banner Notice (if triggered) --- */}
-        {demoActionNotice && (
-          <div className="bg-[#171717] border-b border-[#404040] px-4 py-2 flex items-center justify-between text-xs text-[#FFFFFF]">
-            <div className="flex items-center gap-2">
-              <CheckCircle2 size={13} className="text-[#FFFFFF]" />
-              <span>{demoActionNotice}</span>
-            </div>
-            <button onClick={() => setDemoActionNotice(null)} className="text-[#A3A3A3] hover:text-[#FFFFFF]">
-              <X size={12} />
-            </button>
-          </div>
-        )}
+                <div className="space-y-3">
+                  <div className="bg-[#1A1A24] border border-[#2F2F3E] p-4 rounded-2xl flex items-start gap-3">
+                    <div className="p-2 rounded-xl bg-[#242432] text-emerald-400 shrink-0">
+                      <Mic size={18} />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-[#FFFFFF]">Microphone & Mute Status</h4>
+                      <p className="text-xs text-[#8E8E9E] mt-1 leading-relaxed">
+                        When microphone is active, you will see a green pulsing indicator and live audio waves. When muted, a red <strong>MUTED</strong> badge appears and the audio waves <strong>flatten completely to zero</strong>.
+                      </p>
+                    </div>
+                  </div>
 
-        {/* --- Main Content Area --- */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-6 bg-[#0A0A0A]">
+                  <div className="bg-[#1A1A24] border border-[#2F2F3E] p-4 rounded-2xl flex items-start gap-3">
+                    <div className="p-2 rounded-xl bg-[#242432] text-emerald-400 shrink-0">
+                      <Video size={18} />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-[#FFFFFF]">Webcam Video Calling</h4>
+                      <p className="text-xs text-[#8E8E9E] mt-1 leading-relaxed">
+                        Click the camera icon on the bottom dock to start or stop your webcam video. Your video tile will show an active speaker ring whenever you talk.
+                      </p>
+                    </div>
+                  </div>
 
-          {/* ========================================================================= */}
-          {/* TAB 1: CURRENT PAGE INSTRUCTIONS & INTERACTIVE DEMO                       */}
-          {/* ========================================================================= */}
-          {activeTab === 'CURRENT_PAGE' && (
-            <div className="space-y-6">
-              
-              {/* Quick View Switcher Bar inside Guide */}
-              <div className="border border-[#262626] bg-[#121212] p-3 flex flex-wrap items-center justify-between gap-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-[11px] text-[#A3A3A3]">VIEWING INSTRUCTIONS FOR:</span>
-                  <div className="flex items-center gap-1">
-                    {(['editor', 'kanban', 'browser', 'stage', 'copilot'] as WorkspaceView[]).map(v => (
-                      <button
-                        key={v}
-                        onClick={() => setSelectedViewGuide(v)}
-                        className={`px-2 py-1 text-[11px] border uppercase transition-colors ${
-                          selectedViewGuide === v
-                            ? 'bg-[#FFFFFF] text-[#000000] font-bold border-[#FFFFFF]'
-                            : 'bg-[#181818] hover:bg-[#222222] text-[#A3A3A3] hover:text-[#FFFFFF] border-[#333333]'
-                        }`}
-                      >
-                        {v}
-                      </button>
-                    ))}
+                  <div className="bg-[#1A1A24] border border-[#2F2F3E] p-4 rounded-2xl flex items-start gap-3">
+                    <div className="p-2 rounded-xl bg-[#242432] text-emerald-400 shrink-0">
+                      <Monitor size={18} />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-[#FFFFFF]">Screen Sharing & Quality Presets (240p to 2K)</h4>
+                      <p className="text-xs text-[#8E8E9E] mt-1 leading-relaxed">
+                        Click the monitor button to present code or browser windows at up to 60fps. Choose resolution presets anytime:
+                      </p>
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        <span className="px-2 py-0.5 rounded-lg bg-[#222230] border border-[#333346] text-[11px] font-bold text-[#D4D4DC]">240p (Data Saver)</span>
+                        <span className="px-2 py-0.5 rounded-lg bg-[#222230] border border-[#333346] text-[11px] font-bold text-[#D4D4DC]">360p Standard</span>
+                        <span className="px-2 py-0.5 rounded-lg bg-[#222230] border border-[#333346] text-[11px] font-bold text-[#D4D4DC]">720p HD</span>
+                        <span className="px-2 py-0.5 rounded-lg bg-[#222230] border border-[#333346] text-[11px] font-bold text-[#D4D4DC]">1080p Full HD</span>
+                        <span className="px-2 py-0.5 rounded-lg bg-[#222230] border border-[#333346] text-[11px] font-bold text-emerald-400">2K Ultra HD (1440p)</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 <button
-                  onClick={() => {
-                    setActiveView(selectedViewGuide);
-                    onClose();
-                  }}
-                  className="flex items-center gap-1.5 px-3 py-1 bg-[#FFFFFF] text-[#000000] text-xs font-bold hover:bg-[#CCCCCC] transition-colors"
+                  onClick={() => navigateToView('stage')}
+                  className="px-5 py-2.5 rounded-xl bg-[#FFFFFF] text-[#0B0B0E] font-bold text-xs hover:bg-[#E4E4E7] transition-all flex items-center gap-2"
                 >
-                  <span>GO TO THIS PAGE NOW</span>
-                  <ArrowRight size={13} />
+                  <Radio size={14} />
+                  <span>Launch Voice & Video Stage Now</span>
                 </button>
               </div>
+            )}
 
-              {/* View Hero Header */}
-              <div className="border border-[#262626] bg-[#0E0E0E] p-5">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="bg-[#FFFFFF] text-[#000000] font-bold text-xs px-2 py-0.5">
-                    {currentGuide.badge}
-                  </span>
-                  <h3 className="text-base font-bold text-[#FFFFFF] tracking-wider uppercase">
-                    {currentGuide.title}
-                  </h3>
-                </div>
-                <p className="text-xs text-[#A3A3A3] leading-relaxed">
-                  {currentGuide.subtitle}
-                </p>
-              </div>
-
-              {/* Grid: What to do & How to do it */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                
-                {/* Left: What to do */}
-                <div className="border border-[#262626] bg-[#101010] p-4 flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center gap-2 pb-2 border-b border-[#262626] mb-3">
-                      <span className="w-1.5 h-1.5 bg-[#FFFFFF]" />
-                      <h4 className="text-xs font-bold text-[#FFFFFF] tracking-wider uppercase">
-                        WHAT TO DO ON THIS PAGE
-                      </h4>
-                    </div>
-                    <ul className="space-y-2.5">
-                      {currentGuide.whatToDo.map((item, idx) => (
-                        <li key={idx} className="flex items-start gap-2 text-xs text-[#CCCCCC] leading-relaxed">
-                          <span className="text-[#666666] shrink-0 font-bold">{idx + 1}.</span>
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* Pro-Tips footer */}
-                  <div className="mt-4 pt-3 border-t border-[#262626]">
-                    <div className="text-[10px] text-[#A3A3A3] uppercase font-bold mb-1.5">PRO-TIPS & BEHAVIOR:</div>
-                    {currentGuide.proTips.map((tip, idx) => (
-                      <p key={idx} className="text-[11px] text-[#888888] leading-relaxed mb-1">
-                        • {tip}
-                      </p>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Right: Step-by-Step How To Do It */}
-                <div className="border border-[#262626] bg-[#101010] p-4 flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center gap-2 pb-2 border-b border-[#262626] mb-3">
-                      <span className="w-1.5 h-1.5 bg-[#FFFFFF]" />
-                      <h4 className="text-xs font-bold text-[#FFFFFF] tracking-wider uppercase">
-                        HOW TO DO IT (STEP-BY-STEP)
-                      </h4>
-                    </div>
-                    <div className="space-y-3">
-                      {currentGuide.howToDoIt.map((h, idx) => (
-                        <div key={idx} className="border-l-2 border-[#404040] pl-3">
-                          <div className="text-xs font-bold text-[#FFFFFF]">{h.step}</div>
-                          <div className="text-[11px] text-[#888888] mt-0.5 leading-relaxed">{h.detail}</div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Shortcuts */}
-                  <div className="mt-4 pt-3 border-t border-[#262626]">
-                    <div className="text-[10px] text-[#A3A3A3] uppercase font-bold mb-2">PAGE SHORTCUTS:</div>
-                    <div className="flex flex-wrap gap-2">
-                      {currentGuide.shortcuts.map((s, idx) => (
-                        <div key={idx} className="flex items-center gap-1.5 bg-[#000000] border border-[#2E2E2E] px-2 py-1 text-[10px]">
-                          <kbd className="font-bold text-[#FFFFFF]">{s.key}</kbd>
-                          <span className="text-[#737373]">→</span>
-                          <span className="text-[#A3A3A3]">{s.action}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Bottom: 1-Click Interactive Live Demo Actions */}
-              <div className="border border-[#333333] bg-[#141414] p-4">
-                <div className="flex items-center justify-between pb-2 border-b border-[#262626] mb-3">
-                  <div className="flex items-center gap-2">
-                    <Play size={13} className="text-[#FFFFFF]" />
-                    <h4 className="text-xs font-bold text-[#FFFFFF] tracking-wider uppercase">
-                      TRY LIVE DEMO ACTIONS (ONE-CLICK EXECUTION)
-                    </h4>
-                  </div>
-                  <span className="text-[10px] text-[#737373]">INTERACTIVE DEMO TRIGGERS</span>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <button
-                    onClick={handleDemoCreateDoc}
-                    className="flex flex-col text-left p-3 bg-[#0A0A0A] hover:bg-[#1A1A1A] border border-[#262626] hover:border-[#FFFFFF] transition-colors"
-                  >
-                    <div className="flex items-center justify-between text-xs font-bold text-[#FFFFFF] mb-1">
-                      <span>LOAD ARCHITECTURE SPEC</span>
-                      <FileText size={13} />
-                    </div>
-                    <p className="text-[10px] text-[#888888] leading-relaxed">
-                      Creates and indexes a comprehensive demo specification in Notion 3.0 editor.
-                    </p>
-                  </button>
-
-                  <button
-                    onClick={handleDemoCreateTask}
-                    className="flex flex-col text-left p-3 bg-[#0A0A0A] hover:bg-[#1A1A1A] border border-[#262626] hover:border-[#FFFFFF] transition-colors"
-                  >
-                    <div className="flex items-center justify-between text-xs font-bold text-[#FFFFFF] mb-1">
-                      <span>SEED P0 KANBAN TASK</span>
-                      <Kanban size={13} />
-                    </div>
-                    <p className="text-[10px] text-[#888888] leading-relaxed">
-                      Injects an urgent P0 task into the sprint pipeline ready for 1-click Dispatch AI.
-                    </p>
-                  </button>
-
-                  <button
-                    onClick={() => handleDemoOpenTool('vector')}
-                    className="flex flex-col text-left p-3 bg-[#0A0A0A] hover:bg-[#1A1A1A] border border-[#262626] hover:border-[#FFFFFF] transition-colors"
-                  >
-                    <div className="flex items-center justify-between text-xs font-bold text-[#FFFFFF] mb-1">
-                      <span>LAUNCH VECTOR BOARD</span>
-                      <Compass size={13} />
-                    </div>
-                    <p className="text-[10px] text-[#888888] leading-relaxed">
-                      Opens the interactive 2D diagramming canvas with microservice nodes in Browser.
-                    </p>
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* ========================================================================= */}
-          {/* TAB 2: ALL 10 APP MODULES DIRECTORY                                       */}
-          {/* ========================================================================= */}
-          {activeTab === 'ALL_PAGES' && (
-            <div className="space-y-4">
-              <div className="border border-[#262626] bg-[#121212] p-4 flex items-center justify-between">
+            {activeSection === 'AI_COPILOT' && (
+              <div className="space-y-6">
                 <div>
-                  <h3 className="text-xs font-bold text-[#FFFFFF] tracking-wider uppercase mb-1">
-                    WHITESPACE ARCHITECTURAL SITEMAP // 10 CORE MODULES & TOOLS
+                  <h3 className="text-xl font-bold text-[#FFFFFF] mb-1">
+                    WHITE 3D Voice Assistant & Gemini AI Copilot
                   </h3>
-                  <p className="text-[11px] text-[#888888]">
-                    Click any module card to read its full guide or instantly jump to that page.
+                  <p className="text-sm text-[#D4D4DC] leading-relaxed">
+                    WHITE is your 3D autonomous assistant. The rotating wireframe sphere on the top left serves as the living logo of the app.
                   </p>
                 </div>
-                <div className="text-right">
-                  <span className="text-xs font-bold text-[#FFFFFF]">{spaces.length} ACTIVE SPACES</span>
-                  <div className="text-[10px] text-[#737373]">{totalChunksIndexed} CHUNKS INDEXED</div>
+
+                <div className="bg-[#1A1A24] border border-[#2F2F3E] p-4 rounded-2xl space-y-3">
+                  <h4 className="text-sm font-bold text-[#FFFFFF]">How It Works</h4>
+                  <ul className="text-xs text-[#D4D4DC] space-y-2 list-disc list-inside leading-relaxed">
+                    <li><strong>3D Assistant Logo:</strong> Click the 3D rotating monogram on the top-left rail to open the 3D Assistant Studio. When you speak, the logo pulsates to your voice!</li>
+                    <li><strong>Space Persona (SOUL.MD):</strong> Each space has its own system prompt (SOUL.MD) that tells Gemini how to answer, whether it's software engineering, computer vision, or research.</li>
+                    <li><strong>Pre-Configured API Key:</strong> The workspace comes linked with a verified Gemini API key supporting high-velocity reasoning models like <code>gemini-3.1-flash-lite</code> with instant failover.</li>
+                  </ul>
                 </div>
+
+                <button
+                  onClick={() => navigateToView('copilot')}
+                  className="px-5 py-2.5 rounded-xl bg-[#FFFFFF] text-[#0B0B0E] font-bold text-xs hover:bg-[#E4E4E7] transition-all flex items-center gap-2"
+                >
+                  <Bot size={14} />
+                  <span>Open AI Copilot Chat</span>
+                </button>
               </div>
+            )}
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                
-                {/* 1. Notion 3.0 Slash Editor */}
-                <div className="border border-[#262626] hover:border-[#404040] bg-[#101010] p-4 flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <span className="bg-[#FFFFFF] text-[#000000] text-[10px] font-bold px-1.5 py-0.2">01</span>
-                        <h4 className="text-xs font-bold text-[#FFFFFF]">NOTION 3.0 SLASH EDITOR</h4>
-                      </div>
-                      <span className="text-[10px] text-[#888888]">VIEW: editor</span>
-                    </div>
-                    <p className="text-[11px] text-[#888888] leading-relaxed mb-3">
-                      Slash commands (/h1, /code, /task), 10-format ingestion (.py, .ts, .csv, etc.), and sub-millisecond local RAG indexing.
+            {activeSection === 'DOCUMENTS' && (
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-xl font-bold text-[#FFFFFF] mb-1">
+                    Notion 3.0 Live Markdown & File Ingestion
+                  </h3>
+                  <p className="text-sm text-[#D4D4DC] leading-relaxed">
+                    Distraction-free knowledge base with instant slash commands and multi-format document parsing.
+                  </p>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="bg-[#1A1A24] border border-[#2F2F3E] p-4 rounded-2xl">
+                    <h4 className="text-sm font-bold text-[#FFFFFF] mb-1">1. Slash Command Menu</h4>
+                    <p className="text-xs text-[#8E8E9E] leading-relaxed">
+                      Type <kbd className="px-1.5 py-0.5 rounded bg-[#101018] border border-[#2F2F3E] text-[#FFFFFF] font-mono text-xs">/</kbd> on any blank line to insert Headings (H1-H3), code blocks, interactive task checkboxes, quotes, or dividers.
                     </p>
                   </div>
-                  <div className="flex gap-2 pt-2 border-t border-[#262626]">
-                    <button
-                      onClick={() => { setSelectedViewGuide('editor'); setActiveTab('CURRENT_PAGE'); }}
-                      className="px-2.5 py-1 text-[11px] border border-[#333333] hover:border-[#FFFFFF] text-[#CCCCCC] hover:text-[#FFFFFF]"
-                    >
-                      READ GUIDE
-                    </button>
-                    <button
-                      onClick={() => { setActiveView('editor'); onClose(); }}
-                      className="px-2.5 py-1 text-[11px] bg-[#FFFFFF] text-[#000000] font-bold hover:bg-[#CCCCCC]"
-                    >
-                      OPEN EDITOR →
-                    </button>
+
+                  <div className="bg-[#1A1A24] border border-[#2F2F3E] p-4 rounded-2xl">
+                    <h4 className="text-sm font-bold text-[#FFFFFF] mb-1">2. Uploading Files</h4>
+                    <p className="text-xs text-[#8E8E9E] leading-relaxed">
+                      Click the upload icon in the sidebar to import files up to 5MB. Supports 10 formats: <code>.md, .txt, .json, .csv, .py, .js, .ts, .html, .css, .yaml</code>. Uploaded documents are immediately tokenized into the local RAG engine.
+                    </p>
                   </div>
                 </div>
 
-                {/* 2. OpenClaw Kanban Board */}
-                <div className="border border-[#262626] hover:border-[#404040] bg-[#101010] p-4 flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <span className="bg-[#FFFFFF] text-[#000000] text-[10px] font-bold px-1.5 py-0.2">02</span>
-                        <h4 className="text-xs font-bold text-[#FFFFFF]">OPENCLAW KANBAN PIPELINE</h4>
-                      </div>
-                      <span className="text-[10px] text-[#888888]">VIEW: kanban</span>
-                    </div>
-                    <p className="text-[11px] text-[#888888] leading-relaxed mb-3">
-                      3-column sprint pipeline (QUEUED, ACTIVE, SHIPPED) with P0-P2 priority tiers and 1-click Dispatch AI copilot execution.
+                <button
+                  onClick={() => navigateToView('editor')}
+                  className="px-5 py-2.5 rounded-xl bg-[#FFFFFF] text-[#0B0B0E] font-bold text-xs hover:bg-[#E4E4E7] transition-all flex items-center gap-2"
+                >
+                  <FileText size={14} />
+                  <span>Open Knowledge Docs</span>
+                </button>
+              </div>
+            )}
+
+            {activeSection === 'KANBAN' && (
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-xl font-bold text-[#FFFFFF] mb-1">
+                    OpenClaw Kanban Mission Control & Dispatch AI
+                  </h3>
+                  <p className="text-sm text-[#D4D4DC] leading-relaxed">
+                    3-column engineering task pipeline with 1-click Dispatch to autonomous Gemini Copilot.
+                  </p>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="bg-[#1A1A24] border border-[#2F2F3E] p-4 rounded-2xl">
+                    <h4 className="text-sm font-bold text-[#FFFFFF] mb-1">Columns: Queued → Active → Shipped</h4>
+                    <p className="text-xs text-[#8E8E9E] leading-relaxed">
+                      Drag cards freely between columns to update status. Assign priority badges like P0 (Urgent), P1 (High), and P2 (Normal).
                     </p>
                   </div>
-                  <div className="flex gap-2 pt-2 border-t border-[#262626]">
-                    <button
-                      onClick={() => { setSelectedViewGuide('kanban'); setActiveTab('CURRENT_PAGE'); }}
-                      className="px-2.5 py-1 text-[11px] border border-[#333333] hover:border-[#FFFFFF] text-[#CCCCCC] hover:text-[#FFFFFF]"
-                    >
-                      READ GUIDE
-                    </button>
-                    <button
-                      onClick={() => { setActiveView('kanban'); onClose(); }}
-                      className="px-2.5 py-1 text-[11px] bg-[#FFFFFF] text-[#000000] font-bold hover:bg-[#CCCCCC]"
-                    >
-                      OPEN KANBAN →
-                    </button>
+
+                  <div className="bg-[#1A1A24] border border-[#2F2F3E] p-4 rounded-2xl">
+                    <h4 className="text-sm font-bold text-[#FFFFFF] mb-1">1-Click Dispatch AI Copilot</h4>
+                    <p className="text-xs text-[#8E8E9E] leading-relaxed">
+                      Click the <strong>DISPATCH AI</strong> button on any task card. The Copilot drawer opens on the right side and begins writing code or architectural plans to solve that task.
+                    </p>
                   </div>
                 </div>
 
-                {/* 3. Developer Browser Suite */}
-                <div className="border border-[#262626] hover:border-[#404040] bg-[#101010] p-4 flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <span className="bg-[#FFFFFF] text-[#000000] text-[10px] font-bold px-1.5 py-0.2">03</span>
-                        <h4 className="text-xs font-bold text-[#FFFFFF]">DEVELOPER BROWSER & TOOLS</h4>
-                      </div>
-                      <span className="text-[10px] text-[#888888]">VIEW: browser</span>
-                    </div>
-                    <p className="text-[11px] text-[#888888] leading-relaxed mb-3">
-                      5 integrated tools: Web Viewport, GitHub Explorer, Code Sandbox, Vector Board, and REST Tester with Private vs Team Shared tab toggles.
-                    </p>
-                  </div>
-                  <div className="flex gap-2 pt-2 border-t border-[#262626]">
-                    <button
-                      onClick={() => { setSelectedViewGuide('browser'); setActiveTab('CURRENT_PAGE'); }}
-                      className="px-2.5 py-1 text-[11px] border border-[#333333] hover:border-[#FFFFFF] text-[#CCCCCC] hover:text-[#FFFFFF]"
-                    >
-                      READ GUIDE
-                    </button>
-                    <button
-                      onClick={() => { setActiveView('browser'); onClose(); }}
-                      className="px-2.5 py-1 text-[11px] bg-[#FFFFFF] text-[#000000] font-bold hover:bg-[#CCCCCC]"
-                    >
-                      OPEN BROWSER →
-                    </button>
-                  </div>
+                <button
+                  onClick={() => navigateToView('kanban')}
+                  className="px-5 py-2.5 rounded-xl bg-[#FFFFFF] text-[#0B0B0E] font-bold text-xs hover:bg-[#E4E4E7] transition-all flex items-center gap-2"
+                >
+                  <Kanban size={14} />
+                  <span>Open Kanban Pipeline</span>
+                </button>
+              </div>
+            )}
+
+            {activeSection === 'SHORTCUTS' && (
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-xl font-bold text-[#FFFFFF] mb-1">
+                    Essential Keyboard Shortcuts
+                  </h3>
+                  <p className="text-sm text-[#D4D4DC] leading-relaxed">
+                    High-speed shortcuts designed for power users and white-collar developers.
+                  </p>
                 </div>
 
-                {/* 4. Studio WebRTC Audio Stage */}
-                <div className="border border-[#262626] hover:border-[#404040] bg-[#101010] p-4 flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <span className="bg-[#FFFFFF] text-[#000000] text-[10px] font-bold px-1.5 py-0.2">04</span>
-                        <h4 className="text-xs font-bold text-[#FFFFFF]">STUDIO WEBRTC & AUDIO POD</h4>
-                      </div>
-                      <span className="text-[10px] text-[#888888]">VIEW: stage</span>
-                    </div>
-                    <p className="text-[11px] text-[#888888] leading-relaxed mb-3">
-                      Uncompressed 510 kbps stereo Opus WebRTC peer mesh, 48 kHz hardware AudioContext, 0-200% GainNode boost, and 60fps FFT spectrum.
-                    </p>
+                <div className="bg-[#1A1A24] border border-[#2F2F3E] rounded-2xl overflow-hidden divide-y divide-[#242430]">
+                  <div className="p-3 flex items-center justify-between text-xs">
+                    <span className="text-[#FFFFFF] font-medium">Open Command Palette</span>
+                    <kbd className="px-2 py-1 rounded-md bg-[#101017] border border-[#2F2F3E] text-xs font-mono text-[#D4D4DC]">Ctrl + K</kbd>
                   </div>
-                  <div className="flex gap-2 pt-2 border-t border-[#262626]">
-                    <button
-                      onClick={() => { setSelectedViewGuide('stage'); setActiveTab('CURRENT_PAGE'); }}
-                      className="px-2.5 py-1 text-[11px] border border-[#333333] hover:border-[#FFFFFF] text-[#CCCCCC] hover:text-[#FFFFFF]"
-                    >
-                      READ GUIDE
-                    </button>
-                    <button
-                      onClick={() => { setActiveView('stage'); onClose(); }}
-                      className="px-2.5 py-1 text-[11px] bg-[#FFFFFF] text-[#000000] font-bold hover:bg-[#CCCCCC]"
-                    >
-                      OPEN STAGE →
-                    </button>
+                  <div className="p-3 flex items-center justify-between text-xs">
+                    <span className="text-[#FFFFFF] font-medium">Open User Guide / Help</span>
+                    <kbd className="px-2 py-1 rounded-md bg-[#101017] border border-[#2F2F3E] text-xs font-mono text-[#D4D4DC]">F1 or Ctrl + H</kbd>
                   </div>
-                </div>
-
-                {/* 5. Member-Isolated AI Copilot Chat */}
-                <div className="border border-[#262626] hover:border-[#404040] bg-[#101010] p-4 flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <span className="bg-[#FFFFFF] text-[#000000] text-[10px] font-bold px-1.5 py-0.2">05</span>
-                        <h4 className="text-xs font-bold text-[#FFFFFF]">ISOLATED AI COPILOT (WHITE)</h4>
-                      </div>
-                      <span className="text-[10px] text-[#888888]">VIEW: copilot</span>
-                    </div>
-                    <p className="text-[11px] text-[#888888] leading-relaxed mb-3">
-                      chatsByUser[userId][spaceId] isolated store, SOUL.MD grounding, Three.js 3D audio-reactive assistant, and Gemini REST inference.
-                    </p>
+                  <div className="p-3 flex items-center justify-between text-xs">
+                    <span className="text-[#FFFFFF] font-medium">Slash Commands (in Editor)</span>
+                    <kbd className="px-2 py-1 rounded-md bg-[#101017] border border-[#2F2F3E] text-xs font-mono text-[#D4D4DC]">/</kbd>
                   </div>
-                  <div className="flex gap-2 pt-2 border-t border-[#262626]">
-                    <button
-                      onClick={() => { setSelectedViewGuide('copilot'); setActiveTab('CURRENT_PAGE'); }}
-                      className="px-2.5 py-1 text-[11px] border border-[#333333] hover:border-[#FFFFFF] text-[#CCCCCC] hover:text-[#FFFFFF]"
-                    >
-                      READ GUIDE
-                    </button>
-                    <button
-                      onClick={() => { setActiveView('copilot'); onClose(); }}
-                      className="px-2.5 py-1 text-[11px] bg-[#FFFFFF] text-[#000000] font-bold hover:bg-[#CCCCCC]"
-                    >
-                      OPEN COPILOT →
-                    </button>
+                  <div className="p-3 flex items-center justify-between text-xs">
+                    <span className="text-[#FFFFFF] font-medium">Toggle Voice Stage</span>
+                    <kbd className="px-2 py-1 rounded-md bg-[#101017] border border-[#2F2F3E] text-xs font-mono text-[#D4D4DC]">Click [STAGE]</kbd>
                   </div>
-                </div>
-
-                {/* 6. Multi-Space Manager & SOUL.MD */}
-                <div className="border border-[#262626] hover:border-[#404040] bg-[#101010] p-4 flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <span className="bg-[#FFFFFF] text-[#000000] text-[10px] font-bold px-1.5 py-0.2">06</span>
-                        <h4 className="text-xs font-bold text-[#FFFFFF]">SPACES & SOUL.MD PROMPT</h4>
-                      </div>
-                      <span className="text-[10px] text-[#888888]">DISCORD RAIL [+]</span>
-                    </div>
-                    <p className="text-[11px] text-[#888888] leading-relaxed mb-3">
-                      Independent partitioned spaces with 2-letter geometric badges, custom slugs, and persistent SOUL.MD system directives.
-                    </p>
-                  </div>
-                  <div className="pt-2 border-t border-[#262626]">
-                    <span className="text-[10px] text-[#737373]">ACCESS VIA: Left Discord Rail [+] or NotionSidebar Spaces</span>
-                  </div>
-                </div>
-
-                {/* 7. Sub-Millisecond Local RAG Inspector */}
-                <div className="border border-[#262626] hover:border-[#404040] bg-[#101010] p-4 flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <span className="bg-[#FFFFFF] text-[#000000] text-[10px] font-bold px-1.5 py-0.2">07</span>
-                        <h4 className="text-xs font-bold text-[#FFFFFF]">LOCAL RAG CONTEXT INSPECTOR</h4>
-                      </div>
-                      <span className="text-[10px] text-[#888888]">TOPBAR [RAG]</span>
-                    </div>
-                    <p className="text-[11px] text-[#888888] leading-relaxed mb-3">
-                      Inspect chunk counts, test BM25 queries with latency meters (&lt;1ms), and view inverted index term distributions.
-                    </p>
-                  </div>
-                  <div className="pt-2 border-t border-[#262626]">
-                    <span className="text-[10px] text-[#737373]">ACCESS VIA: TopBar [RAG ({totalChunksIndexed})] Button</span>
-                  </div>
-                </div>
-
-                {/* 8. Workspace Exporter & Local Python Bridge */}
-                <div className="border border-[#262626] hover:border-[#404040] bg-[#101010] p-4 flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <span className="bg-[#FFFFFF] text-[#000000] text-[10px] font-bold px-1.5 py-0.2">08</span>
-                        <h4 className="text-xs font-bold text-[#FFFFFF]">WORKSPACE EXPORTER & BRIDGE</h4>
-                      </div>
-                      <span className="text-[10px] text-[#888888]">TOPBAR [EXPORT]</span>
-                    </div>
-                    <p className="text-[11px] text-[#888888] leading-relaxed mb-3">
-                      Export unified context.md packages, complete JSON state backups, and generate standalone wc_bridge.py Python bridge scripts.
-                    </p>
-                  </div>
-                  <div className="pt-2 border-t border-[#262626]">
-                    <span className="text-[10px] text-[#737373]">ACCESS VIA: TopBar [EXPORT] Button</span>
+                  <div className="p-3 flex items-center justify-between text-xs">
+                    <span className="text-[#FFFFFF] font-medium">Inspect Local RAG Index</span>
+                    <kbd className="px-2 py-1 rounded-md bg-[#101017] border border-[#2F2F3E] text-xs font-mono text-[#D4D4DC]">Click [RAG] in TopBar</kbd>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
-
-          {/* ========================================================================= */}
-          {/* TAB 3: FEATURE DIAGNOSTICS & SYSTEM AUDIT (HOW MANY WORK & HOW MANY DON'T) */}
-          {/* ========================================================================= */}
-          {activeTab === 'FEATURE_AUDIT' && (
-            <div className="space-y-5">
-              
-              {/* Header Card with Metrics */}
-              <div className="border border-[#333333] bg-[#121212] p-5">
-                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-4 border-b border-[#262626] mb-4">
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="w-2 h-2 bg-[#FFFFFF]" />
-                      <h3 className="text-sm font-bold text-[#FFFFFF] tracking-wider uppercase">
-                        WHITE COLLARS OS // FEATURE AUDIT & DIAGNOSTIC VERIFIER
-                      </h3>
-                    </div>
-                    <p className="text-[11px] text-[#A3A3A3]">
-                      SYSTEMATIC EVALUATION OF ALL 25 ARCHITECTURAL FEATURES // ZERO MOCK POLICY
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={handleRunAudit}
-                      disabled={isAuditing}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FFFFFF] hover:bg-[#CCCCCC] text-[#000000] text-xs font-bold transition-colors disabled:opacity-50 cursor-pointer"
-                    >
-                      <RotateCcw size={12} className={isAuditing ? 'animate-spin' : ''} />
-                      <span>{isAuditing ? 'TESTING SYSTEM...' : 'RUN AUDIT NOW'}</span>
-                    </button>
-
-                    <button
-                      onClick={handleCopyReport}
-                      disabled={!auditSummary}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-[#171717] hover:bg-[#262626] border border-[#333333] text-xs text-[#FFFFFF] transition-colors cursor-pointer"
-                    >
-                      {copiedReport ? <Check size={12} /> : <Copy size={12} />}
-                      <span>{copiedReport ? 'COPIED JSON' : 'COPY REPORT'}</span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Score & Counter Grid */}
-                {auditSummary ? (
-                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-                    <div className="border border-[#262626] bg-[#0A0A0A] p-3 text-center">
-                      <div className="text-[10px] text-[#737373] uppercase mb-1">TOTAL FEATURES</div>
-                      <div className="text-xl font-bold text-[#FFFFFF]">{auditSummary.totalFeatures}</div>
-                      <div className="text-[9px] text-[#555555]">Audited</div>
-                    </div>
-
-                    <div className="border border-[#262626] bg-[#0A0A0A] p-3 text-center">
-                      <div className="text-[10px] text-[#737373] uppercase mb-1">WORKING</div>
-                      <div className="text-xl font-bold text-[#FFFFFF]">{auditSummary.workingCount}</div>
-                      <div className="text-[9px] text-[#888888]">100% Operational</div>
-                    </div>
-
-                    <div className="border border-[#262626] bg-[#0A0A0A] p-3 text-center">
-                      <div className="text-[10px] text-[#737373] uppercase mb-1">REQUIRES KEY</div>
-                      <div className="text-xl font-bold text-[#CCCCCC]">{auditSummary.requiresKeyCount}</div>
-                      <div className="text-[9px] text-[#737373]">API Key / Cloud</div>
-                    </div>
-
-                    <div className="border border-[#262626] bg-[#0A0A0A] p-3 text-center">
-                      <div className="text-[10px] text-[#737373] uppercase mb-1">FAILING</div>
-                      <div className="text-xl font-bold text-[#737373]">{auditSummary.failedCount}</div>
-                      <div className="text-[9px] text-[#555555]">0 Broken</div>
-                    </div>
-
-                    <div className="border border-[#262626] bg-[#0A0A0A] p-3 text-center col-span-2 sm:col-span-1">
-                      <div className="text-[10px] text-[#737373] uppercase mb-1">AVG LATENCY</div>
-                      <div className="text-xl font-bold text-[#FFFFFF]">{auditSummary.averageLatencyMs} ms</div>
-                      <div className="text-[9px] text-[#888888]">Sub-millisecond</div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="text-center py-6 text-xs text-[#737373]">
-                    Initializing feature audit...
-                  </div>
-                )}
-              </div>
-
-              {/* Filter Pills */}
-              <div className="flex items-center justify-between flex-wrap gap-2">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] text-[#737373] uppercase mr-1">FILTER:</span>
-                  {(['ALL', 'WORKING', 'REQUIRES_KEY', 'FAILED'] as const).map(filter => (
-                    <button
-                      key={filter}
-                      onClick={() => setAuditFilter(filter)}
-                      className={`px-2.5 py-1 text-[10px] font-bold border transition-colors ${
-                        auditFilter === filter
-                          ? 'bg-[#FFFFFF] text-[#000000] border-[#FFFFFF]'
-                          : 'bg-[#121212] hover:bg-[#1A1A1A] text-[#888888] hover:text-[#FFFFFF] border-[#262626]'
-                      }`}
-                    >
-                      {filter}
-                    </button>
-                  ))}
-                </div>
-
-                <span className="text-[10px] text-[#737373]">
-                  SHOWING {filteredAuditResults.length} OF {auditSummary?.totalFeatures || 25}
-                </span>
-              </div>
-
-              {/* Detailed Feature List */}
-              <div className="space-y-2.5">
-                {filteredAuditResults.map((item, idx) => (
-                  <div
-                    key={item.id}
-                    className="border border-[#262626] bg-[#0F0F0F] hover:bg-[#121212] p-3 transition-colors"
-                  >
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-1.5">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[10px] text-[#555555] font-bold">#{String(idx + 1).padStart(2, '0')}</span>
-                        <h4 className="text-xs font-bold text-[#FFFFFF]">{item.name}</h4>
-                        <span className="text-[9px] px-1.5 py-0.2 border border-[#2E2E2E] bg-[#000000] text-[#737373]">
-                          {item.category}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <span className="text-[10px] text-[#737373]">{item.latencyMs} ms</span>
-                        <span
-                          className={`text-[9px] font-bold px-2 py-0.5 border uppercase ${
-                            item.status === 'WORKING'
-                              ? 'bg-[#000000] border-[#FFFFFF] text-[#FFFFFF]'
-                              : item.status === 'REQUIRES_KEY'
-                              ? 'bg-[#141414] border-[#404040] text-[#A3A3A3]'
-                              : 'bg-[#220000] border-[#FF4444] text-[#FF4444]'
-                          }`}
-                        >
-                          [{item.status}]
-                        </span>
-                      </div>
-                    </div>
-
-                    <p className="text-[11px] text-[#888888] mb-1.5">
-                      {item.description}
-                    </p>
-
-                    <div className="bg-[#050505] border border-[#202020] p-2 text-[10px] text-[#CCCCCC] font-mono leading-relaxed">
-                      {item.details}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* ========================================================================= */}
-          {/* TAB 4: 5-PILLAR INTERACTIVE WALKTHROUGH TOUR                              */}
-          {/* ========================================================================= */}
-          {activeTab === 'INTERACTIVE_TOUR' && (
-            <div className="space-y-6 max-w-3xl mx-auto">
-              
-              {/* Tour Progress Bar */}
-              <div className="border border-[#262626] bg-[#121212] p-4">
-                <div className="flex items-center justify-between text-xs mb-2">
-                  <span className="font-bold text-[#FFFFFF]">WHITE COLLARS 5-PILLAR GUIDED TOUR</span>
-                  <span className="text-[#A3A3A3]">STEP {tourStep + 1} OF 5</span>
-                </div>
-                <div className="w-full bg-[#202020] h-1.5 overflow-hidden">
-                  <div 
-                    className="bg-[#FFFFFF] h-full transition-all duration-300"
-                    style={{ width: `${((tourStep + 1) / 5) * 100}%` }}
-                  />
-                </div>
-              </div>
-
-              {/* Step 1: Discord Rail */}
-              {tourStep === 0 && (
-                <div className="border border-[#333333] bg-[#0F0F0F] p-6 space-y-4">
-                  <div className="flex items-center gap-2">
-                    <span className="bg-[#FFFFFF] text-[#000000] text-xs font-bold px-2 py-0.5">PILLAR 1</span>
-                    <h3 className="text-sm font-bold text-[#FFFFFF] tracking-wider uppercase">
-                      DISCORD SPACE RAIL & VERTICAL WORKSPACE PARTITIONING
-                    </h3>
-                  </div>
-                  <p className="text-xs text-[#A3A3A3] leading-relaxed">
-                    White Collars uses a vertical Discord-style space rail on the far left. Every space represents an autonomous business unit or project (e.g. WC-CORE, SIGNBRIDGE, MAI-READS) with completely independent knowledge bases, tasks, tabs, and SOUL.MD system prompts.
-                  </p>
-                  <div className="border border-[#262626] bg-[#000000] p-4 text-xs text-[#CCCCCC] space-y-2">
-                    <div className="font-bold text-[#FFFFFF]">TRY THIS NOW:</div>
-                    <p>Click on any space icon on the far left rail (or click the button below) to switch spaces instantly with zero reload delay.</p>
-                  </div>
-                  <div className="flex justify-between items-center pt-4 border-t border-[#262626]">
-                    <div />
-                    <button
-                      onClick={() => setTourStep(1)}
-                      className="flex items-center gap-1.5 px-4 py-2 bg-[#FFFFFF] text-[#000000] text-xs font-bold hover:bg-[#CCCCCC]"
-                    >
-                      <span>NEXT: NOTION 3.0 EDITOR</span>
-                      <ChevronRight size={14} />
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Step 2: Notion 3.0 Editor */}
-              {tourStep === 1 && (
-                <div className="border border-[#333333] bg-[#0F0F0F] p-6 space-y-4">
-                  <div className="flex items-center gap-2">
-                    <span className="bg-[#FFFFFF] text-[#000000] text-xs font-bold px-2 py-0.5">PILLAR 2</span>
-                    <h3 className="text-sm font-bold text-[#FFFFFF] tracking-wider uppercase">
-                      NOTION 3.0 SLASH EDITOR & 10-FORMAT INGESTION
-                    </h3>
-                  </div>
-                  <p className="text-xs text-[#A3A3A3] leading-relaxed">
-                    A distraction-free markdown authoring canvas. Type "/" on any line to invoke formatting blocks (headings, code, checklists). Drag-and-drop or upload 10 formats (.py, .ts, .csv, .yaml, .md) to parse and index directly into local RAG memory.
-                  </p>
-                  <div className="border border-[#262626] bg-[#000000] p-4 text-xs text-[#CCCCCC] space-y-2">
-                    <div className="font-bold text-[#FFFFFF]">TRY THIS NOW:</div>
-                    <button
-                      onClick={handleDemoCreateDoc}
-                      className="px-3 py-1.5 bg-[#FFFFFF] text-[#000000] font-bold text-xs hover:bg-[#CCCCCC]"
-                    >
-                      CREATE DEMO SPECIFICATION DOCUMENT
-                    </button>
-                  </div>
-                  <div className="flex justify-between items-center pt-4 border-t border-[#262626]">
-                    <button
-                      onClick={() => setTourStep(0)}
-                      className="px-3 py-1.5 border border-[#333333] text-xs text-[#A3A3A3] hover:text-[#FFFFFF]"
-                    >
-                      BACK
-                    </button>
-                    <button
-                      onClick={() => setTourStep(2)}
-                      className="flex items-center gap-1.5 px-4 py-2 bg-[#FFFFFF] text-[#000000] text-xs font-bold hover:bg-[#CCCCCC]"
-                    >
-                      <span>NEXT: OPENCLAW KANBAN</span>
-                      <ChevronRight size={14} />
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Step 3: OpenClaw Kanban */}
-              {tourStep === 2 && (
-                <div className="border border-[#333333] bg-[#0F0F0F] p-6 space-y-4">
-                  <div className="flex items-center gap-2">
-                    <span className="bg-[#FFFFFF] text-[#000000] text-xs font-bold px-2 py-0.5">PILLAR 3</span>
-                    <h3 className="text-sm font-bold text-[#FFFFFF] tracking-wider uppercase">
-                      OPENCLAW KANBAN & 1-CLICK DISPATCH AI
-                    </h3>
-                  </div>
-                  <p className="text-xs text-[#A3A3A3] leading-relaxed">
-                    A 3-column sprint pipeline (QUEUED, ACTIVE, SHIPPED). Each task has a strict priority (P0, P1, P2) and an assigned member. The standout feature is "DISPATCH AI": click it on any card to load the specification directly into Copilot for autonomous execution.
-                  </p>
-                  <div className="border border-[#262626] bg-[#000000] p-4 text-xs text-[#CCCCCC] space-y-2">
-                    <div className="font-bold text-[#FFFFFF]">TRY THIS NOW:</div>
-                    <button
-                      onClick={handleDemoCreateTask}
-                      className="px-3 py-1.5 bg-[#FFFFFF] text-[#000000] font-bold text-xs hover:bg-[#CCCCCC]"
-                    >
-                      INJECT P0 TASK & SWITCH TO KANBAN
-                    </button>
-                  </div>
-                  <div className="flex justify-between items-center pt-4 border-t border-[#262626]">
-                    <button
-                      onClick={() => setTourStep(1)}
-                      className="px-3 py-1.5 border border-[#333333] text-xs text-[#A3A3A3] hover:text-[#FFFFFF]"
-                    >
-                      BACK
-                    </button>
-                    <button
-                      onClick={() => setTourStep(3)}
-                      className="flex items-center gap-1.5 px-4 py-2 bg-[#FFFFFF] text-[#000000] text-xs font-bold hover:bg-[#CCCCCC]"
-                    >
-                      <span>NEXT: DEVELOPER BROWSER</span>
-                      <ChevronRight size={14} />
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Step 4: Developer Browser */}
-              {tourStep === 3 && (
-                <div className="border border-[#333333] bg-[#0F0F0F] p-6 space-y-4">
-                  <div className="flex items-center gap-2">
-                    <span className="bg-[#FFFFFF] text-[#000000] text-xs font-bold px-2 py-0.5">PILLAR 4</span>
-                    <h3 className="text-sm font-bold text-[#FFFFFF] tracking-wider uppercase">
-                      DEVELOPER BROWSER & 5 BUILT-IN ENGINEERING TOOLS
-                    </h3>
-                  </div>
-                  <p className="text-xs text-[#A3A3A3] leading-relaxed">
-                    No need to jump outside the workspace: Developer Browser features 5 integrated tools: Web Viewport, GitHub Explorer, Code Sandbox, Vector Board, and REST Tester. Tabs can be private to you or shared with the whole team via the top shared strip.
-                  </p>
-                  <div className="border border-[#262626] bg-[#000000] p-4 text-xs text-[#CCCCCC] space-y-2">
-                    <div className="font-bold text-[#FFFFFF]">TRY THIS NOW:</div>
-                    <button
-                      onClick={() => handleDemoOpenTool('vector')}
-                      className="px-3 py-1.5 bg-[#FFFFFF] text-[#000000] font-bold text-xs hover:bg-[#CCCCCC]"
-                    >
-                      OPEN VECTOR ARCHITECTURE BOARD
-                    </button>
-                  </div>
-                  <div className="flex justify-between items-center pt-4 border-t border-[#262626]">
-                    <button
-                      onClick={() => setTourStep(2)}
-                      className="px-3 py-1.5 border border-[#333333] text-xs text-[#A3A3A3] hover:text-[#FFFFFF]"
-                    >
-                      BACK
-                    </button>
-                    <button
-                      onClick={() => setTourStep(4)}
-                      className="flex items-center gap-1.5 px-4 py-2 bg-[#FFFFFF] text-[#000000] text-xs font-bold hover:bg-[#CCCCCC]"
-                    >
-                      <span>NEXT: STUDIO STAGE & AI</span>
-                      <ChevronRight size={14} />
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Step 5: Studio Stage & 3D Assistant */}
-              {tourStep === 4 && (
-                <div className="border border-[#333333] bg-[#0F0F0F] p-6 space-y-4">
-                  <div className="flex items-center gap-2">
-                    <span className="bg-[#FFFFFF] text-[#000000] text-xs font-bold px-2 py-0.5">PILLAR 5</span>
-                    <h3 className="text-sm font-bold text-[#FFFFFF] tracking-wider uppercase">
-                      STUDIO WEBRTC CALLING & 3D ASSISTANT (WHITE)
-                    </h3>
-                  </div>
-                  <p className="text-xs text-[#A3A3A3] leading-relaxed">
-                    Uncompressed 510 kbps WebRTC stereo audio calling, 48 kHz Web Audio GainNode boost (up to 200%), live 60fps HTML5 FFT spectrum visualization, and personal AI chat with the audio-reactive 3D assistant canvas.
-                  </p>
-                  <div className="border border-[#262626] bg-[#000000] p-4 text-xs text-[#CCCCCC] space-y-2">
-                    <div className="font-bold text-[#FFFFFF]">TOUR COMPLETE:</div>
-                    <p>Press <kbd className="text-[#FFFFFF] font-bold">CTRL+S+D+F</kbd> on any page at any time to open this contextual guide.</p>
-                  </div>
-                  <div className="flex justify-between items-center pt-4 border-t border-[#262626]">
-                    <button
-                      onClick={() => setTourStep(3)}
-                      className="px-3 py-1.5 border border-[#333333] text-xs text-[#A3A3A3] hover:text-[#FFFFFF]"
-                    >
-                      BACK
-                    </button>
-                    <button
-                      onClick={onClose}
-                      className="px-4 py-2 bg-[#FFFFFF] text-[#000000] text-xs font-bold hover:bg-[#CCCCCC]"
-                    >
-                      CLOSE TOUR & START WORKING
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
+            )}
+          </div>
         </div>
-
-        {/* --- Modal Footer Status Bar --- */}
-        <footer className="h-10 bg-[#0F0F0F] border-t border-[#262626] px-4 flex items-center justify-between text-[11px] text-[#737373] shrink-0">
-          <div className="flex items-center gap-3">
-            <span>KEYBOARD TRIGGER: <kbd className="text-[#FFFFFF] px-1 border border-[#333333]">CTRL+S+D+F</kbd></span>
-            <span className="hidden md:inline">•</span>
-            <span className="hidden md:inline">MONOCHROME DISCIPLINE: 0 EMOJIS</span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <span className="text-[#CCCCCC]">ACTIVE MEMBER: {activeMember.name} [{activeMember.badge}]</span>
-          </div>
-        </footer>
       </div>
     </div>
   );

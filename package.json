@@ -12,7 +12,9 @@
     "electron:start": "electron electron/main.cjs",
     "electron:dev": "concurrently -k \"vite\" \"wait-on http://localhost:5173 && cross-env NODE_ENV=development electron electron/main.cjs\"",
     "electron:build": "npm run build && electron-builder --win --x64",
-    "electron:pack": "npm run build && electron-builder --dir"
+    "electron:pack": "npm run build && electron-builder --dir",
+    "test": "node test/verify_system.mjs && node test/test_all_features.mjs",
+    "test:runtime": "electron test/run_runtime_verification.cjs"
   },
   "build": {
     "appId": "com.whitecollars.whitespace",

@@ -8,7 +8,6 @@ import {
   Bookmark, 
   FileDown, 
   Check, 
-  ShieldAlert, 
   RotateCw 
 } from 'lucide-react';
 
@@ -47,13 +46,13 @@ export const EmbeddedWebViewport: React.FC<EmbeddedWebViewportProps> = ({ tab })
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-[#050505] overflow-hidden font-mono select-none">
+    <div className="flex-1 flex flex-col h-full bg-[#000000] overflow-hidden font-mono select-none">
       {/* 1. Developer Bookmark Bar & Top Controls */}
-      <div className="h-9 bg-[#0C0C0C] border-b border-[#262626] px-3 flex items-center justify-between gap-3 text-xs shrink-0">
+      <div className="h-9 bg-[#0A0A0A] border-b border-[#1F1F1F] px-3 flex items-center justify-between gap-3 text-xs shrink-0">
         {/* Bookmarks */}
         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-          <div className="flex items-center gap-1 text-[10px] text-[#737373] uppercase font-bold shrink-0 mr-1">
-            <Bookmark size={11} className="text-[#A3A3A3]" />
+          <div className="flex items-center gap-1 text-[10px] text-[#71717A] uppercase font-bold shrink-0 mr-1">
+            <Bookmark size={11} className="text-[#A1A1AA]" />
             <span>DEV BOOKMARKS:</span>
           </div>
 
@@ -65,8 +64,8 @@ export const EmbeddedWebViewport: React.FC<EmbeddedWebViewportProps> = ({ tab })
                 onClick={() => navigateTab(tab.id, bm.url)}
                 className={`px-2 py-0.5 text-[10px] border transition-colors shrink-0 ${
                   isCurrent
-                    ? 'bg-[#1C1C1C] text-[#FFFFFF] border-[#555555] font-bold'
-                    : 'bg-[#121212] text-[#A3A3A3] border-[#262626] hover:text-[#FFFFFF] hover:border-[#404040]'
+                    ? 'bg-[#18181B] text-[#FFFFFF] border-[#3F3F46] font-bold'
+                    : 'bg-[#111111] text-[#A1A1AA] border-[#1F1F1F] hover:text-[#FFFFFF] hover:border-[#262626]'
                 }`}
               >
                 {bm.name}
@@ -80,7 +79,7 @@ export const EmbeddedWebViewport: React.FC<EmbeddedWebViewportProps> = ({ tab })
           <button
             onClick={handleReload}
             title="Reload viewport frame"
-            className="p-1 text-[#A3A3A3] hover:text-[#FFFFFF] border border-[#262626] hover:border-[#404040] bg-[#121212]"
+            className="p-1 text-[#71717A] hover:text-[#FFFFFF] border border-[#1F1F1F] hover:border-[#3F3F46] bg-[#111111] transition-colors"
           >
             <RotateCw size={12} />
           </button>
@@ -92,7 +91,7 @@ export const EmbeddedWebViewport: React.FC<EmbeddedWebViewportProps> = ({ tab })
             className={`px-2.5 py-1 text-[10px] font-bold border flex items-center gap-1.5 transition-all ${
               indexedFeedback
                 ? 'bg-[#FFFFFF] text-[#000000] border-[#FFFFFF]'
-                : 'bg-[#121212] hover:bg-[#1C1C1C] text-[#FFFFFF] border-[#333333] hover:border-[#FFFFFF]'
+                : 'bg-[#111111] hover:bg-[#18181B] text-[#FFFFFF] border-[#262626] hover:border-[#FFFFFF]'
             }`}
           >
             {indexedFeedback ? (
@@ -113,7 +112,7 @@ export const EmbeddedWebViewport: React.FC<EmbeddedWebViewportProps> = ({ tab })
             target="_blank"
             rel="noreferrer"
             title="Open URL in native system browser tab"
-            className="px-2 py-1 bg-[#121212] hover:bg-[#1C1C1C] text-[#A3A3A3] hover:text-[#FFFFFF] text-[10px] border border-[#262626] flex items-center gap-1"
+            className="px-2 py-1 bg-[#111111] hover:bg-[#18181B] text-[#A1A1AA] hover:text-[#FFFFFF] text-[10px] border border-[#1F1F1F] flex items-center gap-1 transition-colors"
           >
             <span>OPEN EXTERNAL</span>
             <ExternalLink size={10} />
@@ -124,14 +123,14 @@ export const EmbeddedWebViewport: React.FC<EmbeddedWebViewportProps> = ({ tab })
       {/* 2. Embedded Iframe Viewport */}
       <div className="flex-1 relative bg-[#000000] overflow-hidden flex flex-col">
         {/* Electron Header Stripping Notice Pill */}
-        <div className="h-6 bg-[#0E0E0E] border-b border-[#202020] px-3 flex items-center justify-between text-[10px] text-[#737373]">
+        <div className="h-6 bg-[#0A0A0A] border-b border-[#1F1F1F] px-3 flex items-center justify-between text-[10px] text-[#71717A]">
           <div className="flex items-center gap-1.5 truncate">
-            <Globe size={11} className="text-[#555555] shrink-0" />
-            <span className="truncate text-[#A3A3A3]">{tab.url}</span>
+            <Globe size={11} className="text-[#52525B] shrink-0" />
+            <span className="truncate text-[#A1A1AA]">{tab.url}</span>
           </div>
           <div className="flex items-center gap-2 shrink-0">
-            <span className="hidden sm:inline text-[#555555]">DESKTOP ELECTRON: STRIPS X-FRAME-OPTIONS</span>
-            <span className="bg-[#171717] px-1 py-0.2 border border-[#303030] text-[#A3A3A3]">SANDBOXED</span>
+            <span className="hidden sm:inline text-[#52525B]">DESKTOP ELECTRON: STRIPS X-FRAME-OPTIONS</span>
+            <span className="bg-[#141414] px-1 py-0.2 border border-[#262626] text-[#A1A1AA]">SANDBOXED</span>
           </div>
         </div>
 

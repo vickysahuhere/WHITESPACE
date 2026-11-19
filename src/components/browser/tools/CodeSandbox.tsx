@@ -351,27 +351,27 @@ export const CodeSandbox: React.FC<CodeSandboxProps> = ({ tab }) => {
   `;
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-[#050505] text-[#FFFFFF] font-mono select-none overflow-hidden">
+    <div className="flex-1 flex flex-col h-full bg-[#000000] text-[#FFFFFF] font-mono select-none overflow-hidden">
       {/* 1. Header Toolbar */}
-      <div className="h-10 bg-[#0C0C0C] border-b border-[#262626] px-3 flex items-center justify-between gap-3 shrink-0">
+      <div className="h-10 bg-[#0A0A0A] border-b border-[#1F1F1F] px-3 flex items-center justify-between gap-3 shrink-0">
         <div className="flex items-center gap-2">
-          <Code2 size={16} className="text-[#FFFFFF]" />
+          <Code2 size={15} className="text-[#FFFFFF]" />
           <span className="text-xs font-bold tracking-wider text-[#FFFFFF] uppercase">
             MONOCHROME CODE SANDBOX
           </span>
-          <span className="text-[10px] text-[#737373] bg-[#121212] px-1.5 py-0.2 border border-[#262626]">
+          <span className="text-[10px] text-[#A1A1AA] bg-[#141414] px-1.5 py-0.2 border border-[#262626] font-bold">
             LIVE RUNNER
           </span>
         </div>
 
         {/* Template Quick Selectors */}
         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-          <span className="text-[10px] text-[#737373] uppercase font-bold shrink-0">TEMPLATES:</span>
+          <span className="text-[10px] text-[#71717A] uppercase font-bold shrink-0">TEMPLATES:</span>
           {Object.entries(TEMPLATES).map(([k, t]) => (
             <button
               key={k}
               onClick={() => loadTemplate(k)}
-              className="px-2 py-0.5 text-[10px] bg-[#121212] hover:bg-[#1C1C1C] text-[#A3A3A3] hover:text-[#FFFFFF] border border-[#262626] hover:border-[#404040] shrink-0"
+              className="px-2 py-0.5 text-[10px] bg-[#111111] hover:bg-[#18181B] text-[#A1A1AA] hover:text-[#FFFFFF] border border-[#1F1F1F] hover:border-[#3F3F46] shrink-0 transition-colors"
             >
               {t.label}
             </button>
@@ -383,7 +383,7 @@ export const CodeSandbox: React.FC<CodeSandboxProps> = ({ tab }) => {
           <button
             onClick={handleRun}
             title="Execute code in sandboxed iframe"
-            className="px-3 py-1 bg-[#FFFFFF] text-[#000000] font-bold text-xs border border-[#FFFFFF] hover:bg-[#CCCCCC] flex items-center gap-1.5"
+            className="px-3 py-1 bg-[#FFFFFF] text-[#000000] font-bold text-xs border border-[#FFFFFF] hover:bg-[#CCCCCC] flex items-center gap-1.5 transition-colors"
           >
             <Play size={12} fill="#000000" />
             <span>RUN</span>
@@ -395,7 +395,7 @@ export const CodeSandbox: React.FC<CodeSandboxProps> = ({ tab }) => {
             className={`px-3 py-1 text-xs font-bold border flex items-center gap-1.5 transition-all ${
               indexedFeedback
                 ? 'bg-[#FFFFFF] text-[#000000] border-[#FFFFFF]'
-                : 'bg-[#121212] hover:bg-[#1C1C1C] text-[#FFFFFF] border-[#333333] hover:border-[#FFFFFF]'
+                : 'bg-[#111111] hover:bg-[#18181B] text-[#FFFFFF] border-[#262626] hover:border-[#FFFFFF]'
             }`}
           >
             {indexedFeedback ? (
@@ -416,17 +416,17 @@ export const CodeSandbox: React.FC<CodeSandboxProps> = ({ tab }) => {
       {/* 2. Main Workspace: Split Editor & Preview */}
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
         {/* Left Half: Multi-tab Code Editor */}
-        <div className="flex-1 flex flex-col border-b md:border-b-0 md:border-r border-[#262626] bg-[#0A0A0A]">
+        <div className="flex-1 flex flex-col border-b md:border-b-0 md:border-r border-[#1F1F1F] bg-[#0A0A0A]">
           {/* Language Tabs */}
-          <div className="h-9 bg-[#0E0E0E] border-b border-[#262626] px-2 flex items-center gap-1 shrink-0">
+          <div className="h-9 bg-[#0A0A0A] border-b border-[#1F1F1F] px-2 flex items-center gap-1 shrink-0">
             {(['js', 'html', 'css'] as const).map(lang => (
               <button
                 key={lang}
                 onClick={() => setActiveTabLang(lang)}
                 className={`px-3 py-1 text-xs border uppercase font-bold transition-colors ${
                   activeTabLang === lang
-                    ? 'bg-[#171717] text-[#FFFFFF] border-[#404040]'
-                    : 'bg-transparent text-[#737373] border-transparent hover:text-[#FFFFFF]'
+                    ? 'bg-[#18181B] text-[#FFFFFF] border-[#3F3F46]'
+                    : 'bg-transparent text-[#71717A] border-transparent hover:text-[#FFFFFF]'
                 }`}
               >
                 {lang === 'js' ? 'JAVASCRIPT' : lang.toUpperCase()}
@@ -435,12 +435,12 @@ export const CodeSandbox: React.FC<CodeSandboxProps> = ({ tab }) => {
           </div>
 
           {/* Text Editor Area */}
-          <div className="flex-1 relative bg-[#050505]">
+          <div className="flex-1 relative bg-[#000000]">
             <textarea
               value={files[activeTabLang]}
               onChange={e => handleCodeChange(activeTabLang, e.target.value)}
               placeholder={`Write ${activeTabLang.toUpperCase()} code here...`}
-              className="w-full h-full p-4 bg-transparent text-xs font-mono text-[#FFFFFF] outline-none resize-none selection:bg-[#333333] leading-relaxed"
+              className="w-full h-full p-4 bg-transparent text-xs font-mono text-[#FFFFFF] outline-none resize-none selection:bg-[#FFFFFF] selection:text-[#000000] leading-relaxed custom-scrollbar"
               spellCheck={false}
             />
           </div>
@@ -449,7 +449,7 @@ export const CodeSandbox: React.FC<CodeSandboxProps> = ({ tab }) => {
         {/* Right Half: Live Sandbox Preview + Console Logs */}
         <div className="flex-1 flex flex-col bg-[#000000] overflow-hidden">
           {/* Sandboxed Execution Iframe */}
-          <div className="flex-1 relative border-b border-[#262626]">
+          <div className="flex-1 relative border-b border-[#1F1F1F]">
             <iframe
               key={runKey}
               srcDoc={srcDoc}
@@ -460,25 +460,25 @@ export const CodeSandbox: React.FC<CodeSandboxProps> = ({ tab }) => {
           </div>
 
           {/* Console Output Terminal */}
-          <div className="h-44 bg-[#080808] flex flex-col shrink-0 font-mono text-xs">
-            <div className="h-7 bg-[#0E0E0E] border-b border-[#262626] px-3 flex items-center justify-between text-[10px] text-[#737373]">
+          <div className="h-44 bg-[#0A0A0A] flex flex-col shrink-0 font-mono text-xs">
+            <div className="h-7 bg-[#111111] border-b border-[#1F1F1F] px-3 flex items-center justify-between text-[10px] text-[#71717A]">
               <div className="flex items-center gap-1.5 font-bold">
-                <Terminal size={11} className="text-[#A3A3A3]" />
+                <Terminal size={11} className="text-[#A1A1AA]" />
                 <span>SANDBOX CONSOLE LOGS ({logs.length})</span>
               </div>
               <button
                 onClick={() => setLogs([])}
                 title="Clear console output"
-                className="hover:text-[#FFFFFF] p-1 flex items-center gap-1"
+                className="hover:text-[#FFFFFF] p-1 flex items-center gap-1 transition-colors"
               >
                 <Trash2 size={10} />
                 <span>CLEAR</span>
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-2 space-y-1 bg-[#050505]">
+            <div className="flex-1 overflow-y-auto p-2 space-y-1 bg-[#000000] custom-scrollbar">
               {logs.length === 0 ? (
-                <div className="text-[10px] text-[#404040] italic py-2 px-1">
+                <div className="text-[10px] text-[#52525B] italic py-2 px-1">
                   Console output is empty. Run code with console.log() to inspect output.
                 </div>
               ) : (
@@ -487,14 +487,14 @@ export const CodeSandbox: React.FC<CodeSandboxProps> = ({ tab }) => {
                     key={log.id}
                     className={`flex items-start gap-2 text-[11px] py-0.5 px-1 ${
                       log.level === 'error'
-                        ? 'text-[#FFFFFF] bg-[#262626] border-l-2 border-[#FFFFFF]'
+                        ? 'text-[#FFFFFF] bg-[#18181B] border-l-2 border-[#FFFFFF]'
                         : log.level === 'warn'
-                        ? 'text-[#CCCCCC]'
-                        : 'text-[#A3A3A3]'
+                        ? 'text-[#E4E4E7]'
+                        : 'text-[#A1A1AA]'
                     }`}
                   >
-                    <span className="text-[9px] text-[#555555] shrink-0">{log.timestamp}</span>
-                    <span className="text-[9px] font-bold px-1 bg-[#141414] border border-[#262626] shrink-0">
+                    <span className="text-[9px] text-[#71717A] shrink-0">{log.timestamp}</span>
+                    <span className="text-[9px] font-bold px-1 bg-[#141414] border border-[#262626] shrink-0 text-[#FFFFFF]">
                       {log.level.toUpperCase()}
                     </span>
                     <span className="break-all whitespace-pre-wrap">{log.message}</span>

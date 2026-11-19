@@ -188,17 +188,17 @@ export const GitHubExplorer: React.FC<GitHubExplorerProps> = ({ tab }) => {
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-[#050505] text-[#FFFFFF] font-mono select-none overflow-hidden">
+    <div className="flex-1 flex flex-col h-full bg-[#000000] text-[#FFFFFF] font-mono select-none overflow-hidden">
       {/* 1. Header & Search Form */}
-      <div className="p-3 bg-[#0C0C0C] border-b border-[#262626] flex flex-col gap-2 shrink-0">
+      <div className="p-3 bg-[#0A0A0A] border-b border-[#1F1F1F] flex flex-col gap-2 shrink-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <FolderGit2 size={16} className="text-[#FFFFFF]" />
+            <FolderGit2 size={15} className="text-[#FFFFFF]" />
             <span className="text-xs font-bold tracking-wider text-[#FFFFFF] uppercase">
               GITHUB OSS EXPLORER // REST REPOSITORY DISCOVERY
             </span>
           </div>
-          <span className="text-[10px] text-[#737373] bg-[#121212] px-2 py-0.5 border border-[#262626]">
+          <span className="text-[10px] text-[#A1A1AA] bg-[#141414] px-2 py-0.5 border border-[#262626] font-bold">
             LIVE GITHUB API V3
           </span>
         </div>
@@ -206,19 +206,19 @@ export const GitHubExplorer: React.FC<GitHubExplorerProps> = ({ tab }) => {
         {/* Search Bar */}
         <form onSubmit={handleSearchSubmit} className="flex gap-2">
           <div className="relative flex-1">
-            <Search size={13} className="absolute left-3 top-2.5 text-[#737373]" />
+            <Search size={13} className="absolute left-3 top-2.5 text-[#71717A]" />
             <input
               type="text"
               value={query}
               onChange={e => setQuery(e.target.value)}
               placeholder="SEARCH GITHUB REPOSITORIES (e.g. ai agent, threejs, webrtc)..."
-              className="w-full bg-[#000000] border border-[#262626] focus:border-[#FFFFFF] pl-8 pr-3 py-1.5 text-xs text-[#FFFFFF] outline-none"
+              className="w-full bg-[#000000] border border-[#1F1F1F] focus:border-[#FFFFFF] pl-8 pr-3 py-1.5 text-xs text-[#FFFFFF] outline-none transition-colors"
             />
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="px-4 py-1.5 bg-[#FFFFFF] text-[#000000] font-bold text-xs border border-[#FFFFFF] hover:bg-[#CCCCCC] flex items-center gap-1.5"
+            className="px-4 py-1.5 bg-[#FFFFFF] text-[#000000] font-bold text-xs border border-[#FFFFFF] hover:bg-[#CCCCCC] flex items-center gap-1.5 transition-colors"
           >
             {loading ? <RotateCw size={12} className="animate-spin" /> : <Search size={12} />}
             <span>SEARCH</span>
@@ -227,7 +227,7 @@ export const GitHubExplorer: React.FC<GitHubExplorerProps> = ({ tab }) => {
 
         {/* Preset Query Badges */}
         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-1">
-          <span className="text-[10px] text-[#737373] uppercase font-bold shrink-0">PRESETS:</span>
+          <span className="text-[10px] text-[#71717A] uppercase font-bold shrink-0">PRESETS:</span>
           {PRESET_QUERIES.map(q => (
             <button
               key={q}
@@ -237,8 +237,8 @@ export const GitHubExplorer: React.FC<GitHubExplorerProps> = ({ tab }) => {
               }}
               className={`px-2 py-0.5 text-[10px] border transition-colors shrink-0 ${
                 query.toLowerCase() === q.toLowerCase()
-                  ? 'bg-[#1C1C1C] text-[#FFFFFF] border-[#555555] font-bold'
-                  : 'bg-[#121212] text-[#A3A3A3] border-[#262626] hover:text-[#FFFFFF] hover:border-[#404040]'
+                  ? 'bg-[#18181B] text-[#FFFFFF] border-[#3F3F46] font-bold'
+                  : 'bg-[#111111] text-[#A1A1AA] border-[#1F1F1F] hover:text-[#FFFFFF] hover:border-[#262626]'
               }`}
             >
               {q}
@@ -249,24 +249,24 @@ export const GitHubExplorer: React.FC<GitHubExplorerProps> = ({ tab }) => {
 
       {/* 2. Notice / Error Banner */}
       {errorMsg && (
-        <div className="h-7 bg-[#141414] border-b border-[#262626] px-3 flex items-center justify-between text-[10px] text-[#A3A3A3] shrink-0">
+        <div className="h-7 bg-[#111111] border-b border-[#1F1F1F] px-3 flex items-center justify-between text-[10px] text-[#A1A1AA] shrink-0">
           <div className="flex items-center gap-1.5">
-            <AlertCircle size={11} className="text-[#A3A3A3]" />
+            <AlertCircle size={11} className="text-[#A1A1AA]" />
             <span>{errorMsg}</span>
           </div>
-          <button onClick={() => fetchRepos(query)} className="underline hover:text-[#FFFFFF]">
+          <button onClick={() => fetchRepos(query)} className="underline hover:text-[#FFFFFF] transition-colors">
             RETRY QUERY
           </button>
         </div>
       )}
 
       {/* 3. Repositories Grid */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-[#050505]">
+      <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-[#000000] custom-scrollbar">
         {repos.length === 0 && !loading && (
-          <div className="h-64 flex flex-col items-center justify-center text-center p-6 border border-[#262626] bg-[#0A0A0A]">
-            <FolderGit2 size={32} className="text-[#333333] mb-2" />
+          <div className="h-64 flex flex-col items-center justify-center text-center p-6 border border-[#1F1F1F] bg-[#0A0A0A]">
+            <FolderGit2 size={32} className="text-[#262626] mb-2" />
             <div className="text-xs font-bold text-[#FFFFFF] uppercase mb-1">NO REPOSITORIES FOUND</div>
-            <p className="text-[11px] text-[#737373]">Try searching for keywords like "threejs", "webrtc", or "markdown".</p>
+            <p className="text-[11px] text-[#71717A]">Try searching for keywords like &quot;threejs&quot;, &quot;webrtc&quot;, or &quot;markdown&quot;.</p>
           </div>
         )}
 
@@ -274,7 +274,7 @@ export const GitHubExplorer: React.FC<GitHubExplorerProps> = ({ tab }) => {
           {repos.map(repo => (
             <div
               key={repo.id}
-              className="bg-[#0A0A0A] border border-[#262626] hover:border-[#404040] p-3.5 flex flex-col justify-between transition-colors"
+              className="bg-[#0A0A0A] border border-[#1F1F1F] hover:border-[#3F3F46] p-3.5 flex flex-col justify-between transition-colors hover:bg-[#111111]"
             >
               <div>
                 {/* Title & Language */}
@@ -286,43 +286,43 @@ export const GitHubExplorer: React.FC<GitHubExplorerProps> = ({ tab }) => {
                     className="font-bold text-xs text-[#FFFFFF] hover:underline flex items-center gap-1.5 group"
                   >
                     <span>{repo.full_name}</span>
-                    <ExternalLink size={10} className="text-[#737373] group-hover:text-[#FFFFFF]" />
+                    <ExternalLink size={10} className="text-[#71717A] group-hover:text-[#FFFFFF]" />
                   </a>
 
                   {repo.language && (
-                    <span className="text-[9px] font-bold px-1.5 py-0.2 bg-[#171717] border border-[#333333] text-[#A3A3A3] shrink-0">
+                    <span className="text-[9px] font-bold px-1.5 py-0.2 bg-[#141414] border border-[#262626] text-[#A1A1AA] shrink-0">
                       {repo.language}
                     </span>
                   )}
                 </div>
 
                 {/* Description */}
-                <p className="text-[11px] text-[#737373] line-clamp-2 mb-3 leading-relaxed">
+                <p className="text-[11px] text-[#A1A1AA] line-clamp-2 mb-3 leading-relaxed">
                   {repo.description || 'No repository description available.'}
                 </p>
 
                 {/* Metrics */}
-                <div className="flex items-center gap-3 text-[10px] text-[#A3A3A3] mb-3">
+                <div className="flex items-center gap-3 text-[10px] text-[#A1A1AA] mb-3">
                   <span className="flex items-center gap-1">
                     <Star size={11} className="text-[#FFFFFF]" />
                     <span>{repo.stargazers_count?.toLocaleString()}</span>
                   </span>
                   <span className="flex items-center gap-1">
-                    <GitFork size={11} className="text-[#A3A3A3]" />
+                    <GitFork size={11} className="text-[#A1A1AA]" />
                     <span>{repo.forks_count?.toLocaleString()}</span>
                   </span>
-                  <span className="text-[#555555]">
+                  <span className="text-[#52525B]">
                     ISSUES: {repo.open_issues_count}
                   </span>
                 </div>
               </div>
 
               {/* Actions Toolbar */}
-              <div className="pt-2.5 border-t border-[#1C1C1C] flex items-center justify-between gap-2">
+              <div className="pt-2.5 border-t border-[#1F1F1F] flex items-center justify-between gap-2">
                 <button
                   onClick={() => handleCopyCDN(repo)}
                   title="Copy jsDelivr CDN link"
-                  className="px-2 py-1 bg-[#121212] hover:bg-[#1C1C1C] text-[#A3A3A3] hover:text-[#FFFFFF] border border-[#262626] text-[10px] flex items-center gap-1"
+                  className="px-2 py-1 bg-[#111111] hover:bg-[#18181B] text-[#A1A1AA] hover:text-[#FFFFFF] border border-[#1F1F1F] text-[10px] flex items-center gap-1 transition-colors"
                 >
                   {copiedId === repo.id ? (
                     <>
@@ -343,7 +343,7 @@ export const GitHubExplorer: React.FC<GitHubExplorerProps> = ({ tab }) => {
                   className={`px-2.5 py-1 text-[10px] font-bold border flex items-center gap-1 transition-all ${
                     indexedId === repo.id
                       ? 'bg-[#FFFFFF] text-[#000000] border-[#FFFFFF]'
-                      : 'bg-[#171717] hover:bg-[#222222] text-[#FFFFFF] border-[#383838] hover:border-[#FFFFFF]'
+                      : 'bg-[#141414] hover:bg-[#18181B] text-[#FFFFFF] border-[#262626] hover:border-[#FFFFFF]'
                   }`}
                 >
                   {indexedId === repo.id ? (

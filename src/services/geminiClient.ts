@@ -18,38 +18,38 @@ const ACTIVE_MODEL_STORAGE_KEY = 'whitespace_active_gemini_model';
 
 export const CURATED_FALLBACK_MODELS: GeminiModelInfo[] = [
   {
-    name: 'models/gemini-2.5-flash',
-    id: 'gemini-2.5-flash',
-    displayName: 'Gemini 2.5 Flash',
-    description: 'Next-generation multimodal reasoning optimized for high-speed agentic execution.',
+    name: 'models/gemini-3.1-flash-lite',
+    id: 'gemini-3.1-flash-lite',
+    displayName: 'Gemini 3.1 Flash Lite',
+    description: 'Sub-second high-velocity multimodal reasoning optimized for workspace intelligence.',
     inputTokenLimit: 1048576,
     outputTokenLimit: 8192,
     supportedGenerationMethods: ['generateContent', 'countTokens']
   },
   {
-    name: 'models/gemini-2.5-pro',
-    id: 'gemini-2.5-pro',
-    displayName: 'Gemini 2.5 Pro',
-    description: 'Deep reasoning model engineered for complex architectural synthesis and code generation.',
-    inputTokenLimit: 2097152,
-    outputTokenLimit: 8192,
-    supportedGenerationMethods: ['generateContent', 'countTokens']
-  },
-  {
-    name: 'models/gemini-1.5-flash',
-    id: 'gemini-1.5-flash',
-    displayName: 'Gemini 1.5 Flash',
-    description: 'High-velocity multimodal workhorse model for sub-second responses.',
+    name: 'models/gemini-3.5-flash-lite',
+    id: 'gemini-3.5-flash-lite',
+    displayName: 'Gemini 3.5 Flash Lite',
+    description: 'Ultra-fast next-gen lightweight Gemini model with enhanced accuracy and instant response.',
     inputTokenLimit: 1048576,
     outputTokenLimit: 8192,
     supportedGenerationMethods: ['generateContent', 'countTokens']
   },
   {
-    name: 'models/gemini-1.5-pro',
-    id: 'gemini-1.5-pro',
-    displayName: 'Gemini 1.5 Pro',
-    description: 'Foundation model with 2M token context window for large repository ingestion.',
+    name: 'models/gemini-3.8-flash',
+    id: 'gemini-3.8-flash',
+    displayName: 'Gemini 3.8 Flash',
+    description: 'Next-generation reasoning model engineered for deep architectural synthesis.',
     inputTokenLimit: 2097152,
+    outputTokenLimit: 8192,
+    supportedGenerationMethods: ['generateContent', 'countTokens']
+  },
+  {
+    name: 'models/gemini-flash-latest',
+    id: 'gemini-flash-latest',
+    displayName: 'Gemini Flash Latest',
+    description: 'General-purpose high-throughput Gemini model for multi-space dispatching.',
+    inputTokenLimit: 1048576,
     outputTokenLimit: 8192,
     supportedGenerationMethods: ['generateContent', 'countTokens']
   }
@@ -69,9 +69,13 @@ export class GeminiClient {
 
   public getActiveModel(): string {
     try {
-      return localStorage.getItem(ACTIVE_MODEL_STORAGE_KEY) || 'gemini-2.5-flash';
+      const saved = localStorage.getItem(ACTIVE_MODEL_STORAGE_KEY);
+      if (saved && saved !== 'gemini-2.5-flash' && saved !== 'gemini-2.5-pro') {
+        return saved;
+      }
+      return 'gemini-3.1-flash-lite';
     } catch {
-      return 'gemini-2.5-flash';
+      return 'gemini-3.1-flash-lite';
     }
   }
 
@@ -121,7 +125,7 @@ export class GeminiClient {
   }
 
   /**
-   * Executes a direct generateContent REST call.
+   * Executes a direct generateContent REST call with intelligent model fallback.
    */
   public async generateContent(
     apiKey: string,
@@ -129,37 +133,61 @@ export class GeminiClient {
     systemPrompt: string,
     userPrompt: string
   ): Promise<string> {
-    const cleanModel = modelId.replace(/^models\//, '');
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${cleanModel}:generateContent?key=${apiKey.trim()}`;
+    const candidateModels = [
+      modelId.replace(/^models\//, ''),
+      'gemini-3.1-flash-lite',
+      'gemini-3.5-flash-lite',
+      'gemini-3.8-flash'
+    ].filter((m, idx, arr) => arr.indexOf(m) === idx);
 
-    const body = {
-      contents: [
-        {
-          role: 'user',
-          parts: [
-            { text: `SYSTEM DIRECTIVES:\n${systemPrompt}\n\nUSER INSTRUCTION:\n${userPrompt}` }
-          ]
+    let lastError: Error | null = null;
+
+    for (const model of candidateModels) {
+      try {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey.trim()}`;
+
+        const body = {
+          contents: [
+            {
+              role: 'user',
+              parts: [
+                { text: `SYSTEM DIRECTIVES:\n${systemPrompt}\n\nUSER INSTRUCTION:\n${userPrompt}` }
+              ]
+            }
+          ],
+          generationConfig: {
+            temperature: 0.2,
+            maxOutputTokens: 2048
+          }
+        };
+
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (text) {
+            return text;
+          }
+        } else {
+          const errText = await res.text();
+          lastError = new Error(`Gemini REST error (${res.status} on ${model}): ${errText}`);
+          // If model is not found (404) or busy (503), try next fallback model
+          if (res.status === 404 || res.status === 503) {
+            continue;
+          }
+          throw lastError;
         }
-      ],
-      generationConfig: {
-        temperature: 0.2,
-        maxOutputTokens: 2048
+      } catch (err: any) {
+        lastError = err;
       }
-    };
-
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
-
-    if (!res.ok) {
-      const errText = await res.text();
-      throw new Error(`Gemini REST error (${res.status}): ${errText}`);
     }
 
-    const data = await res.json();
-    return data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response generated.';
+    throw lastError || new Error('Failed to generate response across all models.');
   }
 
   /**

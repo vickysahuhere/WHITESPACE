@@ -45,11 +45,22 @@ interface WorkspaceContextType {
 const WorkspaceContext = createContext<WorkspaceContextType | null>(null);
 
 export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // 1. Spaces State with LocalStorage backing
+  // 1. Spaces State with LocalStorage backing & legacy space ID normalization
   const [spaces, setSpaces] = useState<Space[]>(() => {
     try {
       const saved = localStorage.getItem('whitespace_spaces');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed: Space[] = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          // Normalize legacy space IDs
+          return parsed.map(s => {
+            if (s.id === 'space_wc_core') return { ...s, id: 'wc-core', slug: 'wc-core' };
+            if (s.id === 'space_signbridge') return { ...s, id: 'signbridge', slug: 'signbridge' };
+            if (s.id === 'space_mai_reads') return { ...s, id: 'mai-reads', slug: 'mai-reads' };
+            return s;
+          });
+        }
+      }
     } catch (e) {
       console.error('Failed to load spaces from localStorage', e);
     }
@@ -57,7 +68,11 @@ export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   });
 
   const [activeSpaceId, setActiveSpaceIdState] = useState<string>(() => {
-    return localStorage.getItem('whitespace_active_space') || DEFAULT_SPACES[0].id;
+    const saved = localStorage.getItem('whitespace_active_space');
+    if (saved === 'space_wc_core') return 'wc-core';
+    if (saved === 'space_signbridge') return 'signbridge';
+    if (saved === 'space_mai_reads') return 'mai-reads';
+    return saved || DEFAULT_SPACES[0].id;
   });
 
   const setActiveSpaceId = (id: string) => {
@@ -231,7 +246,7 @@ export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   // 5. Gemini API Key Wiring
   const [geminiKey, setGeminiKeyState] = useState<string>(() => {
-    return localStorage.getItem('whitespace_gemini_key') || '';
+    return localStorage.getItem('whitespace_gemini_key') || (import.meta.env.VITE_GEMINI_API_KEY as string) || '';
   });
 
   const setGeminiKey = (key: string) => {
@@ -245,17 +260,24 @@ export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   // 6. Global Command Palette
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
 
-  // 7. Interactive App Demo & Contextual Guide (CTRL+S+D+F)
+  // 7. Interactive App Demo & Contextual Guide
   const [guideModalOpen, setGuideModalOpen] = useState(false);
   const toggleGuideModal = () => setGuideModalOpen(prev => !prev);
 
-  // Global Keydown Listener for CTRL+S+D+F shortcut
+  // Global Keydown Listener for easy guide opening (F1 or Ctrl+H or chord)
   useEffect(() => {
     const heldKeys = new Set<string>();
     let chordBuffer: string[] = [];
     let chordTimeout: ReturnType<typeof setTimeout> | null = null;
 
     const handleKeyDown = (e: KeyboardEvent) => {
+      // 0. Easy Single-Key Help: F1 or Ctrl+H
+      if (e.key === 'F1' || ((e.ctrlKey || e.metaKey) && (e.key === 'h' || e.key === 'H'))) {
+        e.preventDefault();
+        setGuideModalOpen(prev => !prev);
+        return;
+      }
+
       const key = e.key.toLowerCase();
       heldKeys.add(key);
 

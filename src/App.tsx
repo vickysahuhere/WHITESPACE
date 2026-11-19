@@ -13,15 +13,15 @@ export default function App() {
     <WorkspaceProvider>
       <AudioProvider>
         <DocumentProvider>
-          <RAGProvider>
-            <ChatProvider>
-              <BrowserProvider>
-                <TaskProvider>
+          <TaskProvider>
+            <BrowserProvider>
+              <RAGProvider>
+                <ChatProvider>
                   <MainLayout />
-                </TaskProvider>
-              </BrowserProvider>
-            </ChatProvider>
-          </RAGProvider>
+                </ChatProvider>
+              </RAGProvider>
+            </BrowserProvider>
+          </TaskProvider>
         </DocumentProvider>
       </AudioProvider>
     </WorkspaceProvider>

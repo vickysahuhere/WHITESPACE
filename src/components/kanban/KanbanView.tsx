@@ -10,11 +10,8 @@ import {
   Edit3, 
   ArrowLeft, 
   ArrowRight, 
-  Bot, 
   CheckCircle2, 
-  Clock, 
-  Sparkles,
-  User
+  Sparkles 
 } from 'lucide-react';
 
 interface KanbanViewProps {
@@ -88,39 +85,39 @@ export const KanbanView: React.FC<KanbanViewProps> = ({ onDispatchTask }) => {
   const getPriorityBadge = (p: TaskPriority) => {
     switch (p) {
       case 'P0':
-        return <span className="px-1.5 py-0.2 bg-[#FFFFFF] text-[#000000] font-bold border border-[#FFFFFF] text-[10px]">P0 HIGH</span>;
+        return <span className="px-2 py-0.5 bg-[#FFFFFF] text-[#0B0B0E] font-bold rounded-md text-[11px] shadow-xs">P0 URGENT</span>;
       case 'P1':
-        return <span className="px-1.5 py-0.2 bg-[#171717] text-[#FFFFFF] font-bold border border-[#404040] text-[10px]">P1 MED</span>;
+        return <span className="px-2 py-0.5 bg-[#252534] text-emerald-400 font-bold border border-emerald-500/30 rounded-md text-[11px]">P1 HIGH</span>;
       case 'P2':
-        return <span className="px-1.5 py-0.2 bg-[#0D0D0D] text-[#737373] border border-[#262626] text-[10px]">P2 LOW</span>;
+        return <span className="px-2 py-0.5 bg-[#1E1E26] text-[#8E8E9E] border border-[#2F2F3E] rounded-md text-[11px]">P2 NORMAL</span>;
     }
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-[#050505] text-[#FFFFFF] font-mono select-none overflow-hidden">
+    <div className="flex-1 flex flex-col h-full bg-[#0B0B0E] text-[#FFFFFF] select-none overflow-hidden">
       {/* 1. Header Toolbar */}
-      <div className="h-11 bg-[#0C0C0C] border-b border-[#262626] px-4 flex items-center justify-between gap-3 shrink-0">
-        <div className="flex items-center gap-2">
-          <Kanban size={16} className="text-[#FFFFFF]" />
-          <span className="text-xs font-bold tracking-wider text-[#FFFFFF] uppercase">
-            OPENCLAW MISSION CONTROL // {activeSpace.name.toUpperCase()} KANBAN
+      <div className="h-12 bg-[#121217] border-b border-[#242430] px-4 flex items-center justify-between gap-3 shrink-0">
+        <div className="flex items-center gap-2.5">
+          <Kanban size={17} className="text-emerald-400" />
+          <span className="text-sm font-bold tracking-tight text-[#FFFFFF]">
+            OpenClaw Mission Control // {activeSpace.name} Kanban
           </span>
-          <span className="text-[10px] bg-[#171717] border border-[#333333] px-2 py-0.5 text-[#A3A3A3]">
-            {spaceTasks.length} TASKS
+          <span className="text-xs bg-[#1E1E28] border border-[#2F2F3E] px-2.5 py-0.5 rounded-full text-[#D4D4DC] font-semibold">
+            {spaceTasks.length} tasks
           </span>
         </div>
 
         <button
           onClick={() => handleOpenCreate('queued')}
-          className="px-3 py-1 bg-[#FFFFFF] text-[#000000] font-bold text-xs border border-[#FFFFFF] hover:bg-[#CCCCCC] flex items-center gap-1.5"
+          className="px-4 py-1.5 bg-[#FFFFFF] text-[#0B0B0E] font-bold text-xs rounded-xl hover:bg-[#E4E4E7] flex items-center gap-1.5 transition-all shadow-sm"
         >
-          <Plus size={13} />
+          <Plus size={14} />
           <span>NEW TASK</span>
         </button>
       </div>
 
       {/* 2. 3-Column Pipeline Grid */}
-      <div className="flex-1 overflow-x-auto p-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="flex-1 overflow-x-auto p-4 sm:p-5 grid grid-cols-1 md:grid-cols-3 gap-4">
         {COLUMNS.map(col => {
           const colTasks = spaceTasks.filter(t => t.column === col.id);
           const isOver = draggedOverCol === col.id;
@@ -131,22 +128,22 @@ export const KanbanView: React.FC<KanbanViewProps> = ({ onDispatchTask }) => {
               onDragOver={e => handleDragOver(e, col.id)}
               onDragLeave={handleDragLeave}
               onDrop={e => handleDrop(e, col.id)}
-              className={`flex flex-col bg-[#0A0A0A] border rounded-none transition-colors ${
-                isOver ? 'border-[#FFFFFF] bg-[#121212]' : 'border-[#262626]'
+              className={`flex flex-col bg-[#121217] border rounded-2xl transition-all shadow-sm overflow-hidden ${
+                isOver ? 'border-emerald-500/80 bg-[#161622] ring-2 ring-emerald-500/20' : 'border-[#242430]'
               }`}
             >
               {/* Column Header */}
-              <div className="p-3 bg-[#0E0E0E] border-b border-[#262626] flex items-center justify-between">
+              <div className="p-3.5 bg-[#171722] border-b border-[#242430] flex items-center justify-between">
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-bold text-[#FFFFFF] uppercase tracking-wide">
                       {col.title}
                     </span>
-                    <span className="bg-[#171717] border border-[#333333] px-1.5 py-0.2 text-[10px] text-[#FFFFFF] font-bold">
+                    <span className="bg-[#20202E] border border-[#333346] px-2 py-0.5 rounded-md text-xs text-[#FFFFFF] font-bold">
                       {colTasks.length}
                     </span>
                   </div>
-                  <div className="text-[10px] text-[#737373] mt-0.5">
+                  <div className="text-[11px] text-[#8E8E9E] mt-0.5">
                     {col.subtitle}
                   </div>
                 </div>
@@ -154,20 +151,20 @@ export const KanbanView: React.FC<KanbanViewProps> = ({ onDispatchTask }) => {
                 <button
                   onClick={() => handleOpenCreate(col.id)}
                   title={`Add task to ${col.title}`}
-                  className="p-1 text-[#A3A3A3] hover:text-[#FFFFFF] border border-[#262626] hover:border-[#404040] bg-[#121212]"
+                  className="p-1.5 text-[#8E8E9E] hover:text-[#FFFFFF] rounded-lg border border-[#2F2F3E] hover:border-[#454558] bg-[#1E1E28] transition-colors"
                 >
-                  <Plus size={12} />
+                  <Plus size={13} />
                 </button>
               </div>
 
               {/* Tasks List */}
-              <div className="flex-1 overflow-y-auto p-3 space-y-3">
+              <div className="flex-1 overflow-y-auto p-3.5 space-y-3 custom-scrollbar">
                 {colTasks.length === 0 ? (
-                  <div className="h-32 border border-dashed border-[#202020] flex flex-col items-center justify-center text-[10px] text-[#404040]">
+                  <div className="h-36 border border-dashed border-[#242430] rounded-xl flex flex-col items-center justify-center text-xs text-[#52525B]">
                     <span>NO TASKS IN COLUMN</span>
                     <button
                       onClick={() => handleOpenCreate(col.id)}
-                      className="mt-1 text-[#737373] hover:text-[#FFFFFF] underline"
+                      className="mt-1 text-emerald-400 hover:text-emerald-300 font-medium transition-colors"
                     >
                       + Create Specification
                     </button>
@@ -181,16 +178,16 @@ export const KanbanView: React.FC<KanbanViewProps> = ({ onDispatchTask }) => {
                         key={task.id}
                         draggable
                         onDragStart={e => handleDragStart(e, task.id)}
-                        className="bg-[#0F0F0F] border border-[#262626] hover:border-[#555555] p-3 flex flex-col gap-2.5 transition-all cursor-grab active:cursor-grabbing group shadow-md"
+                        className="bg-[#1A1A24] border border-[#2F2F3E] hover:border-[#454558] rounded-2xl p-4 flex flex-col gap-3 transition-all cursor-grab active:cursor-grabbing group shadow-md hover:bg-[#20202E]"
                       >
                         {/* Priority & Assignee Header */}
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-1.5">
+                          <div className="flex items-center gap-2">
                             {getPriorityBadge(task.priority)}
                             {assignee && (
                               <span
                                 title={`Assigned to ${assignee.name}`}
-                                className="bg-[#171717] border border-[#333333] text-[9px] px-1.5 py-0.2 text-[#FFFFFF] font-bold"
+                                className="bg-[#242432] border border-[#333346] text-xs px-2 py-0.5 rounded-md text-[#FFFFFF] font-bold"
                               >
                                 {assignee.badge}
                               </span>
@@ -203,49 +200,49 @@ export const KanbanView: React.FC<KanbanViewProps> = ({ onDispatchTask }) => {
                               <button
                                 onClick={() => moveTask(task.id, col.id === 'shipped' ? 'active' : 'queued')}
                                 title="Move Left"
-                                className="p-1 hover:bg-[#202020] text-[#A3A3A3] hover:text-[#FFFFFF]"
+                                className="p-1 rounded-md text-[#8E8E9E] hover:text-[#FFFFFF] hover:bg-[#2A2A3A]"
                               >
-                                <ArrowLeft size={11} />
+                                <ArrowLeft size={13} />
                               </button>
                             )}
                             {col.id !== 'shipped' && (
                               <button
                                 onClick={() => moveTask(task.id, col.id === 'queued' ? 'active' : 'shipped')}
                                 title="Move Right"
-                                className="p-1 hover:bg-[#202020] text-[#A3A3A3] hover:text-[#FFFFFF]"
+                                className="p-1 rounded-md text-[#8E8E9E] hover:text-[#FFFFFF] hover:bg-[#2A2A3A]"
                               >
-                                <ArrowRight size={11} />
+                                <ArrowRight size={13} />
                               </button>
                             )}
                           </div>
                         </div>
 
                         {/* Task Title */}
-                        <div className="text-xs font-bold text-[#FFFFFF] leading-snug">
+                        <div className="text-sm font-bold text-[#FFFFFF] leading-snug">
                           {task.title}
                         </div>
 
                         {/* Task Spec Excerpt */}
                         {task.spec && (
-                          <p className="text-[11px] text-[#737373] line-clamp-3 leading-relaxed">
+                          <p className="text-xs text-[#8E8E9E] line-clamp-3 leading-relaxed">
                             {task.spec}
                           </p>
                         )}
 
                         {/* Footer: 1-Click DISPATCH AI & Actions */}
-                        <div className="pt-2 border-t border-[#1C1C1C] flex items-center justify-between gap-2">
+                        <div className="pt-2.5 border-t border-[#242430] flex items-center justify-between gap-2">
                           {col.id !== 'shipped' ? (
                             <button
                               onClick={() => handleDispatch(task)}
                               title="Launch autonomous agent reasoning loop in right-docked drawer"
-                              className="px-2.5 py-1 bg-[#FFFFFF] hover:bg-[#CCCCCC] text-[#000000] font-bold text-[10px] border border-[#FFFFFF] flex items-center gap-1.5 transition-all"
+                              className="px-3 py-1.5 bg-[#FFFFFF] hover:bg-[#E4E4E7] text-[#0B0B0E] font-bold text-xs rounded-xl flex items-center gap-1.5 transition-all shadow-xs"
                             >
-                              <Sparkles size={11} />
+                              <Sparkles size={13} />
                               <span>DISPATCH AI</span>
                             </button>
                           ) : (
-                            <div className="flex items-center gap-1 text-[10px] text-[#A3A3A3]">
-                              <CheckCircle2 size={11} className="text-[#FFFFFF]" />
+                            <div className="flex items-center gap-1.5 text-xs text-emerald-400 font-bold">
+                              <CheckCircle2 size={13} className="text-emerald-400" />
                               <span>SHIPPED</span>
                             </div>
                           )}
@@ -254,16 +251,16 @@ export const KanbanView: React.FC<KanbanViewProps> = ({ onDispatchTask }) => {
                             <button
                               onClick={() => handleOpenEdit(task)}
                               title="Edit Task"
-                              className="p-1 hover:text-[#FFFFFF] text-[#737373]"
+                              className="p-1.5 text-[#8E8E9E] hover:text-[#FFFFFF] rounded-md hover:bg-[#2A2A3A] transition-colors"
                             >
-                              <Edit3 size={11} />
+                              <Edit3 size={13} />
                             </button>
                             <button
                               onClick={() => deleteTask(task.id)}
                               title="Delete Task"
-                              className="p-1 hover:text-[#FFFFFF] text-[#737373]"
+                              className="p-1.5 text-[#8E8E9E] hover:text-red-400 rounded-md hover:bg-[#2A2A3A] transition-colors"
                             >
-                              <Trash2 size={11} />
+                              <Trash2 size={13} />
                             </button>
                           </div>
                         </div>

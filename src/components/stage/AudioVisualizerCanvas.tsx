@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { useAudio } from '../../context/AudioContext';
+import { useWorkspace } from '../../context/WorkspaceContext';
 
 interface AudioVisualizerCanvasProps {
   mode?: 'compact' | 'studio';
@@ -11,8 +12,12 @@ export const AudioVisualizerCanvas: React.FC<AudioVisualizerCanvasProps> = ({
   className = ''
 }) => {
   const { analyserNode, isMicOn } = useAudio();
+  const { audioState } = useWorkspace();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const peakLevelsRef = useRef<number[]>(new Array(32).fill(0));
+
+  // Determine if mic is live and transmitting (ON and NOT MUTED)
+  const isTransmitting = isMicOn && !audioState.muted;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -34,13 +39,13 @@ export const AudioVisualizerCanvas: React.FC<AudioVisualizerCanvasProps> = ({
       const width = canvas.width;
       const height = canvas.height;
 
-      // Clear Canvas
-      ctx.fillStyle = '#000000';
+      // Clear Canvas with rich dark background
+      ctx.fillStyle = '#0F0F14';
       ctx.fillRect(0, 0, width, height);
 
       let rms = 0;
 
-      if (isMicOn && analyserNode) {
+      if (isTransmitting && analyserNode) {
         analyserNode.getByteFrequencyData(freqData);
         analyserNode.getByteTimeDomainData(timeData);
 
@@ -52,13 +57,9 @@ export const AudioVisualizerCanvas: React.FC<AudioVisualizerCanvasProps> = ({
         }
         rms = Math.sqrt(sumSquares / timeData.length);
       } else {
-        // Fluid idle wave simulation
-        const t = performance.now() * 0.003;
-        for (let i = 0; i < numBars; i++) {
-          const wave = Math.sin(t + i * 0.25) * 0.3 + 0.3;
-          freqData[i] = Math.floor(wave * 140);
-        }
-        rms = 0.04 + Math.sin(t) * 0.02;
+        // When muted or mic is off, waves MUST GO DOWN TO ZERO (flat)
+        freqData.fill(0);
+        rms = 0;
       }
 
       // Calculate dBFS (-60 dB to 0 dB)
@@ -70,9 +71,10 @@ export const AudioVisualizerCanvas: React.FC<AudioVisualizerCanvasProps> = ({
         const barWidth = width / numBars;
         for (let i = 0; i < numBars; i++) {
           const val = freqData[i] || 0;
-          const barHeight = Math.max(2, (val / 255) * (height - 2));
+          // When transmitting, scale bar height; when muted/off, keep strictly at flat baseline (1px)
+          const barHeight = isTransmitting ? Math.max(2, (val / 255) * (height - 2)) : 1.5;
 
-          ctx.fillStyle = isMicOn ? '#FFFFFF' : '#404040';
+          ctx.fillStyle = isTransmitting ? '#FFFFFF' : '#2D2D3E';
           ctx.fillRect(
             i * barWidth + 1,
             height - barHeight,
@@ -85,24 +87,28 @@ export const AudioVisualizerCanvas: React.FC<AudioVisualizerCanvasProps> = ({
         const spectrumHeight = height - 26; // Reserve bottom 26px for VU meter
         const barWidth = width / numBars;
 
-        // 1. Draw 32 Frequency Bars
+        // 1. Draw Frequency Bars
         for (let i = 0; i < numBars; i++) {
           const val = freqData[i] || 0;
-          const barHeight = (val / 255) * spectrumHeight;
+          const barHeight = isTransmitting ? (val / 255) * spectrumHeight : 1;
 
           // Peak decay
           if (barHeight > peakLevelsRef.current[i]) {
             peakLevelsRef.current[i] = barHeight;
           } else {
-            peakLevelsRef.current[i] = Math.max(0, peakLevelsRef.current[i] - 0.8);
+            peakLevelsRef.current[i] = Math.max(1, peakLevelsRef.current[i] - 1.2);
           }
 
-          // Main Bar (Monochrome Gradient: dark base to bright top)
-          const grad = ctx.createLinearGradient(0, spectrumHeight, 0, spectrumHeight - barHeight);
-          grad.addColorStop(0, '#262626');
-          grad.addColorStop(1, '#FFFFFF');
+          // Main Bar (White-to-grey gradient when live, dark slate baseline when muted)
+          if (isTransmitting && barHeight > 1) {
+            const grad = ctx.createLinearGradient(0, spectrumHeight, 0, spectrumHeight - barHeight);
+            grad.addColorStop(0, '#323242');
+            grad.addColorStop(1, '#FFFFFF');
+            ctx.fillStyle = grad;
+          } else {
+            ctx.fillStyle = '#22222D';
+          }
 
-          ctx.fillStyle = isMicOn ? grad : '#222222';
           ctx.fillRect(
             i * barWidth + 1,
             spectrumHeight - barHeight,
@@ -111,23 +117,25 @@ export const AudioVisualizerCanvas: React.FC<AudioVisualizerCanvasProps> = ({
           );
 
           // Peak hold line
-          ctx.fillStyle = isMicOn ? '#FFFFFF' : '#555555';
-          ctx.fillRect(
-            i * barWidth + 1,
-            spectrumHeight - peakLevelsRef.current[i],
-            Math.max(1, barWidth - 2),
-            1
-          );
+          if (isTransmitting && peakLevelsRef.current[i] > 2) {
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(
+              i * barWidth + 1,
+              spectrumHeight - peakLevelsRef.current[i],
+              Math.max(1, barWidth - 2),
+              1
+            );
+          }
         }
 
         // 2. Horizontal Divider Line
-        ctx.fillStyle = '#262626';
+        ctx.fillStyle = '#242430';
         ctx.fillRect(0, spectrumHeight + 2, width, 1);
 
         // 3. True RMS dB VU Level Meter
         const vuY = spectrumHeight + 7;
         const vuHeight = 12;
-        const normalizedDb = Math.max(0, Math.min(1, (db + 60) / 60)); // 0.0 at -60dB, 1.0 at 0dB
+        const normalizedDb = isTransmitting ? Math.max(0, Math.min(1, (db + 60) / 60)) : 0; // 0 when muted
         const meterWidth = width - 110;
 
         // Background Track
@@ -172,7 +180,7 @@ export const AudioVisualizerCanvas: React.FC<AudioVisualizerCanvasProps> = ({
   }, [analyserNode, isMicOn, mode]);
 
   return (
-    <div className={`relative bg-[#000000] border border-[#262626] overflow-hidden ${className}`}>
+    <div className={`relative bg-[#000000] border border-[#1F1F1F] overflow-hidden ${className}`}>
       <canvas
         ref={canvasRef}
         width={mode === 'compact' ? 220 : 480}

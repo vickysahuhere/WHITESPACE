@@ -69,27 +69,27 @@ export const ModelDiscoveryModal: React.FC<ModelDiscoveryModalProps> = ({ isOpen
   };
 
   return (
-    <div className="fixed inset-0 bg-[#000000]/80 backdrop-blur-xs flex items-center justify-center z-50 p-4 font-mono select-none">
-      <div className="w-full max-w-2xl bg-[#0C0C0C] border border-[#404040] p-6 shadow-2xl flex flex-col gap-4 max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-[#000000]/85 backdrop-blur-xs flex items-center justify-center z-50 p-4 font-mono select-none">
+      <div className="w-full max-w-2xl bg-[#0A0A0A] border border-[#1F1F1F] p-6 shadow-2xl flex flex-col gap-4 max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-[#262626]">
+        <div className="flex items-center justify-between pb-3 border-b border-[#1F1F1F]">
           <div className="flex items-center gap-2">
-            <Cpu size={16} className="text-[#FFFFFF]" />
+            <Cpu size={15} className="text-[#FFFFFF]" />
             <span className="text-xs font-bold tracking-wider text-[#FFFFFF] uppercase">
               GOOGLE GEMINI REST // LIVE MODEL DISCOVERY
             </span>
           </div>
-          <button onClick={onClose} className="text-[#A3A3A3] hover:text-[#FFFFFF]">
+          <button onClick={onClose} className="text-[#71717A] hover:text-[#FFFFFF] transition-colors">
             <X size={15} />
           </button>
         </div>
 
         {/* Top Info Bar: Status & Rescan */}
-        <div className="p-3 bg-[#080808] border border-[#202020] flex items-center justify-between text-xs">
+        <div className="p-3 bg-[#111111] border border-[#1F1F1F] flex items-center justify-between text-xs">
           <div className="flex items-center gap-2">
-            <Key size={13} className={isKeyLinked ? 'text-[#FFFFFF]' : 'text-[#737373]'} />
-            <span className="text-[#A3A3A3]">
-              API KEY STATUS: <strong className={isKeyLinked ? 'text-[#FFFFFF]' : 'text-[#737373]'}>
+            <Key size={13} className={isKeyLinked ? 'text-[#FFFFFF]' : 'text-[#71717A]'} />
+            <span className="text-[#A1A1AA]">
+              API KEY STATUS: <strong className={isKeyLinked ? 'text-[#FFFFFF]' : 'text-[#71717A]'}>
                 {isKeyLinked ? 'LINKED // REST V1BETA ACTIVE' : 'KEYLESS // LOCAL OFFLINE RAG ACTIVE'}
               </strong>
             </span>
@@ -98,7 +98,7 @@ export const ModelDiscoveryModal: React.FC<ModelDiscoveryModalProps> = ({ isOpen
           <button
             onClick={() => fetchModels(keyInput)}
             disabled={loading}
-            className="px-2.5 py-1 bg-[#141414] hover:bg-[#202020] text-[#A3A3A3] hover:text-[#FFFFFF] border border-[#262626] text-[10px] flex items-center gap-1.5"
+            className="px-2.5 py-1 bg-[#141414] hover:bg-[#18181B] text-[#A1A1AA] hover:text-[#FFFFFF] border border-[#1F1F1F] text-[10px] flex items-center gap-1.5 transition-colors"
           >
             <RotateCw size={11} className={loading ? 'animate-spin' : ''} />
             <span>RESCAN MODELS</span>
@@ -106,16 +106,16 @@ export const ModelDiscoveryModal: React.FC<ModelDiscoveryModalProps> = ({ isOpen
         </div>
 
         {/* Gemini API Key Configuration */}
-        <div className="p-3 bg-[#080808] border border-[#202020] space-y-2">
+        <div className="p-3 bg-[#111111] border border-[#1F1F1F] space-y-2">
           <div className="flex items-center justify-between text-xs">
             <span className="text-[#FFFFFF] font-bold flex items-center gap-1.5">
-              <Key size={13} />
+              <Key size={13} className="text-[#A1A1AA]" />
               <span>CONFIGURE GOOGLE GEMINI KEY</span>
             </span>
             <span className={`px-2 py-0.5 text-[9px] font-bold border ${
               isKeyLinked 
                 ? 'bg-[#FFFFFF] text-[#000000] border-[#FFFFFF]' 
-                : 'bg-[#171717] text-[#737373] border-[#333333]'
+                : 'bg-[#141414] text-[#71717A] border-[#1F1F1F]'
             }`}>
               {isKeyLinked ? 'ACTIVE' : 'NOT LINKED'}
             </span>
@@ -128,19 +128,19 @@ export const ModelDiscoveryModal: React.FC<ModelDiscoveryModalProps> = ({ isOpen
                 value={keyInput}
                 onChange={e => setKeyInput(e.target.value)}
                 placeholder="PASTE GOOGLE GEMINI API KEY..."
-                className="w-full bg-[#000000] border border-[#262626] focus:border-[#FFFFFF] px-3 py-1.5 text-xs text-[#FFFFFF] outline-none pr-8 font-mono"
+                className="w-full bg-[#000000] border border-[#1F1F1F] focus:border-[#FFFFFF] px-3 py-1.5 text-xs text-[#FFFFFF] outline-none pr-8 font-mono"
               />
               <button
                 type="button"
                 onClick={() => setShowKey(!showKey)}
-                className="absolute right-2.5 top-2 text-[#737373] hover:text-[#FFFFFF]"
+                className="absolute right-2.5 top-2 text-[#71717A] hover:text-[#FFFFFF] transition-colors"
               >
                 {showKey ? <EyeOff size={13} /> : <Eye size={13} />}
               </button>
             </div>
             <button
               type="submit"
-              className="px-4 py-1.5 bg-[#FFFFFF] text-[#000000] font-bold text-xs border border-[#FFFFFF] hover:bg-[#CCCCCC] transition-colors"
+              className="px-4 py-1.5 bg-[#FFFFFF] text-[#000000] font-bold text-xs border border-[#FFFFFF] hover:bg-[#A1A1AA] transition-colors"
             >
               {keySaved ? 'LINKED' : 'LINK KEY'}
             </button>
@@ -149,7 +149,7 @@ export const ModelDiscoveryModal: React.FC<ModelDiscoveryModalProps> = ({ isOpen
 
         {/* Models List */}
         <div className="space-y-2.5">
-          <div className="text-[10px] text-[#737373] uppercase font-bold flex items-center justify-between">
+          <div className="text-[10px] text-[#71717A] uppercase font-bold flex items-center justify-between">
             <span>AVAILABLE GEMINI MODELS ({models.length})</span>
             <span>CONTEXT HEADROOM: &gt;99% HEADROOM AVAILABLE</span>
           </div>
@@ -161,10 +161,10 @@ export const ModelDiscoveryModal: React.FC<ModelDiscoveryModalProps> = ({ isOpen
               return (
                 <div
                   key={m.id}
-                  className={`p-3.5 bg-[#090909] border transition-all flex flex-col justify-between gap-2 ${
+                  className={`p-3.5 border transition-all flex flex-col justify-between gap-2 ${
                     isSelected
-                      ? 'border-[#FFFFFF] bg-[#121212]'
-                      : 'border-[#222222] hover:border-[#383838]'
+                      ? 'border-[#FFFFFF] bg-[#141414]'
+                      : 'border-[#1F1F1F] bg-[#111111] hover:border-[#262626]'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-3">
@@ -173,16 +173,16 @@ export const ModelDiscoveryModal: React.FC<ModelDiscoveryModalProps> = ({ isOpen
                         <span className="text-xs font-bold text-[#FFFFFF]">
                           {m.displayName}
                         </span>
-                        <span className="bg-[#171717] border border-[#333333] px-1.5 py-0.2 text-[9px] text-[#A3A3A3]">
+                        <span className="bg-[#141414] border border-[#1F1F1F] px-1.5 py-0.5 text-[9px] text-[#A1A1AA]">
                           {m.id}
                         </span>
                         {isSelected && (
-                          <span className="bg-[#FFFFFF] text-[#000000] px-1.5 py-0.2 text-[9px] font-bold">
+                          <span className="bg-[#FFFFFF] text-[#000000] px-1.5 py-0.5 text-[9px] font-bold">
                             ACTIVE
                           </span>
                         )}
                       </div>
-                      <p className="text-[11px] text-[#737373] mt-1 leading-relaxed">
+                      <p className="text-[11px] text-[#71717A] mt-1 leading-relaxed">
                         {m.description}
                       </p>
                     </div>
@@ -192,7 +192,7 @@ export const ModelDiscoveryModal: React.FC<ModelDiscoveryModalProps> = ({ isOpen
                       className={`px-3 py-1 text-xs font-bold border shrink-0 flex items-center gap-1 transition-colors ${
                         isSelected
                           ? 'bg-[#FFFFFF] text-[#000000] border-[#FFFFFF]'
-                          : 'bg-[#141414] hover:bg-[#222222] text-[#FFFFFF] border-[#333333]'
+                          : 'bg-[#141414] hover:bg-[#18181B] text-[#FFFFFF] border-[#1F1F1F]'
                       }`}
                     >
                       {switchedId === m.id ? (
@@ -212,10 +212,10 @@ export const ModelDiscoveryModal: React.FC<ModelDiscoveryModalProps> = ({ isOpen
                   </div>
 
                   {/* Model Specs Bar */}
-                  <div className="flex items-center justify-between pt-2 border-t border-[#171717] text-[10px] text-[#555555]">
-                    <span>CONTEXT LIMIT: <strong className="text-[#A3A3A3]">{m.inputTokenLimit.toLocaleString()} TOKENS</strong></span>
-                    <span>MAX OUTPUT: <strong className="text-[#A3A3A3]">{m.outputTokenLimit.toLocaleString()} TOKENS</strong></span>
-                    <span>METHODS: <strong className="text-[#A3A3A3]">{m.supportedGenerationMethods.join(', ')}</strong></span>
+                  <div className="flex items-center justify-between pt-2 border-t border-[#1F1F1F] text-[10px] text-[#71717A]">
+                    <span>CONTEXT LIMIT: <strong className="text-[#A1A1AA]">{m.inputTokenLimit.toLocaleString()} TOKENS</strong></span>
+                    <span>MAX OUTPUT: <strong className="text-[#A1A1AA]">{m.outputTokenLimit.toLocaleString()} TOKENS</strong></span>
+                    <span>METHODS: <strong className="text-[#A1A1AA]">{m.supportedGenerationMethods.join(', ')}</strong></span>
                   </div>
                 </div>
               );
@@ -224,15 +224,15 @@ export const ModelDiscoveryModal: React.FC<ModelDiscoveryModalProps> = ({ isOpen
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between pt-3 border-t border-[#262626] text-xs">
-          <div className="flex items-center gap-2 text-[10px] text-[#737373]">
+        <div className="flex items-center justify-between pt-3 border-t border-[#1F1F1F] text-xs">
+          <div className="flex items-center gap-2 text-[10px] text-[#71717A]">
             <Database size={12} />
             <span>LOCAL RAG: {totalChunksIndexed} CHUNKS INDEXED IN SPACE</span>
           </div>
 
           <button
             onClick={onClose}
-            className="px-4 py-1.5 bg-[#FFFFFF] text-[#000000] font-bold text-xs border border-[#FFFFFF] hover:bg-[#CCCCCC]"
+            className="px-4 py-1.5 bg-[#FFFFFF] text-[#000000] font-bold text-xs border border-[#FFFFFF] hover:bg-[#A1A1AA] transition-colors"
           >
             DONE
           </button>

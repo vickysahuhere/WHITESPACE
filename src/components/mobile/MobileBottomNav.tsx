@@ -14,12 +14,12 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ onOpenAudioSet
   const isStageActive = activeView === 'stage';
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 h-16 bg-[#0A0A0A]/95 backdrop-blur-md border-t border-[#262626] flex items-center justify-around px-4 z-30 select-none pb-[env(safe-area-inset-bottom)]">
+    <nav className="fixed bottom-0 left-0 right-0 h-16 bg-[#0A0A0A]/95 backdrop-blur-md border-t border-[#1F1F1F] flex items-center justify-around px-4 z-30 select-none pb-[env(safe-area-inset-bottom)]">
       {/* 1. AI Bot View Tab */}
       <button
         onClick={() => setActiveView('copilot')}
         className={`flex-1 flex flex-col items-center justify-center py-1.5 transition-all active:scale-95 ${
-          isBotActive ? 'text-[#FFFFFF]' : 'text-[#666666] hover:text-[#A3A3A3]'
+          isBotActive ? 'text-[#FFFFFF]' : 'text-[#71717A] hover:text-[#A1A1AA]'
         }`}
       >
         <div className="relative">
@@ -44,7 +44,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ onOpenAudioSet
           title={audioState.muted ? "Unmute Microphone" : "Mute Microphone"}
           className={`w-11 h-11 rounded-none flex items-center justify-center border transition-all active:scale-90 ${
             audioState.muted 
-              ? 'bg-[#171717] text-[#737373] border-[#333333]' 
+              ? 'bg-[#141414] text-[#71717A] border-[#1F1F1F]' 
               : 'bg-[#FFFFFF] text-[#000000] border-[#FFFFFF] shadow-sm'
           }`}
         >
@@ -56,7 +56,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ onOpenAudioSet
       <button
         onClick={() => setActiveView('stage')}
         className={`flex-1 flex flex-col items-center justify-center py-1.5 transition-all active:scale-95 ${
-          isStageActive ? 'text-[#FFFFFF]' : 'text-[#666666] hover:text-[#A3A3A3]'
+          isStageActive ? 'text-[#FFFFFF]' : 'text-[#71717A] hover:text-[#A1A1AA]'
         }`}
       >
         <div className="relative">

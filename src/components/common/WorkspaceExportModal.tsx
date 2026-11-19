@@ -137,49 +137,49 @@ export const WorkspaceExportModal: React.FC<WorkspaceExportModalProps> = ({ isOp
   };
 
   return (
-    <div className="fixed inset-0 bg-[#000000]/80 backdrop-blur-xs flex items-center justify-center z-50 p-4 font-mono select-none">
-      <div className="w-full max-w-2xl bg-[#0C0C0C] border border-[#404040] p-6 shadow-2xl flex flex-col gap-4 max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-[#000000]/85 backdrop-blur-xs flex items-center justify-center z-50 p-4 font-mono select-none">
+      <div className="w-full max-w-2xl bg-[#0A0A0A] border border-[#1F1F1F] p-6 shadow-2xl flex flex-col gap-4 max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-[#262626]">
+        <div className="flex items-center justify-between pb-3 border-b border-[#1F1F1F]">
           <div className="flex items-center gap-2">
-            <Download size={16} className="text-[#FFFFFF]" />
+            <Download size={15} className="text-[#FFFFFF]" />
             <span className="text-xs font-bold tracking-wider text-[#FFFFFF] uppercase">
               WORKSPACE EXPORT & LOCAL AGENT BRIDGE
             </span>
           </div>
-          <button onClick={onClose} className="text-[#A3A3A3] hover:text-[#FFFFFF]">
+          <button onClick={onClose} className="text-[#71717A] hover:text-[#FFFFFF] transition-colors">
             <X size={15} />
           </button>
         </div>
 
-        <p className="text-[11px] text-[#A3A3A3] leading-relaxed">
+        <p className="text-[11px] text-[#A1A1AA] leading-relaxed">
           Zero platform lock-in. Compile active space context into structured Markdown, standalone Python bridge script, or full JSON snapshots for Google Antigravity, Cursor, and local CLI tools.
         </p>
 
         {/* Manifest Metrics */}
-        <div className="grid grid-cols-4 gap-2 bg-[#080808] border border-[#202020] p-3 text-center">
+        <div className="grid grid-cols-4 gap-2 bg-[#111111] border border-[#1F1F1F] p-3 text-center">
           <div>
             <div className="text-xs font-bold text-[#FFFFFF]">{spaceDocs.length}</div>
-            <div className="text-[10px] text-[#737373]">SPACE DOCS</div>
+            <div className="text-[10px] text-[#71717A]">SPACE DOCS</div>
           </div>
           <div>
             <div className="text-xs font-bold text-[#FFFFFF]">{spaceTasks.length}</div>
-            <div className="text-[10px] text-[#737373]">SPACE TASKS</div>
+            <div className="text-[10px] text-[#71717A]">SPACE TASKS</div>
           </div>
           <div>
             <div className="text-xs font-bold text-[#FFFFFF]">{sharedTabs.length}</div>
-            <div className="text-[10px] text-[#737373]">SHARED TABS</div>
+            <div className="text-[10px] text-[#71717A]">SHARED TABS</div>
           </div>
           <div>
             <div className="text-xs font-bold text-[#FFFFFF]">{totalChunksIndexed}</div>
-            <div className="text-[10px] text-[#737373]">RAG CHUNKS</div>
+            <div className="text-[10px] text-[#71717A]">RAG CHUNKS</div>
           </div>
         </div>
 
         {/* Action Downloads */}
         <div className="space-y-2">
           <div className="text-xs font-bold text-[#FFFFFF] uppercase tracking-wider flex items-center gap-1.5">
-            <Layers size={13} />
+            <Layers size={13} className="text-[#A1A1AA]" />
             <span>ONE-CLICK LOCAL EXPORTS</span>
           </div>
 
@@ -187,54 +187,54 @@ export const WorkspaceExportModal: React.FC<WorkspaceExportModalProps> = ({ isOp
             {/* Download context.md */}
             <button
               onClick={handleDownloadContextMd}
-              className="p-3 bg-[#121212] hover:bg-[#1A1A1A] border border-[#262626] hover:border-[#FFFFFF] text-left transition-colors flex flex-col justify-between group"
+              className="p-3 bg-[#111111] hover:bg-[#18181B] border border-[#1F1F1F] hover:border-[#3F3F46] text-left transition-colors flex flex-col justify-between group"
             >
               <div className="flex items-center justify-between mb-2">
-                <FileText size={16} className="text-[#FFFFFF]" />
-                <span className="text-[9px] text-[#737373] group-hover:text-[#FFFFFF]">MD</span>
+                <FileText size={15} className="text-[#FFFFFF]" />
+                <span className="text-[9px] text-[#71717A] group-hover:text-[#FFFFFF] font-mono">MD</span>
               </div>
               <div>
                 <div className="text-xs font-bold text-[#FFFFFF]">CONTEXT.MD</div>
-                <div className="text-[10px] text-[#737373]">Compiled space knowledge</div>
+                <div className="text-[10px] text-[#71717A]">Compiled space knowledge</div>
               </div>
             </button>
 
             {/* Download wc_bridge.py */}
             <button
               onClick={handleDownloadBridgeScript}
-              className="p-3 bg-[#121212] hover:bg-[#1A1A1A] border border-[#262626] hover:border-[#FFFFFF] text-left transition-colors flex flex-col justify-between group"
+              className="p-3 bg-[#111111] hover:bg-[#18181B] border border-[#1F1F1F] hover:border-[#3F3F46] text-left transition-colors flex flex-col justify-between group"
             >
               <div className="flex items-center justify-between mb-2">
-                <Terminal size={16} className="text-[#FFFFFF]" />
-                <span className="text-[9px] text-[#737373] group-hover:text-[#FFFFFF]">PYTHON</span>
+                <Terminal size={15} className="text-[#FFFFFF]" />
+                <span className="text-[9px] text-[#71717A] group-hover:text-[#FFFFFF] font-mono">PYTHON</span>
               </div>
               <div>
                 <div className="text-xs font-bold text-[#FFFFFF]">WC_BRIDGE.PY</div>
-                <div className="text-[10px] text-[#737373]">Antigravity/Cursor bridge</div>
+                <div className="text-[10px] text-[#71717A]">Antigravity/Cursor bridge</div>
               </div>
             </button>
 
             {/* Download JSON Backup */}
             <button
               onClick={handleDownloadJsonBackup}
-              className="p-3 bg-[#121212] hover:bg-[#1A1A1A] border border-[#262626] hover:border-[#FFFFFF] text-left transition-colors flex flex-col justify-between group"
+              className="p-3 bg-[#111111] hover:bg-[#18181B] border border-[#1F1F1F] hover:border-[#3F3F46] text-left transition-colors flex flex-col justify-between group"
             >
               <div className="flex items-center justify-between mb-2">
-                <Database size={16} className="text-[#FFFFFF]" />
-                <span className="text-[9px] text-[#737373] group-hover:text-[#FFFFFF]">JSON</span>
+                <Database size={15} className="text-[#FFFFFF]" />
+                <span className="text-[9px] text-[#71717A] group-hover:text-[#FFFFFF] font-mono">JSON</span>
               </div>
               <div>
                 <div className="text-xs font-bold text-[#FFFFFF]">FULL BACKUP</div>
-                <div className="text-[10px] text-[#737373]">All spaces & chat histories</div>
+                <div className="text-[10px] text-[#71717A]">All spaces & chat histories</div>
               </div>
             </button>
           </div>
         </div>
 
         {/* Integration Instructions */}
-        <div className="bg-[#080808] border border-[#202020] p-3 text-[11px] space-y-2">
+        <div className="bg-[#111111] border border-[#1F1F1F] p-3 text-[11px] space-y-2">
           <div className="text-xs font-bold text-[#FFFFFF]">LOCAL AI AGENT WORKFLOW (GOOGLE ANTIGRAVITY & CURSOR)</div>
-          <ol className="list-decimal pl-4 space-y-1 text-[#A3A3A3] text-[10px] leading-relaxed">
+          <ol className="list-decimal pl-4 space-y-1 text-[#A1A1AA] text-[10px] leading-relaxed">
             <li>Download <code className="text-[#FFFFFF]">context.md</code> and <code className="text-[#FFFFFF]">wc_bridge.py</code> into your project root.</li>
             <li>Run <code className="text-[#FFFFFF]">python wc_bridge.py</code> to populate <code className="text-[#FFFFFF]">.whitespace/</code> with <code className="text-[#FFFFFF]">SOUL.MD</code>, <code className="text-[#FFFFFF]">DOCS/</code>, and <code className="text-[#FFFFFF]">TASKS.json</code>.</li>
             <li>Local agents read sub-millisecond context without cloud round-trips.</li>
@@ -242,13 +242,13 @@ export const WorkspaceExportModal: React.FC<WorkspaceExportModalProps> = ({ isOp
         </div>
 
         {/* JSON Restore Section */}
-        <div className="bg-[#080808] border border-[#202020] p-3 space-y-2">
+        <div className="bg-[#111111] border border-[#1F1F1F] p-3 space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-[#FFFFFF] flex items-center gap-1.5">
-              <Upload size={13} />
+              <Upload size={13} className="text-[#A1A1AA]" />
               <span>RESTORE FROM JSON BACKUP</span>
             </span>
-            <span className="text-[10px] text-[#737373]">OVERWRITES LOCAL STORAGE</span>
+            <span className="text-[10px] text-[#71717A]">OVERWRITES LOCAL STORAGE</span>
           </div>
 
           <div className="flex items-center gap-2">
@@ -262,28 +262,28 @@ export const WorkspaceExportModal: React.FC<WorkspaceExportModalProps> = ({ isOp
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={isRestoring}
-              className="px-3 py-1.5 bg-[#171717] hover:bg-[#222222] border border-[#333333] hover:border-[#FFFFFF] text-xs font-bold text-[#FFFFFF] flex items-center gap-2 transition-colors"
+              className="px-3 py-1.5 bg-[#141414] hover:bg-[#18181B] border border-[#1F1F1F] hover:border-[#3F3F46] text-xs font-bold text-[#FFFFFF] flex items-center gap-2 transition-colors"
             >
               <Upload size={13} />
               <span>{isRestoring ? 'VERIFYING...' : 'SELECT BACKUP .JSON'}</span>
             </button>
-            <span className="text-[10px] text-[#555555]">Schema verified before ingestion.</span>
+            <span className="text-[10px] text-[#71717A]">Schema verified before ingestion.</span>
           </div>
         </div>
 
         {/* Feedback Banner */}
         {feedback && (
-          <div className="p-2 bg-[#141414] border border-[#333333] text-xs text-[#FFFFFF] flex items-center gap-2">
-            <Sparkles size={12} className="text-[#FFFFFF]" />
+          <div className="p-2.5 bg-[#111111] border border-[#1F1F1F] text-xs text-[#FFFFFF] flex items-center gap-2">
+            <Sparkles size={13} className="text-[#FFFFFF]" />
             <span>{feedback}</span>
           </div>
         )}
 
         {/* Footer */}
-        <div className="flex justify-end pt-2 border-t border-[#262626]">
+        <div className="flex justify-end pt-2 border-t border-[#1F1F1F]">
           <button
             onClick={onClose}
-            className="px-4 py-1.5 bg-[#FFFFFF] text-[#000000] font-bold text-xs border border-[#FFFFFF] hover:bg-[#CCCCCC]"
+            className="px-4 py-1.5 bg-[#FFFFFF] text-[#000000] font-bold text-xs border border-[#FFFFFF] hover:bg-[#A1A1AA] transition-colors"
           >
             CLOSE
           </button>

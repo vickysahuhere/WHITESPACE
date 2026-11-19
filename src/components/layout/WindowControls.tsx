@@ -32,13 +32,13 @@ export const WindowControls: React.FC = () => {
 
   return (
     <div 
-      className="flex items-center h-full border-l border-[#262626] ml-2 select-none"
+      className="flex items-center h-full border-l border-[#1F1F1F] ml-2 select-none"
       style={{ WebkitAppRegion: 'no-drag' } as any}
     >
       <button
         onClick={handleMinimize}
         title="Minimize"
-        className="h-11 w-10 flex items-center justify-center text-[#737373] hover:text-[#FFFFFF] hover:bg-[#1A1A1A] transition-colors"
+        className="h-11 w-9 flex items-center justify-center text-[#71717A] hover:text-[#FFFFFF] hover:bg-[#18181B] transition-colors"
       >
         <Minus size={12} />
       </button>
@@ -46,7 +46,7 @@ export const WindowControls: React.FC = () => {
       <button
         onClick={handleMaximize}
         title={isMaximized ? "Restore" : "Maximize"}
-        className="h-11 w-10 flex items-center justify-center text-[#737373] hover:text-[#FFFFFF] hover:bg-[#1A1A1A] transition-colors"
+        className="h-11 w-9 flex items-center justify-center text-[#71717A] hover:text-[#FFFFFF] hover:bg-[#18181B] transition-colors"
       >
         {isMaximized ? <Copy size={11} /> : <Square size={11} />}
       </button>
@@ -54,7 +54,7 @@ export const WindowControls: React.FC = () => {
       <button
         onClick={handleClose}
         title="Close"
-        className="h-11 w-10 flex items-center justify-center text-[#737373] hover:text-[#000000] hover:bg-[#FFFFFF] transition-colors"
+        className="h-11 w-9 flex items-center justify-center text-[#71717A] hover:text-[#000000] hover:bg-[#FFFFFF] transition-colors"
       >
         <X size={13} />
       </button>

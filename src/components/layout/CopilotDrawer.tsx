@@ -5,6 +5,7 @@ import { useRAG } from '../../context/RAGContext';
 import { useTasks } from '../../context/TaskContext';
 import { Task } from '../../types';
 import { assembleSystemPrompt } from '../../services/promptAssembler';
+import { geminiClient } from '../../services/geminiClient';
 import { 
   Bot, 
   Send, 
@@ -13,9 +14,8 @@ import {
   Sparkles, 
   Database, 
   RotateCw, 
-  SlidersHorizontal,
-  Check,
-  Terminal
+  Check, 
+  Layers
 } from 'lucide-react';
 
 interface CopilotDrawerProps {
@@ -98,32 +98,17 @@ export const CopilotDrawer: React.FC<CopilotDrawerProps> = ({
       ragContext: retrievedContext
     });
 
-    // 4. Gemini Direct REST Execution (or High-Speed Autonomous Fallback)
+    // 4. Gemini Direct REST Execution (with auto fallback)
     try {
       if (isKeyLinked && geminiKey) {
-        const response = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [
-                {
-                  role: 'user',
-                  parts: [{ text: `SYSTEM DIRECTIVES:\n${systemPrompt}\n\nUSER DIRECTIVE:\n${queryText}` }]
-                }
-              ],
-              generationConfig: {
-                temperature: 0.2,
-                maxOutputTokens: 2048
-              }
-            })
-          }
+        const reply = await geminiClient.generateContent(
+          geminiKey,
+          geminiClient.getActiveModel(),
+          systemPrompt,
+          queryText
         );
 
-        if (response.ok) {
-          const data = await response.json();
-          const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Task executed with empty response.';
+        if (reply) {
           addMessage(activeMember.id, activeSpace.id, 'assistant', reply, ragSources);
           setIsGenerating(false);
           return;
@@ -183,33 +168,35 @@ export const CopilotDrawer: React.FC<CopilotDrawerProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed top-0 right-0 h-screen w-full sm:w-[420px] bg-[#0A0A0A] border-l border-[#262626] z-50 flex flex-col shadow-2xl font-mono select-none">
+    <div className="fixed top-0 right-0 h-screen w-full sm:w-[460px] bg-[#14141C] border-l border-[#242430] z-50 flex flex-col shadow-2xl select-none">
       {/* 1. Header */}
-      <div className="h-11 bg-[#0E0E0E] border-b border-[#262626] px-3 flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-2">
-          <Bot size={15} className="text-[#FFFFFF]" />
-          <span className="text-xs font-bold tracking-wider text-[#FFFFFF] uppercase">
-            AI COPILOT // DISPATCH DRAWER
+      <div className="h-12 bg-[#171722] border-b border-[#242430] px-4 flex items-center justify-between shrink-0">
+        <div className="flex items-center gap-2.5">
+          <div className="w-7 h-7 rounded-lg bg-[#20202E] border border-[#333346] flex items-center justify-center text-emerald-400">
+            <Bot size={15} />
+          </div>
+          <span className="text-sm font-bold tracking-tight text-[#FFFFFF]">
+            AI Copilot Dispatch
           </span>
-          <span className="bg-[#171717] border border-[#333333] px-1.5 py-0.2 text-[10px] text-[#A3A3A3]">
+          <span className="bg-[#1E1E28] border border-[#2F2F3E] px-2 py-0.5 rounded-md text-xs text-[#D4D4DC] font-semibold">
             {activeSpace.badge}
           </span>
         </div>
 
-        <button onClick={onClose} className="text-[#A3A3A3] hover:text-[#FFFFFF] p-1">
-          <X size={15} />
+        <button onClick={onClose} className="text-[#8E8E9E] hover:text-[#FFFFFF] p-1.5 rounded-lg hover:bg-[#20202C] transition-colors">
+          <X size={16} />
         </button>
       </div>
 
       {/* 2. Dispatched Task Banner (if active) */}
       {dispatchedTask && (
-        <div className="p-3 bg-[#121212] border-b border-[#262626] flex flex-col gap-2 shrink-0">
+        <div className="p-3 bg-[#111111] border-b border-[#1F1F1F] flex flex-col gap-2 shrink-0">
           <div className="flex items-center justify-between text-[10px]">
-            <span className="text-[#737373] uppercase font-bold flex items-center gap-1">
+            <span className="text-[#71717A] uppercase font-bold flex items-center gap-1.5">
               <Sparkles size={11} className="text-[#FFFFFF]" />
               <span>ACTIVE DISPATCHED TASK</span>
             </span>
-            <span className="bg-[#1C1C1C] text-[#FFFFFF] border border-[#383838] px-1 py-0.2 text-[9px] font-bold">
+            <span className="bg-[#18181B] text-[#FFFFFF] border border-[#3F3F46] px-1.5 py-0.2 text-[9px] font-bold">
               {dispatchedTask.column.toUpperCase()}
             </span>
           </div>
@@ -219,7 +206,7 @@ export const CopilotDrawer: React.FC<CopilotDrawerProps> = ({
           </div>
 
           <div className="flex items-center justify-between pt-1">
-            <span className="text-[10px] text-[#737373]">
+            <span className="text-[10px] text-[#71717A]">
               ASSIGNED: {activeMember.name}
             </span>
             <button
@@ -227,7 +214,7 @@ export const CopilotDrawer: React.FC<CopilotDrawerProps> = ({
               className={`px-2.5 py-1 text-[10px] font-bold border flex items-center gap-1 transition-all ${
                 shippedFeedback
                   ? 'bg-[#FFFFFF] text-[#000000] border-[#FFFFFF]'
-                  : 'bg-[#000000] hover:bg-[#1C1C1C] text-[#FFFFFF] border-[#383838] hover:border-[#FFFFFF]'
+                  : 'bg-[#000000] hover:bg-[#18181B] text-[#FFFFFF] border-[#3F3F46] hover:border-[#FFFFFF]'
               }`}
             >
               {shippedFeedback ? <Check size={11} /> : <CheckCircle2 size={11} />}
@@ -238,7 +225,7 @@ export const CopilotDrawer: React.FC<CopilotDrawerProps> = ({
       )}
 
       {/* 3. Messages Stream */}
-      <div className="flex-1 overflow-y-auto p-3 space-y-3 bg-[#050505]">
+      <div className="flex-1 overflow-y-auto p-4 space-y-3.5 bg-[#0F0F14] custom-scrollbar">
         {currentMessages.map(msg => {
           const isUser = msg.role === 'user';
           const isSystem = msg.role === 'system';
@@ -246,35 +233,35 @@ export const CopilotDrawer: React.FC<CopilotDrawerProps> = ({
           return (
             <div
               key={msg.id}
-              className={`flex flex-col text-xs p-3 border ${
+              className={`flex flex-col text-xs p-3.5 rounded-2xl border transition-all ${
                 isUser
-                  ? 'bg-[#0E0E0E] border-[#333333] ml-4'
+                  ? 'bg-[#1E1E2A] border-[#333346] ml-4 text-[#FFFFFF]'
                   : isSystem
-                  ? 'bg-[#0A0A0A] border-[#222222] text-[#737373]'
-                  : 'bg-[#000000] border-[#262626] mr-4'
+                  ? 'bg-[#161620] border-[#242430] text-[#8E8E9E]'
+                  : 'bg-[#14141C] border-[#242430] mr-4 text-[#E4E4E7]'
               }`}
             >
-              <div className="flex items-center justify-between pb-1 mb-1.5 border-b border-[#1A1A1A] text-[10px] text-[#737373]">
-                <span className="font-bold text-[#FFFFFF]">
+              <div className="flex items-center justify-between pb-1.5 mb-1.5 border-b border-[#242430] text-xs text-[#8E8E9E]">
+                <span className="font-semibold text-[#FFFFFF]">
                   {isUser ? activeMember.name : isSystem ? 'WORKSPACE SYSTEM' : 'WHITE AI COPILOT'}
                 </span>
                 <span>{new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
               </div>
 
-              <div className="text-xs leading-relaxed whitespace-pre-wrap text-[#FFFFFF]">
+              <div className="text-xs leading-relaxed whitespace-pre-wrap">
                 {msg.content}
               </div>
 
               {/* RAG Source Chips */}
               {msg.ragSources && msg.ragSources.length > 0 && (
-                <div className="mt-2 pt-2 border-t border-[#1C1C1C] flex flex-wrap gap-1">
+                <div className="mt-2.5 pt-2 border-t border-[#242430] flex flex-wrap gap-1.5">
                   {msg.ragSources.map((s, idx) => (
                     <span
                       key={idx}
                       title={s.chunk.slice(0, 100)}
-                      className="text-[9px] bg-[#121212] border border-[#262626] px-1.5 py-0.5 text-[#A3A3A3] flex items-center gap-1"
+                      className="text-[10px] bg-[#1E1E28] border border-[#2F2F3E] rounded-md px-2 py-0.5 text-emerald-400 flex items-center gap-1"
                     >
-                      <Database size={9} />
+                      <Database size={10} />
                       <span>{s.title}</span>
                     </span>
                   ))}
@@ -285,8 +272,8 @@ export const CopilotDrawer: React.FC<CopilotDrawerProps> = ({
         })}
 
         {isGenerating && (
-          <div className="p-3 bg-[#0C0C0C] border border-[#262626] flex items-center gap-2 text-xs text-[#A3A3A3]">
-            <RotateCw size={13} className="animate-spin text-[#FFFFFF]" />
+          <div className="p-3.5 bg-[#161620] border border-[#242430] rounded-2xl flex items-center gap-2.5 text-xs text-emerald-400 animate-pulse">
+            <RotateCw size={14} className="animate-spin text-emerald-400" />
             <span>Autonomous agent reasoning grounded in Space SOUL.MD...</span>
           </div>
         )}
@@ -295,16 +282,16 @@ export const CopilotDrawer: React.FC<CopilotDrawerProps> = ({
       </div>
 
       {/* 4. Drawer Footer Form */}
-      <div className="p-3 bg-[#0A0A0A] border-t border-[#262626] flex flex-col gap-2 shrink-0">
-        <div className="flex items-center justify-between text-[10px] text-[#737373]">
+      <div className="p-3.5 bg-[#171720] border-t border-[#242430] flex flex-col gap-2 shrink-0">
+        <div className="flex items-center justify-between text-xs text-[#8E8E9E]">
           <button
             onClick={() => setRagGrounding(!ragGrounding)}
-            className={`flex items-center gap-1 hover:text-[#FFFFFF] ${ragGrounding ? 'text-[#FFFFFF]' : 'text-[#555555]'}`}
+            className={`flex items-center gap-1.5 hover:text-[#FFFFFF] transition-colors ${ragGrounding ? 'text-emerald-400 font-semibold' : 'text-[#8E8E9E]'}`}
           >
-            <Database size={10} />
+            <Database size={12} />
             <span>RAG GROUNDING: {ragGrounding ? 'ENABLED (<1ms)' : 'OFF'}</span>
           </button>
-          <span>DIRECT REST API v1beta</span>
+          <span>Gemini Direct REST</span>
         </div>
 
         <form onSubmit={handleSend} className="flex gap-2">
@@ -313,14 +300,14 @@ export const CopilotDrawer: React.FC<CopilotDrawerProps> = ({
             value={input}
             onChange={e => setInput(e.target.value)}
             placeholder="Direct AI copilot instruction..."
-            className="flex-1 bg-[#000000] border border-[#262626] focus:border-[#FFFFFF] px-3 py-1.5 text-xs text-[#FFFFFF] outline-none"
+            className="flex-1 bg-[#101016] border border-[#2F2F3E] focus:border-[#FFFFFF] rounded-xl px-3.5 py-2 text-xs text-[#FFFFFF] outline-none transition-colors"
           />
           <button
             type="submit"
             disabled={isGenerating || !input.trim()}
-            className="px-3 py-1.5 bg-[#FFFFFF] text-[#000000] font-bold text-xs border border-[#FFFFFF] hover:bg-[#CCCCCC] disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1"
+            className="px-4 py-2 rounded-xl bg-[#FFFFFF] text-[#0B0B0E] font-bold text-xs hover:bg-[#E4E4E7] disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1 transition-all shadow-sm"
           >
-            <Send size={11} fill="#000000" />
+            <Send size={13} fill="#0B0B0E" />
           </button>
         </form>
       </div>

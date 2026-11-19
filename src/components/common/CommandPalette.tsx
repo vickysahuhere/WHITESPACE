@@ -255,11 +255,11 @@ export const CommandPalette: React.FC = () => {
     >
       <div 
         onClick={e => e.stopPropagation()}
-        className="w-full max-w-xl bg-[#0F0F0F] border border-[#404040] shadow-2xl overflow-hidden flex flex-col"
+        className="w-full max-w-xl bg-[#0A0A0A] border border-[#1F1F1F] shadow-2xl overflow-hidden flex flex-col"
       >
         {/* Top Search Input */}
-        <div className="flex items-center px-3 py-3 border-b border-[#262626] bg-[#0A0A0A]">
-          <Search size={15} className="text-[#A3A3A3] mr-2 shrink-0" />
+        <div className="flex items-center px-3 py-2.5 border-b border-[#1F1F1F] bg-[#0A0A0A]">
+          <Search size={14} className="text-[#71717A] mr-2.5 shrink-0" />
           <input
             ref={inputRef}
             type="text"
@@ -270,17 +270,17 @@ export const CommandPalette: React.FC = () => {
             }}
             onKeyDown={handleKeyDown}
             placeholder="TYPE A COMMAND OR SEARCH (SPACES, VIEWS, ACTIONS)..."
-            className="w-full bg-transparent text-xs text-[#FFFFFF] placeholder-[#525252] outline-none font-mono"
+            className="w-full bg-transparent text-xs text-[#FFFFFF] placeholder-[#71717A] outline-none font-mono"
           />
-          <kbd className="px-1.5 py-0.5 bg-[#171717] border border-[#262626] text-[10px] text-[#A3A3A3] shrink-0">
+          <kbd className="px-1.5 py-0.5 bg-[#141414] border border-[#1F1F1F] text-[10px] text-[#71717A] shrink-0 font-mono">
             ESC
           </kbd>
         </div>
 
         {/* Results List */}
-        <div className="max-h-80 overflow-y-auto p-1.5 space-y-0.5">
+        <div className="max-h-80 overflow-y-auto p-1.5 space-y-0.5 bg-[#0A0A0A]">
           {filteredItems.length === 0 ? (
-            <div className="py-8 text-center text-xs text-[#737373]">
+            <div className="py-8 text-center text-xs text-[#71717A]">
               NO MATCHING COMMANDS FOUND FOR "{query.toUpperCase()}"
             </div>
           ) : (
@@ -294,17 +294,17 @@ export const CommandPalette: React.FC = () => {
                   className={`flex items-center justify-between p-2 text-xs cursor-pointer border transition-all ${
                     isSelected
                       ? 'bg-[#FFFFFF] text-[#000000] border-[#FFFFFF] font-bold'
-                      : 'bg-transparent text-[#A3A3A3] border-transparent hover:bg-[#141414] hover:text-[#FFFFFF]'
+                      : 'bg-transparent text-[#A1A1AA] border-transparent hover:bg-[#18181B] hover:text-[#FFFFFF]'
                   }`}
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
-                    <span className={isSelected ? 'text-[#000000]' : 'text-[#737373]'}>
+                    <span className={isSelected ? 'text-[#000000]' : 'text-[#71717A]'}>
                       {item.icon}
                     </span>
                     <div className="min-w-0">
                       <div className="truncate tracking-tight">{item.title}</div>
                       {item.subtitle && (
-                        <div className={`text-[10px] truncate ${isSelected ? 'text-[#333333]' : 'text-[#737373]'}`}>
+                        <div className={`text-[10px] truncate ${isSelected ? 'text-[#3F3F46]' : 'text-[#71717A]'}`}>
                           {item.subtitle}
                         </div>
                       )}
@@ -316,12 +316,12 @@ export const CommandPalette: React.FC = () => {
                       <span className={`px-1.5 py-0.5 text-[9px] border font-bold ${
                         isSelected 
                           ? 'border-[#000000] bg-[#000000] text-[#FFFFFF]' 
-                          : 'border-[#262626] bg-[#171717] text-[#A3A3A3]'
+                          : 'border-[#1F1F1F] bg-[#141414] text-[#A1A1AA]'
                       }`}>
                         {item.badge}
                       </span>
                     )}
-                    <span className={`text-[9px] ${isSelected ? 'text-[#333333]' : 'text-[#525252]'}`}>
+                    <span className={`text-[9px] ${isSelected ? 'text-[#3F3F46]' : 'text-[#71717A]'}`}>
                       {item.category}
                     </span>
                   </div>
@@ -332,13 +332,13 @@ export const CommandPalette: React.FC = () => {
         </div>
 
         {/* Footer Navigation Hints */}
-        <div className="px-3 py-1.5 bg-[#0A0A0A] border-t border-[#262626] flex items-center justify-between text-[10px] text-[#737373]">
+        <div className="px-3 py-1.5 bg-[#0A0A0A] border-t border-[#1F1F1F] flex items-center justify-between text-[10px] text-[#71717A]">
           <div className="flex items-center gap-3">
-            <span><kbd className="px-1 border border-[#262626]">↑</kbd> <kbd className="px-1 border border-[#262626]">↓</kbd> NAVIGATE</span>
-            <span><kbd className="px-1 border border-[#262626]">ENTER</kbd> SELECT</span>
-            <span><kbd className="px-1 border border-[#262626]">ESC</kbd> CLOSE</span>
+            <span><kbd className="px-1 border border-[#1F1F1F] bg-[#141414] text-[#A1A1AA]">↑</kbd> <kbd className="px-1 border border-[#1F1F1F] bg-[#141414] text-[#A1A1AA]">↓</kbd> NAVIGATE</span>
+            <span><kbd className="px-1 border border-[#1F1F1F] bg-[#141414] text-[#A1A1AA]">ENTER</kbd> SELECT</span>
+            <span><kbd className="px-1 border border-[#1F1F1F] bg-[#141414] text-[#A1A1AA]">ESC</kbd> CLOSE</span>
           </div>
-          <span>WHITE COLLARS // FAST PALETTE</span>
+          <span className="font-mono text-[#71717A]">WHITE COLLARS // FAST PALETTE</span>
         </div>
       </div>
     </div>

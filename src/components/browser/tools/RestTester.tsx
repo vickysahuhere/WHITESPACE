@@ -100,11 +100,11 @@ export const RestTester: React.FC<RestTesterProps> = ({ tab }) => {
     const start = performance.now();
 
     try {
-      // Build URL with query params
-      const parsedUrl = new URL(req.url.trim().startsWith('http') ? req.url.trim() : `https://${req.url.trim()}`);
+      // Build URL with params
+      const parsedUrl = new URL(req.url);
       req.params.forEach(p => {
         if (p.enabled && p.key.trim()) {
-          parsedUrl.searchParams.append(p.key.trim(), p.value.trim());
+          parsedUrl.searchParams.append(p.key.trim(), p.value);
         }
       });
 
@@ -112,7 +112,7 @@ export const RestTester: React.FC<RestTesterProps> = ({ tab }) => {
       const requestHeaders: Record<string, string> = {};
       req.headers.forEach(h => {
         if (h.enabled && h.key.trim()) {
-          requestHeaders[h.key.trim()] = h.value.trim();
+          requestHeaders[h.key.trim()] = h.value;
         }
       });
 
@@ -249,54 +249,53 @@ export const RestTester: React.FC<RestTesterProps> = ({ tab }) => {
   };
 
   const removeHeaderRow = (id: string) => {
-    const newReq = {
-      ...req,
-      headers: req.headers.filter(h => h.id !== id)
-    };
+    const updated = req.headers.filter(h => h.id !== id);
+    const newReq = { ...req, headers: updated };
     setReq(newReq);
     persistState(newReq, res);
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-[#050505] text-[#FFFFFF] font-mono select-none overflow-hidden">
+    <div className="flex-1 flex flex-col h-full bg-[#000000] text-[#FFFFFF] font-mono select-none overflow-hidden">
       {/* 1. Header Toolbar */}
-      <div className="h-10 bg-[#0C0C0C] border-b border-[#262626] px-3 flex items-center justify-between gap-3 shrink-0">
+      <div className="h-10 bg-[#0A0A0A] border-b border-[#1F1F1F] px-3 flex items-center justify-between gap-3 shrink-0">
         <div className="flex items-center gap-2">
-          <Terminal size={16} className="text-[#FFFFFF]" />
+          <Terminal size={15} className="text-[#FFFFFF]" />
           <span className="text-xs font-bold tracking-wider text-[#FFFFFF] uppercase">
-            REST API TESTER // HOPPSCOTCH-LITE
+            REST API TESTER
           </span>
-          <span className="text-[10px] text-[#737373] bg-[#121212] px-1.5 py-0.2 border border-[#262626]">
-            NATIVE FETCH
+          <span className="text-[10px] text-[#A1A1AA] bg-[#141414] px-1.5 py-0.2 border border-[#262626] font-bold">
+            HOPPSCOTCH LITE
           </span>
         </div>
 
-        {/* Presets */}
+        {/* Preset Endpoints Strip */}
         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-          <span className="text-[10px] text-[#737373] uppercase font-bold shrink-0">PRESETS:</span>
-          {PRESET_ENDPOINTS.map(p => (
+          <span className="text-[10px] text-[#71717A] uppercase font-bold shrink-0">PRESETS:</span>
+          {PRESET_ENDPOINTS.map(ep => (
             <button
-              key={p.name}
+              key={ep.url}
               onClick={() => {
-                const updated = { ...req, method: p.method, url: p.url };
+                const updated = { ...req, method: ep.method, url: ep.url };
                 setReq(updated);
                 persistState(updated, res);
               }}
-              className="px-2 py-0.5 text-[10px] bg-[#121212] hover:bg-[#1C1C1C] text-[#A3A3A3] hover:text-[#FFFFFF] border border-[#262626] shrink-0"
+              className="px-2 py-0.5 text-[10px] bg-[#111111] hover:bg-[#18181B] text-[#A1A1AA] hover:text-[#FFFFFF] border border-[#1F1F1F] hover:border-[#3F3F46] shrink-0 transition-colors"
             >
-              {p.name}
+              <span className="font-bold text-[#FFFFFF] mr-1">{ep.method}</span>
+              <span>{ep.name}</span>
             </button>
           ))}
         </div>
 
-        {/* SAVE TO SPACE DOCS */}
+        {/* Save to Docs Button */}
         <button
           onClick={handleSaveToSpace}
-          title="Save API test specification to Space Docs and trigger RAG indexing"
-          className={`px-3 py-1 text-xs font-bold border flex items-center gap-1.5 transition-all shrink-0 ${
+          title="Save API specification into Space Docs"
+          className={`px-3 py-1 text-xs font-bold border flex items-center gap-1.5 transition-all ${
             indexedFeedback
               ? 'bg-[#FFFFFF] text-[#000000] border-[#FFFFFF]'
-              : 'bg-[#121212] hover:bg-[#1C1C1C] text-[#FFFFFF] border-[#333333] hover:border-[#FFFFFF]'
+              : 'bg-[#111111] hover:bg-[#18181B] text-[#FFFFFF] border-[#262626] hover:border-[#FFFFFF]'
           }`}
         >
           {indexedFeedback ? (
@@ -314,7 +313,7 @@ export const RestTester: React.FC<RestTesterProps> = ({ tab }) => {
       </div>
 
       {/* 2. Request Address & Send Bar */}
-      <div className="p-3 bg-[#0E0E0E] border-b border-[#262626] flex items-center gap-2 shrink-0">
+      <div className="p-3 bg-[#0A0A0A] border-b border-[#1F1F1F] flex items-center gap-2 shrink-0">
         {/* Method Picker */}
         <select
           value={req.method}
@@ -323,7 +322,7 @@ export const RestTester: React.FC<RestTesterProps> = ({ tab }) => {
             setReq(updated);
             persistState(updated, res);
           }}
-          className="bg-[#171717] border border-[#333333] px-2.5 py-1.5 text-xs text-[#FFFFFF] font-bold outline-none uppercase"
+          className="bg-[#141414] border border-[#262626] px-2.5 py-1.5 text-xs text-[#FFFFFF] font-bold outline-none uppercase transition-colors"
         >
           <option value="GET">GET</option>
           <option value="POST">POST</option>
@@ -342,14 +341,14 @@ export const RestTester: React.FC<RestTesterProps> = ({ tab }) => {
             persistState(updated, res);
           }}
           placeholder="ENTER API ENDPOINT (https://...)"
-          className="flex-1 bg-[#000000] border border-[#262626] focus:border-[#FFFFFF] px-3 py-1.5 text-xs text-[#FFFFFF] font-mono outline-none"
+          className="flex-1 bg-[#000000] border border-[#1F1F1F] focus:border-[#FFFFFF] px-3 py-1.5 text-xs text-[#FFFFFF] font-mono outline-none transition-colors"
         />
 
         {/* SEND BUTTON */}
         <button
           onClick={handleSend}
           disabled={loading}
-          className="px-4 py-1.5 bg-[#FFFFFF] text-[#000000] font-bold text-xs border border-[#FFFFFF] hover:bg-[#CCCCCC] flex items-center gap-1.5 shrink-0"
+          className="px-4 py-1.5 bg-[#FFFFFF] text-[#000000] font-bold text-xs border border-[#FFFFFF] hover:bg-[#CCCCCC] flex items-center gap-1.5 shrink-0 transition-colors"
         >
           {loading ? <RotateCw size={12} className="animate-spin" /> : <Send size={12} fill="#000000" />}
           <span>SEND</span>
@@ -359,9 +358,9 @@ export const RestTester: React.FC<RestTesterProps> = ({ tab }) => {
       {/* 3. Split Main View: Request Config (Left) vs Response Inspector (Right) */}
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
         {/* Request Tabs (Left) */}
-        <div className="flex-1 flex flex-col border-b md:border-b-0 md:border-r border-[#262626] bg-[#0A0A0A]">
+        <div className="flex-1 flex flex-col border-b md:border-b-0 md:border-r border-[#1F1F1F] bg-[#0A0A0A]">
           {/* Subtabs */}
-          <div className="h-9 bg-[#0E0E0E] border-b border-[#262626] px-3 flex items-center justify-between shrink-0">
+          <div className="h-9 bg-[#0A0A0A] border-b border-[#1F1F1F] px-3 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-1">
               {(['headers', 'params', 'body'] as const).map(tabKey => (
                 <button
@@ -369,8 +368,8 @@ export const RestTester: React.FC<RestTesterProps> = ({ tab }) => {
                   onClick={() => setActiveReqTab(tabKey)}
                   className={`px-3 py-1 text-xs uppercase font-bold border transition-colors ${
                     activeReqTab === tabKey
-                      ? 'bg-[#171717] text-[#FFFFFF] border-[#404040]'
-                      : 'bg-transparent text-[#737373] border-transparent hover:text-[#FFFFFF]'
+                      ? 'bg-[#18181B] text-[#FFFFFF] border-[#3F3F46]'
+                      : 'bg-transparent text-[#71717A] border-transparent hover:text-[#FFFFFF]'
                   }`}
                 >
                   {tabKey}
@@ -381,7 +380,7 @@ export const RestTester: React.FC<RestTesterProps> = ({ tab }) => {
             {activeReqTab === 'body' && (
               <button
                 onClick={formatJsonBody}
-                className="text-[10px] text-[#A3A3A3] hover:text-[#FFFFFF] underline"
+                className="text-[10px] text-[#A1A1AA] hover:text-[#FFFFFF] underline transition-colors"
               >
                 FORMAT JSON
               </button>
@@ -389,12 +388,12 @@ export const RestTester: React.FC<RestTesterProps> = ({ tab }) => {
           </div>
 
           {/* Tab Content */}
-          <div className="flex-1 overflow-y-auto p-3 bg-[#050505]">
+          <div className="flex-1 overflow-y-auto p-3 bg-[#000000] custom-scrollbar">
             {activeReqTab === 'headers' && (
               <div className="space-y-2">
-                <div className="flex items-center justify-between pb-1 border-b border-[#202020] text-[10px] text-[#737373]">
+                <div className="flex items-center justify-between pb-1 border-b border-[#1F1F1F] text-[10px] text-[#71717A] font-bold">
                   <span>HTTP REQUEST HEADERS</span>
-                  <button onClick={addHeaderRow} className="hover:text-[#FFFFFF] flex items-center gap-1">
+                  <button onClick={addHeaderRow} className="hover:text-[#FFFFFF] flex items-center gap-1 transition-colors">
                     <Plus size={11} />
                     <span>ADD HEADER</span>
                   </button>
@@ -412,18 +411,18 @@ export const RestTester: React.FC<RestTesterProps> = ({ tab }) => {
                       value={h.key}
                       onChange={e => updateHeaderRow(h.id, { key: e.target.value })}
                       placeholder="Header Name"
-                      className="flex-1 bg-[#0A0A0A] border border-[#262626] focus:border-[#FFFFFF] px-2 py-1 text-xs text-[#FFFFFF]"
+                      className="flex-1 bg-[#0A0A0A] border border-[#1F1F1F] focus:border-[#FFFFFF] px-2 py-1 text-xs text-[#FFFFFF] outline-none transition-colors"
                     />
                     <input
                       type="text"
                       value={h.value}
                       onChange={e => updateHeaderRow(h.id, { value: e.target.value })}
                       placeholder="Value"
-                      className="flex-1 bg-[#0A0A0A] border border-[#262626] focus:border-[#FFFFFF] px-2 py-1 text-xs text-[#FFFFFF]"
+                      className="flex-1 bg-[#0A0A0A] border border-[#1F1F1F] focus:border-[#FFFFFF] px-2 py-1 text-xs text-[#FFFFFF] outline-none transition-colors"
                     />
                     <button
                       onClick={() => removeHeaderRow(h.id)}
-                      className="text-[#555555] hover:text-[#FFFFFF] p-1"
+                      className="text-[#71717A] hover:text-[#FFFFFF] p-1 transition-colors"
                     >
                       <Trash2 size={11} />
                     </button>
@@ -434,7 +433,7 @@ export const RestTester: React.FC<RestTesterProps> = ({ tab }) => {
 
             {activeReqTab === 'params' && (
               <div className="space-y-2">
-                <div className="text-[10px] text-[#737373] pb-1 border-b border-[#202020]">
+                <div className="text-[10px] text-[#71717A] pb-1 border-b border-[#1F1F1F] font-bold">
                   URL QUERY PARAMETERS
                 </div>
                 {req.params.map(p => (
@@ -456,7 +455,7 @@ export const RestTester: React.FC<RestTesterProps> = ({ tab }) => {
                         setReq({ ...req, params: updated });
                       }}
                       placeholder="Parameter"
-                      className="flex-1 bg-[#0A0A0A] border border-[#262626] focus:border-[#FFFFFF] px-2 py-1 text-xs text-[#FFFFFF]"
+                      className="flex-1 bg-[#0A0A0A] border border-[#1F1F1F] focus:border-[#FFFFFF] px-2 py-1 text-xs text-[#FFFFFF] outline-none transition-colors"
                     />
                     <input
                       type="text"
@@ -466,7 +465,7 @@ export const RestTester: React.FC<RestTesterProps> = ({ tab }) => {
                         setReq({ ...req, params: updated });
                       }}
                       placeholder="Value"
-                      className="flex-1 bg-[#0A0A0A] border border-[#262626] focus:border-[#FFFFFF] px-2 py-1 text-xs text-[#FFFFFF]"
+                      className="flex-1 bg-[#0A0A0A] border border-[#1F1F1F] focus:border-[#FFFFFF] px-2 py-1 text-xs text-[#FFFFFF] outline-none transition-colors"
                     />
                   </div>
                 ))}
@@ -482,7 +481,7 @@ export const RestTester: React.FC<RestTesterProps> = ({ tab }) => {
                   persistState(updated, res);
                 }}
                 placeholder="Raw JSON Request Body..."
-                className="w-full h-full min-h-[220px] bg-transparent text-xs font-mono text-[#FFFFFF] outline-none resize-none selection:bg-[#333333] leading-relaxed"
+                className="w-full h-full min-h-[220px] bg-transparent text-xs font-mono text-[#FFFFFF] outline-none resize-none selection:bg-[#FFFFFF] selection:text-[#000000] leading-relaxed custom-scrollbar"
                 spellCheck={false}
               />
             )}
@@ -492,30 +491,30 @@ export const RestTester: React.FC<RestTesterProps> = ({ tab }) => {
         {/* Response Viewer (Right) */}
         <div className="flex-1 flex flex-col bg-[#000000] overflow-hidden">
           {/* Response Status Bar */}
-          <div className="h-9 bg-[#0E0E0E] border-b border-[#262626] px-3 flex items-center justify-between shrink-0">
+          <div className="h-9 bg-[#0A0A0A] border-b border-[#1F1F1F] px-3 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-2 text-xs">
-              <span className="font-bold text-[#737373]">RESPONSE:</span>
+              <span className="font-bold text-[#71717A]">RESPONSE:</span>
               {res.status !== null ? (
                 <span className={`px-2 py-0.5 text-[10px] font-bold border ${
                   res.status >= 200 && res.status < 300
-                    ? 'bg-[#171717] border-[#FFFFFF] text-[#FFFFFF]'
-                    : 'bg-[#222222] border-[#555555] text-[#CCCCCC]'
+                    ? 'bg-[#FFFFFF] border-[#FFFFFF] text-[#000000]'
+                    : 'bg-[#18181B] border-[#3F3F46] text-[#FFFFFF]'
                 }`}>
                   {res.status} {res.statusText}
                 </span>
               ) : (
-                <span className="text-[10px] text-[#555555]">NOT SENT</span>
+                <span className="text-[10px] text-[#52525B]">NOT SENT</span>
               )}
 
               {res.timeMs !== null && (
-                <span className="text-[10px] text-[#A3A3A3] flex items-center gap-1">
+                <span className="text-[10px] text-[#A1A1AA] flex items-center gap-1 font-bold">
                   <Clock size={10} />
                   <span>{res.timeMs} ms</span>
                 </span>
               )}
 
               {res.sizeBytes !== null && (
-                <span className="text-[10px] text-[#737373]">
+                <span className="text-[10px] text-[#71717A]">
                   {(res.sizeBytes / 1024).toFixed(1)} KB
                 </span>
               )}
@@ -525,7 +524,7 @@ export const RestTester: React.FC<RestTesterProps> = ({ tab }) => {
               <button
                 onClick={handleCopyResponse}
                 title="Copy response body"
-                className="text-[10px] text-[#A3A3A3] hover:text-[#FFFFFF] flex items-center gap-1"
+                className="text-[10px] text-[#A1A1AA] hover:text-[#FFFFFF] flex items-center gap-1 transition-colors"
               >
                 {copiedResponse ? (
                   <>
@@ -543,11 +542,11 @@ export const RestTester: React.FC<RestTesterProps> = ({ tab }) => {
           </div>
 
           {/* Response Subtabs */}
-          <div className="h-7 bg-[#0B0B0B] border-b border-[#202020] px-3 flex items-center gap-2 shrink-0">
+          <div className="h-7 bg-[#0A0A0A] border-b border-[#1F1F1F] px-3 flex items-center gap-3 shrink-0">
             <button
               onClick={() => setActiveResTab('body')}
               className={`text-[10px] uppercase font-bold transition-colors ${
-                activeResTab === 'body' ? 'text-[#FFFFFF] underline' : 'text-[#737373] hover:text-[#FFFFFF]'
+                activeResTab === 'body' ? 'text-[#FFFFFF] underline' : 'text-[#71717A] hover:text-[#FFFFFF]'
               }`}
             >
               BODY
@@ -555,7 +554,7 @@ export const RestTester: React.FC<RestTesterProps> = ({ tab }) => {
             <button
               onClick={() => setActiveResTab('headers')}
               className={`text-[10px] uppercase font-bold transition-colors ${
-                activeResTab === 'headers' ? 'text-[#FFFFFF] underline' : 'text-[#737373] hover:text-[#FFFFFF]'
+                activeResTab === 'headers' ? 'text-[#FFFFFF] underline' : 'text-[#71717A] hover:text-[#FFFFFF]'
               }`}
             >
               HEADERS ({Object.keys(res.headers).length})
@@ -563,31 +562,31 @@ export const RestTester: React.FC<RestTesterProps> = ({ tab }) => {
           </div>
 
           {/* Response Body & Headers View */}
-          <div className="flex-1 overflow-y-auto p-3 bg-[#050505]">
+          <div className="flex-1 overflow-y-auto p-3 bg-[#000000] custom-scrollbar">
             {res.error ? (
-              <div className="p-4 border border-[#333333] bg-[#0E0E0E] text-xs text-[#CCCCCC] space-y-2">
+              <div className="p-4 border border-[#262626] bg-[#0A0A0A] text-xs text-[#E4E4E7] space-y-2">
                 <div className="flex items-center gap-1.5 font-bold text-[#FFFFFF]">
                   <AlertCircle size={14} className="text-[#FFFFFF]" />
                   <span>NETWORK / CORS FAILURE</span>
                 </div>
-                <p className="text-[11px] leading-relaxed text-[#A3A3A3]">{res.error}</p>
+                <p className="text-[11px] leading-relaxed text-[#A1A1AA]">{res.error}</p>
               </div>
             ) : activeResTab === 'body' && res.data ? (
-              <pre className="text-xs font-mono text-[#FFFFFF] whitespace-pre-wrap selection:bg-[#333333] leading-relaxed">
+              <pre className="text-xs font-mono text-[#FFFFFF] whitespace-pre-wrap selection:bg-[#FFFFFF] selection:text-[#000000] leading-relaxed">
                 {res.data}
               </pre>
             ) : activeResTab === 'headers' && Object.keys(res.headers).length > 0 ? (
               <div className="space-y-1 text-xs">
                 {Object.entries(res.headers).map(([k, v]) => (
-                  <div key={k} className="flex items-start gap-2 py-0.5 border-b border-[#141414]">
-                    <span className="font-bold text-[#A3A3A3] shrink-0 w-44 truncate">{k}:</span>
+                  <div key={k} className="flex items-start gap-2 py-0.5 border-b border-[#1F1F1F]">
+                    <span className="font-bold text-[#A1A1AA] shrink-0 w-44 truncate">{k}:</span>
                     <span className="text-[#FFFFFF] break-all">{v}</span>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="h-full flex flex-col items-center justify-center text-center text-[#555555] text-xs py-10">
-                <Database size={28} className="text-[#262626] mb-2" />
+              <div className="h-full flex flex-col items-center justify-center text-center text-[#52525B] text-xs py-10">
+                <Database size={28} className="text-[#1F1F1F] mb-2" />
                 <span>Send request to inspect live HTTP payload</span>
               </div>
             )}

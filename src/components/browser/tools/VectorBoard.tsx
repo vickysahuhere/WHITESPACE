@@ -276,15 +276,15 @@ export const VectorBoard: React.FC<VectorBoardProps> = ({ tab }) => {
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-[#050505] text-[#FFFFFF] font-mono select-none overflow-hidden">
+    <div className="flex-1 flex flex-col h-full bg-[#000000] text-[#FFFFFF] font-mono select-none overflow-hidden">
       {/* 1. Header Toolbar */}
-      <div className="h-10 bg-[#0C0C0C] border-b border-[#262626] px-3 flex items-center justify-between gap-3 shrink-0">
+      <div className="h-10 bg-[#0A0A0A] border-b border-[#1F1F1F] px-3 flex items-center justify-between gap-3 shrink-0">
         <div className="flex items-center gap-2">
-          <Share2 size={16} className="text-[#FFFFFF]" />
+          <Share2 size={15} className="text-[#FFFFFF]" />
           <span className="text-xs font-bold tracking-wider text-[#FFFFFF] uppercase">
             VECTOR ARCHITECTURE BOARD
           </span>
-          <span className="text-[10px] text-[#737373] bg-[#121212] px-1.5 py-0.2 border border-[#262626]">
+          <span className="text-[10px] text-[#A1A1AA] bg-[#141414] px-1.5 py-0.2 border border-[#262626] font-bold">
             INTERACTIVE GRAPH
           </span>
         </div>
@@ -295,25 +295,25 @@ export const VectorBoard: React.FC<VectorBoardProps> = ({ tab }) => {
           <div className="relative">
             <button
               onClick={() => setShowAddMenu(!showAddMenu)}
-              className="px-2.5 py-1 bg-[#121212] hover:bg-[#1C1C1C] text-[#FFFFFF] border border-[#262626] hover:border-[#404040] text-xs flex items-center gap-1.5"
+              className="px-2.5 py-1 bg-[#111111] hover:bg-[#18181B] text-[#FFFFFF] border border-[#1F1F1F] hover:border-[#3F3F46] text-xs flex items-center gap-1.5 transition-colors"
             >
               <Plus size={12} />
               <span>ADD NODE</span>
             </button>
 
             {showAddMenu && (
-              <div className="absolute top-8 left-0 z-50 w-44 bg-[#0E0E0E] border border-[#404040] shadow-2xl p-1 text-xs space-y-0.5">
-                <div className="p-1 text-[9px] text-[#737373] border-b border-[#262626] uppercase font-bold">
+              <div className="absolute top-8 left-0 z-50 w-44 bg-[#0A0A0A] border border-[#262626] shadow-2xl p-1 text-xs space-y-0.5">
+                <div className="p-1 text-[9px] text-[#71717A] border-b border-[#1F1F1F] uppercase font-bold">
                   SELECT COMPONENT TYPE
                 </div>
                 {(['SVC', 'API', 'DB', 'AI', 'GW', 'UI', 'RTC'] as VectorBadge[]).map(badge => (
                   <button
                     key={badge}
                     onClick={() => handleAddNode(badge)}
-                    className="w-full p-1 text-left text-[#A3A3A3] hover:text-[#FFFFFF] hover:bg-[#1C1C1C] flex items-center justify-between"
+                    className="w-full p-1 text-left text-[#A1A1AA] hover:text-[#FFFFFF] hover:bg-[#18181B] flex items-center justify-between transition-colors"
                   >
                     <span>{badge} Node</span>
-                    <span className="text-[9px] bg-[#171717] px-1 border border-[#333333] text-[#FFFFFF]">{badge}</span>
+                    <span className="text-[9px] bg-[#141414] px-1 border border-[#262626] text-[#FFFFFF] font-bold">{badge}</span>
                   </button>
                 ))}
               </div>
@@ -329,7 +329,7 @@ export const VectorBoard: React.FC<VectorBoardProps> = ({ tab }) => {
             className={`px-2.5 py-1 text-xs border flex items-center gap-1.5 transition-colors ${
               connectMode
                 ? 'bg-[#FFFFFF] text-[#000000] border-[#FFFFFF] font-bold'
-                : 'bg-[#121212] hover:bg-[#1C1C1C] text-[#A3A3A3] hover:text-[#FFFFFF] border-[#262626]'
+                : 'bg-[#111111] hover:bg-[#18181B] text-[#A1A1AA] hover:text-[#FFFFFF] border-[#1F1F1F]'
             }`}
           >
             <LinkIcon size={12} />
@@ -340,7 +340,7 @@ export const VectorBoard: React.FC<VectorBoardProps> = ({ tab }) => {
           {selectedNodeId && (
             <button
               onClick={handleDeleteSelected}
-              className="px-2 py-1 bg-[#1A1A1A] hover:bg-[#262626] text-[#FFFFFF] border border-[#404040] text-xs flex items-center gap-1"
+              className="px-2 py-1 bg-[#18181B] hover:bg-[#262626] text-[#FFFFFF] border border-[#3F3F46] text-xs flex items-center gap-1 transition-colors"
             >
               <Trash2 size={11} />
               <span>DELETE</span>
@@ -351,7 +351,7 @@ export const VectorBoard: React.FC<VectorBoardProps> = ({ tab }) => {
           <button
             onClick={handleResetTopology}
             title="Reset to default White Collars topology"
-            className="p-1.5 text-[#A3A3A3] hover:text-[#FFFFFF] bg-[#121212] border border-[#262626] hover:border-[#404040]"
+            className="p-1.5 text-[#71717A] hover:text-[#FFFFFF] bg-[#111111] border border-[#1F1F1F] hover:border-[#3F3F46] transition-colors"
           >
             <RotateCcw size={12} />
           </button>
@@ -363,7 +363,7 @@ export const VectorBoard: React.FC<VectorBoardProps> = ({ tab }) => {
             className={`px-3 py-1 text-xs font-bold border flex items-center gap-1.5 transition-all ${
               indexedFeedback
                 ? 'bg-[#FFFFFF] text-[#000000] border-[#FFFFFF]'
-                : 'bg-[#121212] hover:bg-[#1C1C1C] text-[#FFFFFF] border-[#333333] hover:border-[#FFFFFF]'
+                : 'bg-[#111111] hover:bg-[#18181B] text-[#FFFFFF] border-[#262626] hover:border-[#FFFFFF]'
             }`}
           >
             {indexedFeedback ? (
@@ -390,13 +390,13 @@ export const VectorBoard: React.FC<VectorBoardProps> = ({ tab }) => {
           setSelectedNodeId(null);
           setShowAddMenu(false);
         }}
-        className="flex-1 relative bg-[#040404] overflow-hidden cursor-crosshair"
+        className="flex-1 relative bg-[#000000] overflow-hidden cursor-crosshair"
       >
         {/* Architectural Background Grid */}
         <div 
           className="absolute inset-0 pointer-events-none opacity-20"
           style={{
-            backgroundImage: 'radial-gradient(#404040 1px, transparent 1px)',
+            backgroundImage: 'radial-gradient(#262626 1px, transparent 1px)',
             backgroundSize: '24px 24px'
           }}
         />
@@ -429,8 +429,8 @@ export const VectorBoard: React.FC<VectorBoardProps> = ({ tab }) => {
                 <path
                   d={`M ${from.x} ${from.y} C ${midX} ${from.y}, ${midX} ${to.y}, ${to.x} ${to.y}`}
                   fill="none"
-                  stroke="#555555"
-                  strokeWidth="2"
+                  stroke="#3F3F46"
+                  strokeWidth="1.5"
                   markerEnd="url(#arrow)"
                 />
                 {/* Edge Label Badge */}
@@ -438,7 +438,7 @@ export const VectorBoard: React.FC<VectorBoardProps> = ({ tab }) => {
                   <text
                     x={midX}
                     y={midY - 6}
-                    fill="#A3A3A3"
+                    fill="#A1A1AA"
                     fontSize="9"
                     fontFamily="monospace"
                     textAnchor="middle"
@@ -466,21 +466,21 @@ export const VectorBoard: React.FC<VectorBoardProps> = ({ tab }) => {
                 height: 72
               }}
               onMouseDown={e => handleMouseDown(node, e)}
-              className={`absolute top-0 left-0 bg-[#0B0B0B] border p-2 flex flex-col justify-between cursor-move shadow-xl transition-shadow ${
+              className={`absolute top-0 left-0 bg-[#0A0A0A] border p-2.5 flex flex-col justify-between cursor-move shadow-md transition-all ${
                 isConnectSource
                   ? 'border-[#FFFFFF] ring-2 ring-[#FFFFFF] bg-[#141414]'
                   : isSelected
                   ? 'border-[#FFFFFF] ring-1 ring-[#FFFFFF]'
-                  : 'border-[#262626] hover:border-[#444444]'
+                  : 'border-[#1F1F1F] hover:border-[#3F3F46] hover:bg-[#111111]'
               }`}
             >
               {/* Header: Badge & Status */}
               <div className="flex items-center justify-between text-[10px]">
-                <span className="bg-[#171717] border border-[#333333] px-1 py-0.2 text-[#FFFFFF] font-bold">
+                <span className="bg-[#141414] border border-[#262626] px-1 py-0.2 text-[#FFFFFF] font-bold">
                   {node.badge}
                 </span>
-                <span className="text-[#555555] text-[9px] flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 bg-[#FFFFFF] rounded-full inline-block" />
+                <span className="text-[#71717A] text-[9px] flex items-center gap-1 font-bold">
+                  <span className="w-1.5 h-1.5 bg-[#FFFFFF] rounded-none inline-block" />
                   <span>{node.status}</span>
                 </span>
               </div>
@@ -490,7 +490,7 @@ export const VectorBoard: React.FC<VectorBoardProps> = ({ tab }) => {
                 <div className="text-xs font-bold text-[#FFFFFF] truncate tracking-wide">
                   {node.title}
                 </div>
-                <div className="text-[10px] text-[#737373] truncate">
+                <div className="text-[10px] text-[#71717A] truncate">
                   {node.subtitle}
                 </div>
               </div>

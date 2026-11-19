@@ -16,9 +16,74 @@ export interface StagePeer {
   isVideoActive: boolean;
   isScreenSharing: boolean;
   stream?: MediaStream;
+  cameraStream?: MediaStream;
 }
 
-export type StageEventCallback = (peers: StagePeer[], screenStream: MediaStream | null) => void;
+export type StageQualityPreset = '240p' | '360p' | '720p' | '1080p' | '2k';
+
+export interface QualityConfig {
+  id: StageQualityPreset;
+  label: string;
+  width: number;
+  height: number;
+  fps: number;
+  bitrateKbps: number;
+  description: string;
+}
+
+export const STAGE_QUALITY_PRESETS: Record<StageQualityPreset, QualityConfig> = {
+  '240p': {
+    id: '240p',
+    label: '240p',
+    width: 426,
+    height: 240,
+    fps: 15,
+    bitrateKbps: 400,
+    description: 'Low Bandwidth (Data Saver)'
+  },
+  '360p': {
+    id: '360p',
+    label: '360p',
+    width: 640,
+    height: 360,
+    fps: 30,
+    bitrateKbps: 800,
+    description: 'Standard Definition (30fps)'
+  },
+  '720p': {
+    id: '720p',
+    label: '720p HD',
+    width: 1280,
+    height: 720,
+    fps: 30,
+    bitrateKbps: 2500,
+    description: 'High Definition (720p @ 30fps)'
+  },
+  '1080p': {
+    id: '1080p',
+    label: '1080p FHD',
+    width: 1920,
+    height: 1080,
+    fps: 60,
+    bitrateKbps: 6000,
+    description: 'Full HD Studio (1080p @ 60fps)'
+  },
+  '2k': {
+    id: '2k',
+    label: '2K QHD',
+    width: 2560,
+    height: 1440,
+    fps: 60,
+    bitrateKbps: 12000,
+    description: 'Ultra 2K Resolution (1440p @ 60fps)'
+  }
+};
+
+export type StageEventCallback = (
+  peers: StagePeer[], 
+  screenStream: MediaStream | null, 
+  cameraStream: MediaStream | null
+) => void;
 
 export class WebRTCStageService {
   private static instance: WebRTCStageService;
@@ -27,10 +92,12 @@ export class WebRTCStageService {
   private peerConnections: Map<string, RTCPeerConnection> = new Map();
   private remoteStreams: Map<string, MediaStream> = new Map();
   private screenStream: MediaStream | null = null;
+  private cameraStream: MediaStream | null = null;
   private localAudioStream: MediaStream | null = null;
   private currentMemberId: string = 'user_vicky';
   private currentSpaceId: string = 'wc-core';
   private isConnected: boolean = false;
+  private activeQuality: StageQualityPreset = '1080p';
   private listeners: Set<StageEventCallback> = new Set();
 
   private constructor() {
@@ -178,16 +245,99 @@ export class WebRTCStageService {
       this.screenStream = null;
     }
 
+    if (this.cameraStream) {
+      this.cameraStream.getTracks().forEach(t => t.stop());
+      this.cameraStream = null;
+    }
+
     this.peerConnections.forEach(pc => pc.close());
     this.peerConnections.clear();
     this.remoteStreams.clear();
     this.notifyPeers();
   }
 
+  public getQualityPreset(): StageQualityPreset {
+    return this.activeQuality;
+  }
+
+  public async setQualityPreset(preset: StageQualityPreset): Promise<void> {
+    this.activeQuality = preset;
+    const cfg = STAGE_QUALITY_PRESETS[preset];
+
+    // If camera is running, update constraints or restart with new resolution
+    if (this.cameraStream) {
+      const videoTrack = this.cameraStream.getVideoTracks()[0];
+      if (videoTrack) {
+        try {
+          await videoTrack.applyConstraints({
+            width: { ideal: cfg.width },
+            height: { ideal: cfg.height },
+            frameRate: { ideal: cfg.fps, max: cfg.fps }
+          });
+        } catch {
+          // If in-place constraint application fails, restart camera with new preset
+          await this.stopCamera();
+          await this.startCamera(preset);
+        }
+      }
+    }
+
+    this.notifyPeers();
+  }
+
   /**
-   * Start 4K 60fps screen share with high-bitrate video capture.
+   * Start webcam video with selected quality preset (240p to 2k).
    */
-  public async startScreenShare(): Promise<MediaStream | null> {
+  public async startCamera(preset?: StageQualityPreset): Promise<MediaStream | null> {
+    const q = preset || this.activeQuality;
+    this.activeQuality = q;
+    const cfg = STAGE_QUALITY_PRESETS[q];
+
+    try {
+      if (!navigator.mediaDevices?.getUserMedia) {
+        throw new Error('Webcam video not supported on this platform');
+      }
+
+      this.cameraStream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          width: { ideal: cfg.width },
+          height: { ideal: cfg.height },
+          frameRate: { ideal: cfg.fps, max: cfg.fps }
+        },
+        audio: false
+      });
+
+      this.cameraStream.getVideoTracks()[0].onended = () => {
+        this.stopCamera();
+      };
+
+      this.notifyPeers();
+      return this.cameraStream;
+    } catch (err) {
+      console.warn('Camera video access error or permission denied:', err);
+      return null;
+    }
+  }
+
+  public stopCamera(): void {
+    if (this.cameraStream) {
+      this.cameraStream.getTracks().forEach(t => t.stop());
+      this.cameraStream = null;
+    }
+    this.notifyPeers();
+  }
+
+  public getCameraStream(): MediaStream | null {
+    return this.cameraStream;
+  }
+
+  /**
+   * Start screen share with high-bitrate video capture.
+   */
+  public async startScreenShare(preset?: StageQualityPreset): Promise<MediaStream | null> {
+    const q = preset || this.activeQuality;
+    const cfg = STAGE_QUALITY_PRESETS[q];
+
     try {
       if (!navigator.mediaDevices?.getDisplayMedia) {
         throw new Error('Screen sharing not supported on this platform');
@@ -195,9 +345,9 @@ export class WebRTCStageService {
 
       this.screenStream = await navigator.mediaDevices.getDisplayMedia({
         video: {
-          frameRate: { ideal: 60, max: 60 },
-          width: { ideal: 3840 },
-          height: { ideal: 2160 }
+          frameRate: { ideal: cfg.fps, max: cfg.fps },
+          width: { ideal: cfg.width },
+          height: { ideal: cfg.height }
         },
         audio: true
       });
@@ -318,13 +468,14 @@ export class WebRTCStageService {
     const peers: StagePeer[] = [
       {
         id: this.currentMemberId,
-        name: 'You (Local Stage Host)',
+        name: 'You (Stage Host)',
         badge: 'YOU',
-        role: 'Active Speaker',
+        role: 'Active Presenter',
         isAudioActive: true,
-        isVideoActive: false,
+        isVideoActive: !!this.cameraStream,
         isScreenSharing: !!this.screenStream,
-        stream: this.screenStream || undefined
+        stream: this.screenStream || undefined,
+        cameraStream: this.cameraStream || undefined
       },
       {
         id: 'user_arnav',
@@ -339,14 +490,14 @@ export class WebRTCStageService {
         id: 'user_lakshay',
         name: 'Lakshay Arora',
         badge: 'LA',
-        role: 'WebGL Stage Peer',
+        role: 'WebRTC Peer',
         isAudioActive: false,
         isVideoActive: false,
         isScreenSharing: false
       }
     ];
 
-    this.listeners.forEach(cb => cb(peers, this.screenStream));
+    this.listeners.forEach(cb => cb(peers, this.screenStream, this.cameraStream));
   }
 }
 

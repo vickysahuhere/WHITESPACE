@@ -57,7 +57,8 @@ function scanDirForEmojis(dir) {
 
 scanDirForEmojis('src');
 scanDirForEmojis('electron');
-assert(emojiViolations === 0, `Zero emoji check: 0 violations found across all source and electron files (found: ${emojiViolations})`);
+scanDirForEmojis('test');
+assert(emojiViolations === 0, `Zero emoji check: 0 violations found across all source, electron, and test files (found: ${emojiViolations})`);
 
 // -------------------------------------------------------------
 // CHECK 2: PILLAR 1 - MONOCHROME DESIGN FOUNDATION & SHELL
@@ -163,10 +164,28 @@ assert(pkg.scripts['electron:build'] !== undefined, 'package.json contains elect
 assert(pkg.build !== undefined && pkg.build.appId === 'com.whitecollars.whitespace', 'package.json contains electron-builder config');
 
 // -------------------------------------------------------------
-// CHECK 12: DUAL-TARGET PARITY VERIFICATION
+// CHECK 12: PILLAR 11 - MOBILE COMPANION SHELL & PWA (MOB-01, MOB-02)
 // -------------------------------------------------------------
-console.log('\n--- 12. DUAL-TARGET RUNTIME PARITY ---');
+console.log('\n--- 12. PILLAR 11: MOBILE COMPANION SHELL & PROGRESSIVE WEB APP ---');
+assert(fs.existsSync('src/components/mobile/MobileLayout.tsx'), 'MobileLayout responsive shell exists');
+assert(fs.existsSync('src/components/mobile/MobileTopBar.tsx'), 'MobileTopBar exists');
+assert(fs.existsSync('src/components/mobile/MobileBottomNav.tsx'), 'MobileBottomNav navigation exists');
+assert(fs.existsSync('src/hooks/useIsMobile.ts'), 'useIsMobile hook with 768px breakpoint exists');
+assert(fs.existsSync('public/manifest.json'), 'PWA manifest.json exists');
+assert(fs.existsSync('public/sw.js'), 'PWA service worker sw.js exists');
+assert(fs.existsSync('public/icon-192.svg'), 'PWA 192x192 SVG icon exists');
+assert(fs.existsSync('public/icon-512.svg'), 'PWA 512x512 SVG icon exists');
+const indexHtmlContent = fs.readFileSync('index.html', 'utf8');
+assert(indexHtmlContent.includes('viewport-fit=cover'), 'index.html includes viewport-fit=cover safe-area meta tag');
+assert(indexHtmlContent.includes('rel="manifest"'), 'index.html includes manifest link');
+
+// -------------------------------------------------------------
+// CHECK 13: DUAL-TARGET PARITY VERIFICATION
+// -------------------------------------------------------------
+console.log('\n--- 13. DUAL-TARGET RUNTIME PARITY ---');
 assert(fs.existsSync('dist/index.html'), 'Vite production build bundle exists in dist/');
+assert(fs.existsSync('dist/manifest.json'), 'PWA manifest bundled into dist/');
+assert(fs.existsSync('dist/sw.js'), 'PWA service worker bundled into dist/');
 assert(fs.existsSync('index.html'), 'Web root index.html exists');
 
 console.log('\n======================================================================');

@@ -90,18 +90,18 @@ export const SpaceManagerModal: React.FC<{ isOpen: boolean; onClose: () => void 
     >
       <div 
         onClick={e => e.stopPropagation()}
-        className="w-full max-w-4xl h-[650px] bg-[#0A0A0A] border border-[#404040] shadow-2xl flex flex-col overflow-hidden"
+        className="w-full max-w-4xl h-[650px] bg-[#0A0A0A] border border-[#1F1F1F] shadow-2xl flex flex-col overflow-hidden"
       >
         {/* Top Header */}
-        <div className="h-12 border-b border-[#262626] px-4 flex items-center justify-between bg-[#0F0F0F] shrink-0">
+        <div className="h-12 border-b border-[#1F1F1F] px-4 flex items-center justify-between bg-[#0A0A0A] shrink-0">
           <div className="flex items-center gap-2">
             <Compass size={15} className="text-[#FFFFFF]" />
             <span className="text-xs font-bold tracking-widest text-[#FFFFFF]">SPACE MANAGEMENT SYSTEM</span>
-            <span className="text-[10px] text-[#737373]">({spaces.length} ACTIVE SPACES)</span>
+            <span className="text-[10px] text-[#71717A]">({spaces.length} ACTIVE SPACES)</span>
           </div>
           <button 
             onClick={onClose}
-            className="text-[#A3A3A3] hover:text-[#FFFFFF] p-1 border border-transparent hover:border-[#262626]"
+            className="text-[#71717A] hover:text-[#FFFFFF] p-1 border border-transparent hover:border-[#1F1F1F] transition-colors"
           >
             <X size={15} />
           </button>
@@ -110,12 +110,12 @@ export const SpaceManagerModal: React.FC<{ isOpen: boolean; onClose: () => void 
         {/* 2-Column Split Workspace */}
         <div className="flex-1 flex overflow-hidden">
           {/* Left Column: Spaces List */}
-          <div className="w-72 border-r border-[#262626] bg-[#0D0D0D] flex flex-col justify-between shrink-0">
-            <div className="p-2 border-b border-[#262626] flex items-center justify-between text-[10px] text-[#737373]">
+          <div className="w-72 border-r border-[#1F1F1F] bg-[#0A0A0A] flex flex-col justify-between shrink-0">
+            <div className="p-2.5 border-b border-[#1F1F1F] flex items-center justify-between text-[10px] text-[#71717A]">
               <span>SPACES REGISTRY</span>
               <button
                 onClick={() => setActiveTab('create')}
-                className="hover:text-[#FFFFFF] flex items-center gap-1 font-bold"
+                className="hover:text-[#FFFFFF] flex items-center gap-1 font-bold transition-colors"
               >
                 <Plus size={11} />
                 <span>NEW</span>
@@ -132,19 +132,19 @@ export const SpaceManagerModal: React.FC<{ isOpen: boolean; onClose: () => void 
                     onClick={() => handleSelectSpace(s)}
                     className={`p-2 border text-xs cursor-pointer transition-all flex items-center justify-between ${
                       isSelected
-                        ? 'bg-[#1C1C1C] text-[#FFFFFF] border-[#FFFFFF]'
-                        : 'bg-[#121212] text-[#A3A3A3] border-[#262626] hover:border-[#404040] hover:text-[#FFFFFF]'
+                        ? 'bg-[#18181B] text-[#FFFFFF] border-[#3F3F46]'
+                        : 'bg-[#111111] text-[#A1A1AA] border-[#1F1F1F] hover:border-[#262626] hover:bg-[#141414] hover:text-[#FFFFFF]'
                     }`}
                   >
                     <div className="flex items-center gap-2 min-w-0">
                       <span className={`px-1.5 py-0.5 text-[10px] font-bold border ${
-                        isSelected ? 'bg-[#FFFFFF] text-[#000000] border-[#FFFFFF]' : 'bg-[#000000] text-[#FFFFFF] border-[#404040]'
+                        isSelected ? 'bg-[#FFFFFF] text-[#000000] border-[#FFFFFF]' : 'bg-[#141414] text-[#FFFFFF] border-[#1F1F1F]'
                       }`}>
                         {s.badge}
                       </span>
                       <div className="truncate">
-                        <div className="truncate font-bold">{s.name}</div>
-                        <div className="text-[10px] text-[#737373] truncate">{s.description}</div>
+                        <div className="truncate font-bold text-[#FFFFFF]">{s.name}</div>
+                        <div className="text-[10px] text-[#71717A] truncate">{s.description}</div>
                       </div>
                     </div>
                     {isCurrentActive && (
@@ -156,13 +156,13 @@ export const SpaceManagerModal: React.FC<{ isOpen: boolean; onClose: () => void 
             </div>
 
             {/* Quick Switch Button at base */}
-            <div className="p-2 border-t border-[#262626] bg-[#0A0A0A]">
+            <div className="p-2 border-t border-[#1F1F1F] bg-[#0A0A0A]">
               <button
                 onClick={() => {
                   setActiveSpaceId(currentSpace.id);
                   onClose();
                 }}
-                className="w-full py-2 bg-[#171717] hover:bg-[#FFFFFF] text-[#FFFFFF] hover:text-[#000000] border border-[#404040] text-xs font-bold transition-all text-center tracking-wider"
+                className="w-full py-2 bg-[#141414] hover:bg-[#FFFFFF] text-[#FFFFFF] hover:text-[#000000] border border-[#1F1F1F] text-xs font-bold transition-all text-center tracking-wider"
               >
                 SWITCH TO THIS SPACE
               </button>
@@ -170,66 +170,66 @@ export const SpaceManagerModal: React.FC<{ isOpen: boolean; onClose: () => void 
           </div>
 
           {/* Right Column: Space Configuration & SOUL.MD */}
-          <div className="flex-1 flex flex-col bg-[#080808] overflow-hidden">
+          <div className="flex-1 flex flex-col bg-[#000000] overflow-hidden">
             {activeTab === 'create' ? (
               /* Create Space Form */
               <div className="p-6 overflow-y-auto flex-1 flex flex-col justify-between">
                 <div>
-                  <div className="pb-3 border-b border-[#262626] mb-4">
+                  <div className="pb-3 border-b border-[#1F1F1F] mb-4">
                     <h2 className="text-sm font-bold text-[#FFFFFF] tracking-wider uppercase">CREATE NEW AUTONOMOUS SPACE</h2>
-                    <p className="text-xs text-[#737373] mt-1">Each space maintains its own isolated documents, SOUL.MD prompt, tasks, and tabs.</p>
+                    <p className="text-xs text-[#71717A] mt-1">Each space maintains its own isolated documents, SOUL.MD prompt, tasks, and tabs.</p>
                   </div>
 
                   <form onSubmit={handleCreate} id="create-space-form" className="space-y-4 max-w-lg text-xs">
                     <div>
-                      <label className="block text-[#A3A3A3] mb-1">SPACE TITLE</label>
+                      <label className="block text-[#A1A1AA] mb-1">SPACE TITLE</label>
                       <input
                         type="text"
                         required
                         placeholder="e.g. SignBridge Vision Engine"
                         value={newName}
                         onChange={e => setNewName(e.target.value)}
-                        className="w-full bg-[#121212] border border-[#262626] focus:border-[#FFFFFF] p-2 text-[#FFFFFF] outline-none"
+                        className="w-full bg-[#0A0A0A] border border-[#1F1F1F] focus:border-[#FFFFFF] p-2 text-[#FFFFFF] outline-none"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-[#A3A3A3] mb-1">2-LETTER BADGE</label>
+                      <label className="block text-[#A1A1AA] mb-1">2-LETTER BADGE</label>
                       <input
                         type="text"
                         maxLength={2}
                         placeholder="e.g. SB"
                         value={newBadge}
                         onChange={e => setNewBadge(e.target.value.toUpperCase())}
-                        className="w-24 bg-[#121212] border border-[#262626] focus:border-[#FFFFFF] p-2 text-[#FFFFFF] outline-none uppercase font-bold"
+                        className="w-24 bg-[#0A0A0A] border border-[#1F1F1F] focus:border-[#FFFFFF] p-2 text-[#FFFFFF] outline-none uppercase font-bold"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-[#A3A3A3] mb-1">DOMAIN DESCRIPTION</label>
+                      <label className="block text-[#A1A1AA] mb-1">DOMAIN DESCRIPTION</label>
                       <textarea
                         rows={3}
                         placeholder="High-frame-rate gesture recognition and video streaming..."
                         value={newDesc}
                         onChange={e => setNewDesc(e.target.value)}
-                        className="w-full bg-[#121212] border border-[#262626] focus:border-[#FFFFFF] p-2 text-[#FFFFFF] outline-none resize-none"
+                        className="w-full bg-[#0A0A0A] border border-[#1F1F1F] focus:border-[#FFFFFF] p-2 text-[#FFFFFF] outline-none resize-none"
                       />
                     </div>
                   </form>
                 </div>
 
-                <div className="flex justify-end gap-2 pt-4 border-t border-[#262626]">
+                <div className="flex justify-end gap-2 pt-4 border-t border-[#1F1F1F]">
                   <button
                     type="button"
                     onClick={() => setActiveTab('general')}
-                    className="px-3 py-1.5 border border-[#262626] text-[#A3A3A3] text-xs hover:text-[#FFFFFF]"
+                    className="px-3 py-1.5 border border-[#1F1F1F] text-[#A1A1AA] text-xs hover:text-[#FFFFFF] transition-colors"
                   >
                     CANCEL
                   </button>
                   <button
                     type="submit"
                     form="create-space-form"
-                    className="px-4 py-1.5 bg-[#FFFFFF] text-[#000000] font-bold text-xs border border-[#FFFFFF] hover:bg-[#A3A3A3]"
+                    className="px-4 py-1.5 bg-[#FFFFFF] text-[#000000] font-bold text-xs border border-[#FFFFFF] hover:bg-[#A1A1AA] transition-colors"
                   >
                     INITIALIZE SPACE
                   </button>
@@ -239,13 +239,13 @@ export const SpaceManagerModal: React.FC<{ isOpen: boolean; onClose: () => void 
               /* Config Tabs */
               <div className="flex-1 flex flex-col overflow-hidden">
                 {/* Tabs Strip */}
-                <div className="h-10 border-b border-[#262626] bg-[#0C0C0C] px-4 flex items-center gap-1 shrink-0">
+                <div className="h-10 border-b border-[#1F1F1F] bg-[#0A0A0A] px-4 flex items-center gap-1 shrink-0">
                   <button
                     onClick={() => setActiveTab('general')}
                     className={`px-3 py-1 text-xs border transition-all ${
                       activeTab === 'general'
-                        ? 'bg-[#1C1C1C] text-[#FFFFFF] border-[#404040] font-bold'
-                        : 'border-transparent text-[#737373] hover:text-[#FFFFFF]'
+                        ? 'bg-[#18181B] text-[#FFFFFF] border-[#3F3F46] font-bold'
+                        : 'border-transparent text-[#71717A] hover:text-[#FFFFFF]'
                     }`}
                   >
                     01 // GENERAL INFO
@@ -254,8 +254,8 @@ export const SpaceManagerModal: React.FC<{ isOpen: boolean; onClose: () => void 
                     onClick={() => setActiveTab('soul')}
                     className={`px-3 py-1 text-xs border transition-all flex items-center gap-1.5 ${
                       activeTab === 'soul'
-                        ? 'bg-[#1C1C1C] text-[#FFFFFF] border-[#404040] font-bold'
-                        : 'border-transparent text-[#737373] hover:text-[#FFFFFF]'
+                        ? 'bg-[#18181B] text-[#FFFFFF] border-[#3F3F46] font-bold'
+                        : 'border-transparent text-[#71717A] hover:text-[#FFFFFF]'
                     }`}
                   >
                     <Sparkles size={12} />
@@ -265,16 +265,16 @@ export const SpaceManagerModal: React.FC<{ isOpen: boolean; onClose: () => void 
                     onClick={() => setActiveTab('danger')}
                     className={`px-3 py-1 text-xs border transition-all ${
                       activeTab === 'danger'
-                        ? 'bg-[#1C1C1C] text-[#FFFFFF] border-[#404040] font-bold'
-                        : 'border-transparent text-[#737373] hover:text-[#FFFFFF]'
+                        ? 'bg-[#18181B] text-[#FFFFFF] border-[#3F3F46] font-bold'
+                        : 'border-transparent text-[#71717A] hover:text-[#FFFFFF]'
                     }`}
                   >
                     03 // SPACE ACTIONS
                   </button>
 
                   {saveFeedback && (
-                    <span className="ml-auto text-[11px] text-[#FFFFFF] font-bold flex items-center gap-1">
-                      <Check size={12} />
+                    <span className="ml-auto text-[11px] text-[#FFFFFF] font-bold flex items-center gap-1 font-mono">
+                      <Check size={12} strokeWidth={3} />
                       <span>SAVED</span>
                     </span>
                   )}
@@ -284,40 +284,40 @@ export const SpaceManagerModal: React.FC<{ isOpen: boolean; onClose: () => void 
                 {activeTab === 'general' && (
                   <form onSubmit={handleSaveGeneral} className="p-6 space-y-4 max-w-lg text-xs overflow-y-auto flex-1">
                     <div>
-                      <label className="block text-[#A3A3A3] mb-1">SPACE NAME</label>
+                      <label className="block text-[#A1A1AA] mb-1">SPACE NAME</label>
                       <input
                         type="text"
                         value={editName}
                         onChange={e => setEditName(e.target.value)}
-                        className="w-full bg-[#121212] border border-[#262626] focus:border-[#FFFFFF] p-2 text-[#FFFFFF] outline-none"
+                        className="w-full bg-[#0A0A0A] border border-[#1F1F1F] focus:border-[#FFFFFF] p-2 text-[#FFFFFF] outline-none"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-[#A3A3A3] mb-1">BADGE</label>
+                      <label className="block text-[#A1A1AA] mb-1">BADGE</label>
                       <input
                         type="text"
                         maxLength={2}
                         value={editBadge}
                         onChange={e => setEditBadge(e.target.value.toUpperCase())}
-                        className="w-20 bg-[#121212] border border-[#262626] focus:border-[#FFFFFF] p-2 text-[#FFFFFF] outline-none uppercase font-bold"
+                        className="w-20 bg-[#0A0A0A] border border-[#1F1F1F] focus:border-[#FFFFFF] p-2 text-[#FFFFFF] outline-none uppercase font-bold"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-[#A3A3A3] mb-1">DESCRIPTION</label>
+                      <label className="block text-[#A1A1AA] mb-1">DESCRIPTION</label>
                       <textarea
                         rows={3}
                         value={editDesc}
                         onChange={e => setEditDesc(e.target.value)}
-                        className="w-full bg-[#121212] border border-[#262626] focus:border-[#FFFFFF] p-2 text-[#FFFFFF] outline-none resize-none"
+                        className="w-full bg-[#0A0A0A] border border-[#1F1F1F] focus:border-[#FFFFFF] p-2 text-[#FFFFFF] outline-none resize-none"
                       />
                     </div>
 
                     <div className="pt-2">
                       <button
                         type="submit"
-                        className="px-4 py-2 bg-[#FFFFFF] text-[#000000] font-bold text-xs border border-[#FFFFFF] hover:bg-[#A3A3A3]"
+                        className="px-4 py-2 bg-[#FFFFFF] text-[#000000] font-bold text-xs border border-[#FFFFFF] hover:bg-[#A1A1AA] transition-colors"
                       >
                         SAVE GENERAL CHANGES
                       </button>
@@ -329,8 +329,8 @@ export const SpaceManagerModal: React.FC<{ isOpen: boolean; onClose: () => void 
                 {activeTab === 'soul' && (
                   <div className="p-4 flex-1 flex flex-col overflow-hidden">
                     <div className="flex items-center justify-between pb-2 text-xs">
-                      <span className="text-[#A3A3A3]">SYSTEM PROMPT (INJECTED INTO GEMINI REST & LOCAL RAG)</span>
-                      <span className="text-[10px] text-[#737373]">
+                      <span className="text-[#A1A1AA]">SYSTEM PROMPT (INJECTED INTO GEMINI REST & LOCAL RAG)</span>
+                      <span className="text-[10px] text-[#71717A]">
                         {editSoul.split(/\s+/).filter(Boolean).length} WORDS // {editSoul.length} CHARS
                       </span>
                     </div>
@@ -339,14 +339,14 @@ export const SpaceManagerModal: React.FC<{ isOpen: boolean; onClose: () => void 
                       value={editSoul}
                       onChange={e => setEditSoul(e.target.value)}
                       placeholder="# SOUL.MD // INSTRUCTIONS FOR THIS SPACE..."
-                      className="flex-1 bg-[#000000] border border-[#262626] focus:border-[#FFFFFF] p-3 text-xs font-mono text-[#FFFFFF] outline-none resize-none leading-relaxed"
+                      className="flex-1 bg-[#0A0A0A] border border-[#1F1F1F] focus:border-[#FFFFFF] p-3 text-xs font-mono text-[#FFFFFF] outline-none resize-none leading-relaxed"
                     />
 
                     <div className="flex justify-end gap-2 pt-3 shrink-0">
                       <button
                         type="button"
                         onClick={handleSaveSoul}
-                        className="px-4 py-2 bg-[#FFFFFF] text-[#000000] font-bold text-xs border border-[#FFFFFF] hover:bg-[#A3A3A3]"
+                        className="px-4 py-2 bg-[#FFFFFF] text-[#000000] font-bold text-xs border border-[#FFFFFF] hover:bg-[#A1A1AA] transition-colors"
                       >
                         SAVE SOUL.MD
                       </button>
@@ -357,29 +357,29 @@ export const SpaceManagerModal: React.FC<{ isOpen: boolean; onClose: () => void 
                 {/* Tab 3: Danger & Actions */}
                 {activeTab === 'danger' && (
                   <div className="p-6 space-y-6 text-xs max-w-lg">
-                    <div className="border border-[#262626] bg-[#121212] p-4">
+                    <div className="border border-[#1F1F1F] bg-[#111111] p-4">
                       <div className="flex items-center gap-2 font-bold text-[#FFFFFF] mb-1">
-                        <Copy size={14} />
+                        <Copy size={14} className="text-[#A1A1AA]" />
                         <span>DUPLICATE SPACE</span>
                       </div>
-                      <p className="text-[11px] text-[#737373] mb-3">
+                      <p className="text-[11px] text-[#71717A] mb-3">
                         Clone all metadata, SOUL.MD system prompt, and configurations into a new independent space.
                       </p>
                       <button
                         type="button"
                         onClick={handleDuplicate}
-                        className="px-3 py-1.5 bg-[#171717] hover:bg-[#262626] text-[#FFFFFF] border border-[#404040]"
+                        className="px-3 py-1.5 bg-[#141414] hover:bg-[#18181B] text-[#FFFFFF] border border-[#1F1F1F] transition-colors"
                       >
                         DUPLICATE THIS SPACE
                       </button>
                     </div>
 
-                    <div className="border border-[#404040] bg-[#121212] p-4">
+                    <div className="border border-[#1F1F1F] bg-[#111111] p-4">
                       <div className="flex items-center gap-2 font-bold text-[#FFFFFF] mb-1">
-                        <Trash2 size={14} />
+                        <Trash2 size={14} className="text-[#A1A1AA]" />
                         <span>DELETE SPACE</span>
                       </div>
-                      <p className="text-[11px] text-[#737373] mb-3">
+                      <p className="text-[11px] text-[#71717A] mb-3">
                         Permanently remove this space. At least one space must remain in the workspace.
                       </p>
                       <button
@@ -388,7 +388,7 @@ export const SpaceManagerModal: React.FC<{ isOpen: boolean; onClose: () => void 
                         disabled={spaces.length <= 1}
                         className={`px-3 py-1.5 border text-xs font-bold transition-all ${
                           spaces.length <= 1
-                            ? 'opacity-40 cursor-not-allowed border-[#262626] text-[#737373]'
+                            ? 'opacity-30 cursor-not-allowed border-[#1F1F1F] text-[#71717A]'
                             : 'border-[#FFFFFF] bg-[#000000] text-[#FFFFFF] hover:bg-[#FFFFFF] hover:text-[#000000]'
                         }`}
                       >

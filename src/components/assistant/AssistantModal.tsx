@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { WhiteAssistant3D } from './WhiteAssistant3D';
-import { Box, X, Play, Pause, Activity, Sparkles, Sliders } from 'lucide-react';
+import { Box, X, Activity } from 'lucide-react';
 
 interface AssistantModalProps {
   isOpen: boolean;
@@ -22,31 +22,33 @@ export const AssistantModal: React.FC<AssistantModalProps> = ({ isOpen, onClose 
   return (
     <div 
       onClick={onClose}
-      className="fixed inset-0 bg-[#000000]/85 backdrop-blur-xs flex items-center justify-center z-50 p-4 font-mono select-none"
+      className="fixed inset-0 bg-[#0B0B0E]/85 backdrop-blur-md flex items-center justify-center z-50 p-4 font-mono select-none animate-fade-in"
     >
       <div 
         onClick={e => e.stopPropagation()}
-        className="w-full max-w-4xl h-[680px] bg-[#0A0A0A] border border-[#404040] shadow-2xl flex flex-col overflow-hidden"
+        className="w-full max-w-4xl h-[680px] bg-[#121217] border border-[#2F2F3E] rounded-3xl shadow-2xl flex flex-col overflow-hidden"
       >
         {/* Top Header */}
-        <div className="h-12 border-b border-[#262626] px-4 flex items-center justify-between bg-[#0F0F0F] shrink-0">
-          <div className="flex items-center gap-2">
-            <Box size={15} className="text-[#FFFFFF]" />
-            <span className="text-xs font-bold tracking-widest text-[#FFFFFF]">WHITE // 3D REACTIVE ASSISTANT STUDIO</span>
-            <span className="border border-[#333333] bg-[#141414] px-1.5 py-0.5 text-[10px] text-[#A3A3A3] font-bold">
+        <div className="h-13 border-b border-[#242432] px-5 flex items-center justify-between bg-[#16161F] shrink-0">
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-[#22222E] border border-[#353547] flex items-center justify-center text-[#FFFFFF]">
+              <Box size={15} />
+            </div>
+            <span className="text-sm font-bold tracking-wider text-[#FFFFFF]">WHITE // 3D VOICE ASSISTANT STUDIO</span>
+            <span className="border border-[#2F2F3E] bg-[#1E1E28] px-2 py-0.5 rounded-md text-[10px] text-[#A1A1B4] font-bold">
               THREE.JS WEBGL
             </span>
           </div>
           <button 
             onClick={onClose}
-            className="text-[#A3A3A3] hover:text-[#FFFFFF] p-1 border border-transparent hover:border-[#262626]"
+            className="text-[#8E8E9E] hover:text-[#FFFFFF] p-1.5 rounded-xl hover:bg-[#22222E] transition-colors"
           >
-            <X size={15} />
+            <X size={16} />
           </button>
         </div>
 
         {/* 3D Viewport Main Stage */}
-        <div className="flex-1 bg-[#050505] relative overflow-hidden flex items-center justify-center">
+        <div className="flex-1 bg-[#0D0D12] relative overflow-hidden flex items-center justify-center">
           <WhiteAssistant3D
             geometryMode={geometryMode}
             isAudioActive={isAudioActive}
@@ -56,13 +58,13 @@ export const AssistantModal: React.FC<AssistantModalProps> = ({ isOpen, onClose 
           />
 
           {/* Real-Time Telemetry HUD Overlay */}
-          <div className="absolute top-4 left-4 p-3 border border-[#262626] bg-[#0A0A0A]/90 backdrop-blur-xs text-xs space-y-1.5 pointer-events-none">
+          <div className="absolute top-4 left-4 p-3.5 border border-[#2F2F3E] bg-[#14141C]/90 backdrop-blur-md rounded-2xl text-xs space-y-1.5 pointer-events-none shadow-xl">
             <div className="flex items-center gap-2 font-bold text-[#FFFFFF]">
-              <Activity size={12} />
+              <Activity size={13} className="text-emerald-400" />
               <span>TELEMETRY METRICS</span>
             </div>
-            <div className="text-[10px] text-[#737373] space-y-0.5">
-              <div>RENDER ENGINE: WebGL (Three.js 0.182)</div>
+            <div className="text-[11px] text-[#8E8E9E] space-y-1 font-mono">
+              <div>RENDER ENGINE: WebGL (Three.js)</div>
               <div>GEOMETRY: {geometryMode === 'sphere' ? 'GEODESIC ICOSAHEDRON' : 'SCULPTED W MONOGRAM'}</div>
               <div>AUDIO REACTIVITY: {isAudioActive ? 'PULSING (ACTIVE)' : 'STANDBY'}</div>
               <div>ACTIVE MEMBER: {activeMember.badge} ({activeMember.name})</div>
@@ -71,33 +73,33 @@ export const AssistantModal: React.FC<AssistantModalProps> = ({ isOpen, onClose 
           </div>
 
           {/* Quick Drag Hint */}
-          <div className="absolute bottom-4 right-4 text-[10px] text-[#555555] bg-[#000000]/70 px-2 py-1 border border-[#262626] pointer-events-none">
+          <div className="absolute bottom-4 right-4 text-[11px] text-[#8E8E9E] bg-[#14141C]/90 px-3 py-1.5 rounded-xl border border-[#2F2F3E] pointer-events-none font-medium backdrop-blur-sm">
             CLICK &amp; DRAG TO ORBIT // SCROLL TO INSPECT
           </div>
         </div>
 
         {/* Studio Controls Strip */}
-        <div className="h-16 border-t border-[#262626] px-4 bg-[#0D0D0D] flex items-center justify-between shrink-0 text-xs">
+        <div className="h-16 border-t border-[#242432] px-5 bg-[#16161F] flex items-center justify-between shrink-0 text-xs">
           {/* Geometry Mode Toggle */}
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] text-[#737373] uppercase">GEOMETRY:</span>
-            <div className="flex border border-[#262626]">
+          <div className="flex items-center gap-2.5">
+            <span className="text-[11px] text-[#8E8E9E] uppercase font-bold tracking-wider">GEOMETRY:</span>
+            <div className="flex rounded-xl p-0.5 bg-[#1E1E28] border border-[#2F2F3E] gap-1">
               <button
                 onClick={() => setGeometryMode('sphere')}
-                className={`px-3 py-1.5 text-xs font-bold transition-all ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                   geometryMode === 'sphere'
-                    ? 'bg-[#FFFFFF] text-[#000000]'
-                    : 'bg-[#121212] text-[#A3A3A3] hover:text-[#FFFFFF]'
+                    ? 'bg-[#FFFFFF] text-[#000000] shadow-sm'
+                    : 'text-[#8E8E9E] hover:text-[#FFFFFF]'
                 }`}
               >
                 01 // GEOMETRIC SPHERE
               </button>
               <button
                 onClick={() => setGeometryMode('monogram')}
-                className={`px-3 py-1.5 text-xs font-bold border-l border-[#262626] transition-all ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                   geometryMode === 'monogram'
-                    ? 'bg-[#FFFFFF] text-[#000000]'
-                    : 'bg-[#121212] text-[#A3A3A3] hover:text-[#FFFFFF]'
+                    ? 'bg-[#FFFFFF] text-[#000000] shadow-sm'
+                    : 'text-[#8E8E9E] hover:text-[#FFFFFF]'
                 }`}
               >
                 02 // SCULPTED &apos;W&apos; MONOGRAM
@@ -108,16 +110,16 @@ export const AssistantModal: React.FC<AssistantModalProps> = ({ isOpen, onClose 
           {/* Rotation Speed & Audio Test */}
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
-              <span className="text-[10px] text-[#737373] uppercase">SPEED:</span>
-              <div className="flex border border-[#262626]">
+              <span className="text-[11px] text-[#8E8E9E] uppercase font-bold tracking-wider">SPEED:</span>
+              <div className="flex rounded-xl p-0.5 bg-[#1E1E28] border border-[#2F2F3E] gap-0.5">
                 {[0.5, 1.0, 2.0].map(s => (
                   <button
                     key={s}
                     onClick={() => setRotationSpeed(s)}
-                    className={`px-2 py-1 text-[10px] font-bold border-r border-[#262626] last:border-r-0 ${
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all ${
                       rotationSpeed === s 
-                        ? 'bg-[#FFFFFF] text-[#000000]' 
-                        : 'bg-[#121212] text-[#A3A3A3] hover:text-[#FFFFFF]'
+                        ? 'bg-[#FFFFFF] text-[#000000] shadow-sm' 
+                        : 'text-[#8E8E9E] hover:text-[#FFFFFF]'
                     }`}
                   >
                     {s}x
@@ -129,13 +131,13 @@ export const AssistantModal: React.FC<AssistantModalProps> = ({ isOpen, onClose 
             {/* Test Audio Button */}
             <button
               onClick={() => setSimulatedAudio(!simulatedAudio)}
-              className={`px-3 py-1.5 border text-xs font-bold flex items-center gap-1.5 transition-all ${
+              className={`px-3.5 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-2 transition-all ${
                 simulatedAudio
-                  ? 'border-[#FFFFFF] bg-[#FFFFFF] text-[#000000]'
-                  : 'border-[#404040] bg-[#171717] text-[#FFFFFF] hover:border-[#FFFFFF]'
+                  ? 'border-emerald-500 bg-emerald-500 text-[#000000]'
+                  : 'border-[#2F2F3E] bg-[#1E1E28] text-[#FFFFFF] hover:border-[#FFFFFF]'
               }`}
             >
-              <Activity size={12} className={simulatedAudio ? 'animate-pulse' : ''} />
+              <Activity size={13} className={simulatedAudio ? 'animate-pulse' : ''} />
               <span>{simulatedAudio ? 'AUDIO: PULSING' : 'TEST AUDIO PULSE'}</span>
             </button>
           </div>

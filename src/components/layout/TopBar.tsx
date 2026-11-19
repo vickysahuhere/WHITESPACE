@@ -3,7 +3,7 @@ import { useWorkspace } from '../../context/WorkspaceContext';
 import { useRAG } from '../../context/RAGContext';
 import { firebaseSync } from '../../services/firebaseSync';
 import { WindowControls } from './WindowControls';
-import { Search, Database, Bot, Cloud, Download, HelpCircle } from 'lucide-react';
+import { Search, Database, Bot, Cloud, Download, HelpCircle, Terminal, Sparkles, BookOpen } from 'lucide-react';
 
 export const TopBar: React.FC<{
   onUserClick: () => void;
@@ -34,24 +34,26 @@ export const TopBar: React.FC<{
 
   return (
     <header 
-      className="h-11 bg-[#0A0A0A] border-b border-[#262626] px-3 flex items-center justify-between select-none shrink-0 z-20 gap-3 font-mono"
+      className="h-12 bg-[#121216] border-b border-[#242430] px-4 flex items-center justify-between select-none shrink-0 z-20 gap-4"
       style={{ WebkitAppRegion: 'drag' } as any}
     >
-      {/* Left: Minimal Single-Line Breadcrumb */}
+      {/* Left: Refined Breadcrumb with Space Context */}
       <div 
-        className="flex items-center gap-2 text-xs text-[#A3A3A3] shrink-0 whitespace-nowrap overflow-hidden max-w-[240px] sm:max-w-[280px]"
+        className="flex items-center gap-2 text-sm text-[#D4D4DC] shrink-0 whitespace-nowrap overflow-hidden max-w-[280px] sm:max-w-[360px]"
         style={{ WebkitAppRegion: 'no-drag' } as any}
       >
-        <span className="text-[#FFFFFF] font-bold tracking-wider">WHITESPACE</span>
-        <span className="text-[#333333]">/</span>
-        <span className="text-[#CCCCCC] font-semibold truncate max-w-[120px] sm:max-w-[150px]" title={activeSpace.name}>
-          {activeSpace.name.toUpperCase()}
+        <span className="text-[#FFFFFF] font-bold tracking-tight text-sm">WHITESPACE</span>
+        <span className="text-[#454558]">/</span>
+        <span className="text-[#D4D4DC] font-medium truncate text-sm" title={activeSpace.name}>
+          {activeSpace.name}
         </span>
-        <span className="text-[#333333]">/</span>
-        <span className="text-[#737373] uppercase shrink-0 text-[11px]">{activeView}</span>
+        <span className="text-[#454558]">/</span>
+        <span className="text-[#8E8E9E] uppercase shrink-0 text-xs tracking-wider font-semibold bg-[#1E1E26] px-2 py-0.5 rounded-md border border-[#2F2F3E]">
+          {activeView}
+        </span>
       </div>
 
-      {/* Center: Minimal Command Bar / Quick Search */}
+      {/* Center: Command Bar / Quick Search (CTRL+K) with Rounded Pill Design */}
       <div 
         className="flex-1 flex justify-center px-2 min-w-0"
         style={{ WebkitAppRegion: 'no-drag' } as any}
@@ -59,76 +61,77 @@ export const TopBar: React.FC<{
         <button
           type="button"
           onClick={onOpenCommandPalette}
-          className="w-full max-w-[260px] h-7 flex items-center justify-between px-2.5 bg-[#121212] hover:bg-[#181818] border border-[#262626] hover:border-[#404040] text-xs text-[#666666] hover:text-[#A3A3A3] transition-colors"
+          className="w-full max-w-[380px] h-8 flex items-center justify-between px-3.5 bg-[#17171D] hover:bg-[#1E1E26] border border-[#2F2F3E] hover:border-[#454558] rounded-full text-xs text-[#8E8E9E] hover:text-[#FFFFFF] transition-all shadow-xs"
           title="Open Command Palette (CTRL+K)"
         >
-          <span className="flex items-center gap-2 truncate">
-            <Search size={12} className="text-[#555555] shrink-0" />
-            <span className="text-[11px] truncate text-[#737373]">Search or jump to...</span>
+          <span className="flex items-center gap-2.5 truncate">
+            <Search size={14} className="text-[#8E8E9E] shrink-0" />
+            <span className="text-xs truncate">Search commands, docs, tasks...</span>
           </span>
-          <kbd className="text-[9px] bg-[#000000] border border-[#262626] px-1 py-0.2 text-[#737373] shrink-0 font-mono">CTRL+K</kbd>
+          <kbd className="text-[10px] bg-[#121216] border border-[#2F2F3E] rounded-md px-1.5 py-0.5 text-[#8E8E9E] shrink-0 font-mono font-semibold">CTRL+K</kbd>
         </button>
       </div>
 
-      {/* Right: Minimal Unified Status & Tooling Actions */}
+      {/* Right: Unified Status & Tooling Actions */}
       <div 
-        className="flex items-center gap-1.5 shrink-0 whitespace-nowrap"
+        className="flex items-center gap-2 shrink-0 whitespace-nowrap"
         style={{ WebkitAppRegion: 'no-drag' } as any}
       >
+        {/* Prominent Help & Easy Guide Launcher */}
+        <button
+          type="button"
+          onClick={() => setGuideModalOpen(true)}
+          className={`h-8 flex items-center gap-1.5 px-3 rounded-xl border text-xs font-semibold shrink-0 transition-all cursor-pointer ${
+            guideModalOpen
+              ? 'bg-[#FFFFFF] text-[#0B0B0E] border-[#FFFFFF] shadow-sm'
+              : 'border-[#2F2F3E] bg-[#17171D] hover:bg-[#1E1E26] text-[#D4D4DC] hover:text-[#FFFFFF] hover:border-[#454558]'
+          }`}
+          title="Open App Guide & Interactive Help (F1 or Ctrl+H)"
+        >
+          <BookOpen size={13} className={guideModalOpen ? "text-[#0B0B0E]" : "text-emerald-400"} />
+          <span>GUIDE</span>
+        </button>
+
         {/* Gemini AI Status Pill */}
         <button
           type="button"
           onClick={onOpenModelDiscovery}
-          className={`h-7 flex items-center gap-1.5 px-2 border text-[10px] shrink-0 transition-colors cursor-pointer hover:border-[#FFFFFF] ${
+          className={`h-8 flex items-center gap-1.5 px-3 rounded-xl border text-xs shrink-0 transition-all cursor-pointer ${
             isKeyLinked 
-              ? 'border-[#333333] bg-[#121212] text-[#FFFFFF]' 
-              : 'border-[#262626] bg-[#0A0A0A] text-[#737373]'
+              ? 'border-[#2F2F3E] hover:border-[#FFFFFF] bg-[#17171D] hover:bg-[#1E1E26] text-[#FFFFFF]' 
+              : 'border-[#242430] bg-[#121216] text-[#8E8E9E]'
           }`}
-          title="Google Gemini Models & API Key"
+          title="Google Gemini Models & REST API Key"
         >
-          <div className={`w-1.5 h-1.5 rounded-full ${isKeyLinked ? 'bg-[#FFFFFF] animate-pulse' : 'bg-[#525252]'}`} />
-          <span>{isKeyLinked ? 'GEMINI' : 'LOCAL RAG'}</span>
+          <div className={`w-2 h-2 rounded-full ${isKeyLinked ? 'bg-emerald-400 shadow-xs shadow-emerald-400/50 animate-pulse' : 'bg-[#52525B]'}`} />
+          <span className="font-semibold text-xs">{isKeyLinked ? 'GEMINI' : 'LOCAL RAG'}</span>
         </button>
 
         {/* In-Memory Local RAG Metrics */}
         <button
           type="button"
           onClick={() => setRagInspectorOpen(true)}
-          title="Local RAG Context Inspector (<1ms)"
-          className="h-7 flex items-center gap-1.5 px-2 border border-[#262626] hover:border-[#FFFFFF] bg-[#121212] hover:bg-[#181818] text-[10px] text-[#A3A3A3] hover:text-[#FFFFFF] transition-colors shrink-0"
+          title="Local RAG Context Inspector (<1ms retrieval)"
+          className="h-8 flex items-center gap-1.5 px-3 rounded-xl border border-[#2F2F3E] hover:border-[#FFFFFF] bg-[#17171D] hover:bg-[#1E1E26] text-xs text-[#D4D4DC] hover:text-[#FFFFFF] transition-all shrink-0"
         >
-          <Database size={11} className="text-[#737373]" />
+          <Database size={13} className="text-[#8E8E9E]" />
           <span>RAG</span>
           <span className="text-[#FFFFFF] font-bold">({totalChunksIndexed})</span>
         </button>
 
-        {/* Consolidated Utility Icon Strip (Cloud, Guide, Export, Copilot) */}
-        <div className="flex items-center border border-[#262626] bg-[#121212] divide-x divide-[#262626] h-7 shrink-0">
+        {/* Consolidated Rounded Utility Strip */}
+        <div className="flex items-center border border-[#2F2F3E] bg-[#17171D] rounded-xl overflow-hidden divide-x divide-[#2F2F3E] h-8 shrink-0">
           {/* Cloud Sync Status */}
           {onOpenCloudSync && (
             <button
               type="button"
               onClick={onOpenCloudSync}
               title={`Firebase Cloud Firestore (${isCloudAuthorized ? 'Synced' : 'Local / Offline'})`}
-              className="w-7 h-full flex items-center justify-center hover:bg-[#1E1E1E] text-[#888888] hover:text-[#FFFFFF] transition-colors"
+              className="w-8 h-full flex items-center justify-center hover:bg-[#282834] text-[#8E8E9E] hover:text-[#FFFFFF] transition-colors"
             >
-              <Cloud size={12} className={isCloudAuthorized ? "text-[#FFFFFF]" : "text-[#555555]"} />
+              <Cloud size={14} className={isCloudAuthorized ? "text-[#FFFFFF]" : "text-[#52525B]"} />
             </button>
           )}
-
-          {/* Interactive App Demo & Contextual Guide (CTRL+S+D+F) */}
-          <button
-            type="button"
-            onClick={() => setGuideModalOpen(true)}
-            className={`w-7 h-full flex items-center justify-center transition-colors cursor-pointer ${
-              guideModalOpen
-                ? 'bg-[#FFFFFF] text-[#000000]'
-                : 'hover:bg-[#1E1E1E] text-[#888888] hover:text-[#FFFFFF]'
-            }`}
-            title="App Demo & Guide (Shortcut: CTRL+S+D+F)"
-          >
-            <HelpCircle size={12} />
-          </button>
 
           {/* Workspace Exporter */}
           {onOpenExport && (
@@ -136,9 +139,9 @@ export const TopBar: React.FC<{
               type="button"
               onClick={onOpenExport}
               title="Export Workspace Docs, Python Bridge & Backups"
-              className="w-7 h-full flex items-center justify-center hover:bg-[#1E1E1E] text-[#888888] hover:text-[#FFFFFF] transition-colors"
+              className="w-8 h-full flex items-center justify-center hover:bg-[#282834] text-[#8E8E9E] hover:text-[#FFFFFF] transition-colors"
             >
-              <Download size={12} />
+              <Download size={14} />
             </button>
           )}
 
@@ -148,13 +151,13 @@ export const TopBar: React.FC<{
               type="button"
               onClick={onToggleCopilotDrawer}
               title="Toggle AI Copilot Drawer"
-              className={`w-7 h-full flex items-center justify-center transition-colors ${
+              className={`w-8 h-full flex items-center justify-center transition-colors ${
                 isCopilotDrawerOpen
-                  ? 'bg-[#FFFFFF] text-[#000000]'
-                  : 'hover:bg-[#1E1E1E] text-[#888888] hover:text-[#FFFFFF]'
+                  ? 'bg-[#FFFFFF] text-[#0B0B0E]'
+                  : 'hover:bg-[#282834] text-[#8E8E9E] hover:text-[#FFFFFF]'
               }`}
             >
-              <Bot size={12} />
+              <Bot size={14} />
             </button>
           )}
         </div>
@@ -163,11 +166,11 @@ export const TopBar: React.FC<{
         <button
           type="button"
           onClick={onUserClick}
-          className="h-7 px-1.5 flex items-center gap-1.5 bg-[#121212] hover:bg-[#181818] border border-[#262626] hover:border-[#404040] text-xs text-[#FFFFFF] transition-colors shrink-0"
+          className="h-8 px-2 flex items-center gap-2 bg-[#17171D] hover:bg-[#1E1E26] border border-[#2F2F3E] hover:border-[#FFFFFF] rounded-xl text-xs text-[#FFFFFF] transition-all shrink-0 shadow-xs"
           title={`Team Member: ${activeMember.name} (${activeMember.role})`}
         >
-          <span className="text-[10px] font-bold text-[#000000] bg-[#FFFFFF] px-1 py-0.2">{activeMember.badge}</span>
-          <span className="hidden xl:inline text-xs truncate max-w-[70px]">{activeMember.name}</span>
+          <span className="text-xs font-bold text-[#0B0B0E] bg-[#FFFFFF] px-1.5 py-0.5 rounded-lg">{activeMember.badge}</span>
+          <span className="hidden xl:inline text-xs truncate max-w-[90px] font-medium">{activeMember.name}</span>
         </button>
 
         {/* Native Frameless Window Controls (Desktop Only) */}

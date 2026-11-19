@@ -74,17 +74,17 @@ export const BrowserView: React.FC = () => {
 
   if (!activeTab && userTabs.length === 0) {
     return (
-      <div className="h-full border border-[#262626] bg-[#0A0A0A] flex flex-col items-center justify-center font-mono select-none p-8">
-        <Globe size={40} className="text-[#333333] mb-4" />
+      <div className="h-full border border-[#1F1F1F] bg-[#0A0A0A] flex flex-col items-center justify-center font-mono select-none p-8">
+        <Globe size={40} className="text-[#262626] mb-4" />
         <h2 className="text-sm font-bold text-[#FFFFFF] tracking-wider mb-2 uppercase">
           NO BROWSER TABS OPEN FOR {activeMember.name.toUpperCase()}
         </h2>
-        <p className="text-xs text-[#737373] max-w-sm text-center mb-6 leading-relaxed">
+        <p className="text-xs text-[#71717A] max-w-sm text-center mb-6 leading-relaxed">
           Initialize a personal developer tab. All new tabs default to PRIVATE (ONLY ME).
         </p>
         <button
           onClick={() => createTab(activeMember.id, activeSpace.id, { type: 'web', url: 'https://docs.github.com/en/rest', title: 'GitHub Docs' })}
-          className="px-4 py-2 bg-[#FFFFFF] text-[#000000] font-bold text-xs border border-[#FFFFFF] hover:bg-[#A3A3A3] flex items-center gap-2"
+          className="px-4 py-2 bg-[#FFFFFF] text-[#000000] font-bold text-xs border border-[#FFFFFF] hover:bg-[#CCCCCC] flex items-center gap-2 transition-colors"
         >
           <Plus size={14} />
           <span>OPEN NEW WEB TAB</span>
@@ -100,10 +100,10 @@ export const BrowserView: React.FC = () => {
   const canGoForward = (activeTab?.historyIndex ?? 0) < (activeTab?.history?.length ?? 1) - 1;
 
   return (
-    <div className="h-full border border-[#262626] bg-[#0A0A0A] flex flex-col font-mono select-none overflow-hidden relative">
+    <div className="h-full border border-[#1F1F1F] bg-[#000000] flex flex-col font-mono select-none overflow-hidden relative">
       {/* 1. Personal Tabs Strip */}
-      <div className="h-10 bg-[#0C0C0C] border-b border-[#262626] px-2 flex items-center gap-1 overflow-x-auto no-scrollbar shrink-0">
-        <div className="flex items-center gap-1.5 px-2 text-[10px] text-[#737373] uppercase font-bold shrink-0 border-r border-[#262626] mr-1">
+      <div className="h-10 bg-[#0A0A0A] border-b border-[#1F1F1F] px-2 flex items-center gap-1 overflow-x-auto no-scrollbar shrink-0">
+        <div className="flex items-center gap-1.5 px-2 text-[10px] text-[#71717A] uppercase font-bold shrink-0 border-r border-[#1F1F1F] mr-1">
           <span className="text-[#FFFFFF]">{activeMember.badge}</span>
           <span>MY TABS:</span>
         </div>
@@ -114,13 +114,13 @@ export const BrowserView: React.FC = () => {
             <div
               key={tab.id}
               onClick={() => setActiveTabId(tab.id)}
-              className={`group max-w-[200px] h-8 px-2.5 flex items-center gap-2 border-t border-x cursor-pointer transition-all shrink-0 text-xs ${
+              className={`group max-w-[200px] h-8 px-2.5 flex items-center gap-2 border-t border-x cursor-pointer transition-colors shrink-0 text-xs ${
                 isActive
-                  ? 'bg-[#171717] text-[#FFFFFF] border-[#404040] font-bold border-b-transparent'
-                  : 'bg-[#0E0E0E] text-[#737373] border-transparent hover:text-[#FFFFFF] hover:bg-[#141414]'
+                  ? 'bg-[#18181B] text-[#FFFFFF] border-[#3F3F46] font-bold border-b-transparent'
+                  : 'bg-[#0E0E0E] text-[#71717A] border-transparent hover:text-[#FFFFFF] hover:bg-[#141414]'
               }`}
             >
-              <span className={isActive ? 'text-[#FFFFFF]' : 'text-[#555555]'}>
+              <span className={isActive ? 'text-[#FFFFFF]' : 'text-[#71717A]'}>
                 {getTabIcon(tab.type)}
               </span>
 
@@ -129,7 +129,7 @@ export const BrowserView: React.FC = () => {
               {/* Privacy Badge */}
               <span 
                 title={tab.isShared ? "SHARED WITH TEAM (Visible in team shared strip)" : "PRIVATE (ONLY ME)"} 
-                className={`p-0.5 ${tab.isShared ? 'text-[#FFFFFF]' : 'text-[#555555]'}`}
+                className={`p-0.5 ${tab.isShared ? 'text-[#FFFFFF]' : 'text-[#52525B]'}`}
               >
                 {tab.isShared ? <Users size={10} /> : <Lock size={10} />}
               </span>
@@ -140,7 +140,7 @@ export const BrowserView: React.FC = () => {
                   e.stopPropagation();
                   closeTab(tab.id);
                 }}
-                className="opacity-0 group-hover:opacity-100 hover:text-[#FFFFFF] text-[#737373] p-0.5"
+                className="opacity-0 group-hover:opacity-100 hover:text-[#FFFFFF] text-[#71717A] p-0.5 transition-opacity"
                 title="Close Tab"
               >
                 <X size={11} />
@@ -154,48 +154,48 @@ export const BrowserView: React.FC = () => {
           <button
             onClick={() => setShowNewTabMenu(!showNewTabMenu)}
             title="Open New Tab"
-            className="w-7 h-7 flex items-center justify-center border border-[#262626] hover:border-[#FFFFFF] bg-[#121212] hover:bg-[#1A1A1A] text-[#A3A3A3] hover:text-[#FFFFFF] text-xs transition-colors ml-1"
+            className="w-7 h-7 flex items-center justify-center border border-[#1F1F1F] hover:border-[#FFFFFF] bg-[#111111] hover:bg-[#18181B] text-[#71717A] hover:text-[#FFFFFF] text-xs transition-colors ml-1"
           >
             <Plus size={13} />
           </button>
 
           {/* New Tab Dropdown Menu */}
           {showNewTabMenu && (
-            <div className="absolute top-8 left-0 z-50 w-52 bg-[#0E0E0E] border border-[#404040] shadow-2xl p-1 text-xs space-y-0.5">
-              <div className="p-1.5 text-[9px] text-[#737373] border-b border-[#262626] uppercase font-bold">
+            <div className="absolute top-8 left-0 z-50 w-56 bg-[#0A0A0A] border border-[#262626] shadow-2xl p-1 text-xs space-y-0.5">
+              <div className="p-1.5 text-[9px] text-[#71717A] border-b border-[#1F1F1F] uppercase font-bold">
                 SELECT TAB TYPE
               </div>
               <button
                 onClick={() => handleCreateNew('web')}
-                className="w-full p-1.5 text-left text-[#A3A3A3] hover:text-[#FFFFFF] hover:bg-[#1C1C1C] flex items-center gap-2"
+                className="w-full p-1.5 text-left text-[#A1A1AA] hover:text-[#FFFFFF] hover:bg-[#18181B] flex items-center gap-2 transition-colors"
               >
                 <Globe size={12} />
                 <span>External Web Viewport</span>
               </button>
               <button
                 onClick={() => handleCreateNew('github')}
-                className="w-full p-1.5 text-left text-[#A3A3A3] hover:text-[#FFFFFF] hover:bg-[#1C1C1C] flex items-center gap-2"
+                className="w-full p-1.5 text-left text-[#A1A1AA] hover:text-[#FFFFFF] hover:bg-[#18181B] flex items-center gap-2 transition-colors"
               >
                 <Code size={12} />
                 <span>GitHub OSS Explorer</span>
               </button>
               <button
                 onClick={() => handleCreateNew('sandbox')}
-                className="w-full p-1.5 text-left text-[#A3A3A3] hover:text-[#FFFFFF] hover:bg-[#1C1C1C] flex items-center gap-2"
+                className="w-full p-1.5 text-left text-[#A1A1AA] hover:text-[#FFFFFF] hover:bg-[#18181B] flex items-center gap-2 transition-colors"
               >
                 <Code size={12} />
                 <span>Code Sandbox (HTML/JS)</span>
               </button>
               <button
                 onClick={() => handleCreateNew('vector')}
-                className="w-full p-1.5 text-left text-[#A3A3A3] hover:text-[#FFFFFF] hover:bg-[#1C1C1C] flex items-center gap-2"
+                className="w-full p-1.5 text-left text-[#A1A1AA] hover:text-[#FFFFFF] hover:bg-[#18181B] flex items-center gap-2 transition-colors"
               >
                 <Share2 size={12} />
                 <span>Vector Architecture Board</span>
               </button>
               <button
                 onClick={() => handleCreateNew('rest')}
-                className="w-full p-1.5 text-left text-[#A3A3A3] hover:text-[#FFFFFF] hover:bg-[#1C1C1C] flex items-center gap-2"
+                className="w-full p-1.5 text-left text-[#A1A1AA] hover:text-[#FFFFFF] hover:bg-[#18181B] flex items-center gap-2 transition-colors"
               >
                 <Terminal size={12} />
                 <span>REST API Tester</span>
@@ -210,15 +210,15 @@ export const BrowserView: React.FC = () => {
 
       {/* 3. Navigation & Privacy Controls Bar */}
       {activeTab && (
-        <div className="h-11 bg-[#0F0F0F] border-b border-[#262626] px-3 flex items-center justify-between gap-3 shrink-0">
+        <div className="h-11 bg-[#0A0A0A] border-b border-[#1F1F1F] px-3 flex items-center justify-between gap-3 shrink-0">
           {/* Navigation History Buttons */}
-          <div className="flex items-center gap-1 text-[#A3A3A3]">
+          <div className="flex items-center gap-1 text-[#A1A1AA]">
             <button
               onClick={() => goBack(activeTab.id)}
               disabled={!canGoBack}
               title="Go Back"
-              className={`p-1.5 border border-[#262626] transition-colors ${
-                canGoBack ? 'hover:text-[#FFFFFF] hover:border-[#404040]' : 'opacity-30 cursor-not-allowed'
+              className={`p-1.5 border border-[#1F1F1F] transition-colors ${
+                canGoBack ? 'hover:text-[#FFFFFF] hover:border-[#3F3F46] bg-[#111111]' : 'opacity-30 cursor-not-allowed bg-[#0A0A0A]'
               }`}
             >
               <ArrowLeft size={13} />
@@ -227,8 +227,8 @@ export const BrowserView: React.FC = () => {
               onClick={() => goForward(activeTab.id)}
               disabled={!canGoForward}
               title="Go Forward"
-              className={`p-1.5 border border-[#262626] transition-colors ${
-                canGoForward ? 'hover:text-[#FFFFFF] hover:border-[#404040]' : 'opacity-30 cursor-not-allowed'
+              className={`p-1.5 border border-[#1F1F1F] transition-colors ${
+                canGoForward ? 'hover:text-[#FFFFFF] hover:border-[#3F3F46] bg-[#111111]' : 'opacity-30 cursor-not-allowed bg-[#0A0A0A]'
               }`}
             >
               <ArrowRight size={13} />
@@ -236,7 +236,7 @@ export const BrowserView: React.FC = () => {
             <button
               onClick={() => navigateTab(activeTab.id, activeTab.url)}
               title="Reload Tab"
-              className="p-1.5 border border-[#262626] hover:text-[#FFFFFF] hover:border-[#404040] transition-colors"
+              className="p-1.5 border border-[#1F1F1F] hover:text-[#FFFFFF] hover:border-[#3F3F46] bg-[#111111] transition-colors"
             >
               <RotateCw size={13} />
             </button>
@@ -249,7 +249,7 @@ export const BrowserView: React.FC = () => {
               value={urlInput}
               onChange={e => setUrlInput(e.target.value)}
               placeholder="ENTER HTTPS:// URL OR DEVELOPER PROTOCOL..."
-              className="w-full bg-[#000000] border border-[#262626] focus:border-[#FFFFFF] px-3 py-1.5 text-xs text-[#FFFFFF] font-mono outline-none"
+              className="w-full bg-[#000000] border border-[#1F1F1F] focus:border-[#FFFFFF] px-3 py-1.5 text-xs text-[#FFFFFF] font-mono outline-none transition-colors"
             />
           </form>
 
@@ -257,7 +257,7 @@ export const BrowserView: React.FC = () => {
           <div className="flex items-center gap-2">
             {isTeammateTab ? (
               <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1.5 bg-[#171717] border border-[#404040] px-2 py-1 text-[11px] text-[#A3A3A3]">
+                <div className="flex items-center gap-1.5 bg-[#141414] border border-[#262626] px-2 py-1 text-[11px] text-[#A1A1AA]">
                   <Eye size={12} className="text-[#FFFFFF]" />
                   <span>PREVIEWING TEAMMATE TAB ({tabOwner?.badge || 'TM'})</span>
                 </div>
@@ -266,7 +266,7 @@ export const BrowserView: React.FC = () => {
                     const cloned = cloneTab(activeTab.id, activeMember.id);
                     if (cloned) setActiveTabId(cloned.id);
                   }}
-                  className="px-3 py-1 text-xs font-bold bg-[#FFFFFF] text-[#000000] border border-[#FFFFFF] hover:bg-[#CCCCCC] flex items-center gap-1.5"
+                  className="px-3 py-1 text-xs font-bold bg-[#FFFFFF] text-[#000000] border border-[#FFFFFF] hover:bg-[#CCCCCC] flex items-center gap-1.5 transition-colors"
                 >
                   <Copy size={12} />
                   <span>CLONE TO MY TABS</span>
@@ -279,7 +279,7 @@ export const BrowserView: React.FC = () => {
                 className={`px-3 py-1 text-xs font-bold border flex items-center gap-1.5 transition-all ${
                   activeTab.isShared
                     ? 'bg-[#FFFFFF] text-[#000000] border-[#FFFFFF]'
-                    : 'bg-[#121212] text-[#A3A3A3] border-[#333333] hover:border-[#FFFFFF] hover:text-[#FFFFFF]'
+                    : 'bg-[#111111] text-[#A1A1AA] border-[#262626] hover:border-[#FFFFFF] hover:text-[#FFFFFF]'
                 }`}
               >
                 {activeTab.isShared ? (
@@ -300,7 +300,7 @@ export const BrowserView: React.FC = () => {
       )}
 
       {/* 4. Viewport Container */}
-      <div className="flex-1 bg-[#050505] overflow-hidden flex flex-col">
+      <div className="flex-1 bg-[#000000] overflow-hidden flex flex-col">
         {activeTab && activeTab.type === 'web' ? (
           <EmbeddedWebViewport tab={activeTab} />
         ) : activeTab && activeTab.type === 'github' ? (
@@ -313,14 +313,14 @@ export const BrowserView: React.FC = () => {
           <RestTester tab={activeTab} />
         ) : activeTab ? (
           <div className="flex-1 p-6 flex flex-col items-center justify-center font-mono">
-            <div className="border border-[#262626] bg-[#0D0D0D] p-6 max-w-lg text-center space-y-3">
-              <div className="w-10 h-10 mx-auto bg-[#000000] border border-[#404040] flex items-center justify-center text-[#FFFFFF]">
+            <div className="border border-[#1F1F1F] bg-[#0A0A0A] p-6 max-w-lg text-center space-y-3">
+              <div className="w-10 h-10 mx-auto bg-[#000000] border border-[#262626] flex items-center justify-center text-[#FFFFFF]">
                 {getTabIcon(activeTab.type)}
               </div>
               <div className="text-xs font-bold text-[#FFFFFF] tracking-wider uppercase">
                 {activeTab.title} // [{activeTab.type.toUpperCase()}]
               </div>
-              <p className="text-[11px] text-[#737373] leading-relaxed">
+              <p className="text-[11px] text-[#71717A] leading-relaxed">
                 Developer suite tool loaded in workspace session for {activeMember.name}. State is {activeTab.isShared ? 'SHARED WITH TEAM' : 'PRIVATE TO YOU'}.
               </p>
             </div>

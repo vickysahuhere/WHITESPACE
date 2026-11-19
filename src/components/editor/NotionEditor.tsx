@@ -12,10 +12,7 @@ import {
   Trash2, 
   Check, 
   Plus, 
-  Copy, 
-  Sparkles,
-  CheckSquare,
-  Square
+  Copy 
 } from 'lucide-react';
 
 export const NotionEditor: React.FC = () => {
@@ -198,12 +195,12 @@ export const NotionEditor: React.FC = () => {
       if (tableRows.length > 0) {
         const [headerRow, ...bodyRows] = tableRows;
         elements.push(
-          <div key={`table-${elements.length}`} className="my-4 overflow-x-auto border border-[#262626]">
+          <div key={`table-${elements.length}`} className="my-4 overflow-x-auto border border-[#1F1F1F]">
             <table className="w-full text-left border-collapse text-xs font-mono">
               <thead>
-                <tr className="bg-[#121212] border-b border-[#262626]">
+                <tr className="bg-[#111111] border-b border-[#1F1F1F]">
                   {headerRow.map((cell, idx) => (
-                    <th key={idx} className="p-2 border-r border-[#262626] font-bold text-[#FFFFFF]">
+                    <th key={idx} className="p-2 border-r border-[#1F1F1F] font-bold text-[#FFFFFF]">
                       {cell.trim()}
                     </th>
                   ))}
@@ -211,9 +208,9 @@ export const NotionEditor: React.FC = () => {
               </thead>
               <tbody>
                 {bodyRows.map((row, rIdx) => (
-                  <tr key={rIdx} className="border-b border-[#1A1A1A] hover:bg-[#0E0E0E]">
+                  <tr key={rIdx} className="border-b border-[#141414] hover:bg-[#111111] transition-colors">
                     {row.map((cell, cIdx) => (
-                      <td key={cIdx} className="p-2 border-r border-[#262626] text-[#A3A3A3]">
+                      <td key={cIdx} className="p-2 border-r border-[#1F1F1F] text-[#A1A1AA]">
                         {cell.trim()}
                       </td>
                     ))}
@@ -237,22 +234,22 @@ export const NotionEditor: React.FC = () => {
           const codeString = codeBuffer.join('\n');
           const blockId = `code-${elements.length}`;
           elements.push(
-            <div key={blockId} className="my-3 border border-[#262626] bg-[#0A0A0A] overflow-hidden">
-              <div className="flex items-center justify-between px-3 py-1 bg-[#121212] border-b border-[#262626] text-[10px] text-[#737373]">
-                <span>{codeLanguage.toUpperCase() || 'CODE'}</span>
+            <div key={blockId} className="my-3 border border-[#2F2F3E] bg-[#14141C] rounded-xl overflow-hidden shadow-sm">
+              <div className="flex items-center justify-between px-3.5 py-1.5 bg-[#1E1E28] border-b border-[#2F2F3E] text-[11px] text-[#8E8E9E]">
+                <span className="font-bold text-[#FFFFFF]">{codeLanguage.toUpperCase() || 'CODE'}</span>
                 <button
                   onClick={() => {
                     navigator.clipboard.writeText(codeString);
                     setCopiedCodeId(blockId);
                     setTimeout(() => setCopiedCodeId(null), 1500);
                   }}
-                  className="hover:text-[#FFFFFF] flex items-center gap-1 font-mono"
+                  className="hover:text-[#FFFFFF] flex items-center gap-1 font-mono transition-colors"
                 >
-                  {copiedCodeId === blockId ? <Check size={11} /> : <Copy size={11} />}
+                  {copiedCodeId === blockId ? <Check size={11} className="text-emerald-400" /> : <Copy size={11} />}
                   <span>{copiedCodeId === blockId ? 'COPIED' : 'COPY'}</span>
                 </button>
               </div>
-              <pre className="p-3 text-xs font-mono text-[#D4D4D4] overflow-x-auto whitespace-pre">
+              <pre className="p-3.5 text-xs font-mono text-[#E4E4E7] overflow-x-auto whitespace-pre custom-scrollbar">
                 {codeString}
               </pre>
             </div>
@@ -275,7 +272,6 @@ export const NotionEditor: React.FC = () => {
       // Tables
       if (line.trim().startsWith('|') && line.trim().endsWith('|')) {
         const cells = line.split('|').slice(1, -1);
-        // Skip separator row like | :--- | :--- |
         if (cells.some(c => c.trim().match(/^:?-+:?$/))) {
           continue;
         }
@@ -288,14 +284,14 @@ export const NotionEditor: React.FC = () => {
 
       // Horizontal Rule
       if (line.trim() === '---' || line.trim() === '***') {
-        elements.push(<hr key={i} className="my-4 border-[#262626]" />);
+        elements.push(<hr key={i} className="my-4 border-[#1F1F1F]" />);
         continue;
       }
 
       // Headers
       if (line.startsWith('# ')) {
         elements.push(
-          <h1 key={i} className="text-lg font-bold text-[#FFFFFF] mt-5 mb-2 pb-1 border-b border-[#262626]">
+          <h1 key={i} className="text-base font-bold text-[#FFFFFF] mt-5 mb-2 pb-1.5 border-b border-[#1F1F1F] tracking-tight">
             {line.substring(2)}
           </h1>
         );
@@ -303,7 +299,7 @@ export const NotionEditor: React.FC = () => {
       }
       if (line.startsWith('## ')) {
         elements.push(
-          <h2 key={i} className="text-sm font-bold text-[#FFFFFF] mt-4 mb-2 pb-1 border-b border-[#1F1F1F]">
+          <h2 key={i} className="text-sm font-bold text-[#FFFFFF] mt-4 mb-2 pb-1 border-b border-[#1F1F1F] tracking-tight">
             {line.substring(3)}
           </h2>
         );
@@ -311,7 +307,7 @@ export const NotionEditor: React.FC = () => {
       }
       if (line.startsWith('### ')) {
         elements.push(
-          <h3 key={i} className="text-xs font-bold text-[#E5E5E5] mt-3 mb-1">
+          <h3 key={i} className="text-xs font-bold text-[#E4E4E7] mt-3 mb-1 tracking-tight">
             {line.substring(4)}
           </h3>
         );
@@ -326,16 +322,16 @@ export const NotionEditor: React.FC = () => {
           <div 
             key={i} 
             onClick={() => toggleTodoItem(line)}
-            className="flex items-center gap-2 py-0.5 text-xs text-[#FFFFFF] cursor-pointer hover:text-[#A3A3A3] select-none"
+            className="flex items-center gap-2 py-0.5 text-xs text-[#FFFFFF] cursor-pointer hover:text-[#A1A1AA] select-none transition-colors"
           >
             {isChecked ? (
               <span className="p-0.5 border border-[#FFFFFF] bg-[#FFFFFF] text-[#000000]">
                 <Check size={11} strokeWidth={3} />
               </span>
             ) : (
-              <span className="w-3.5 h-3.5 border border-[#555555] bg-[#000000] inline-block" />
+              <span className="w-3.5 h-3.5 border border-[#3F3F46] bg-[#000000] inline-block" />
             )}
-            <span className={isChecked ? 'line-through text-[#666666]' : 'text-[#FFFFFF]'}>
+            <span className={isChecked ? 'line-through text-[#71717A]' : 'text-[#FFFFFF]'}>
               {text}
             </span>
           </div>
@@ -346,7 +342,7 @@ export const NotionEditor: React.FC = () => {
       // Blockquote
       if (line.startsWith('> ')) {
         elements.push(
-          <blockquote key={i} className="my-2 pl-3 border-l-2 border-[#FFFFFF] bg-[#0F0F0F] py-1 text-xs text-[#A3A3A3] font-mono">
+          <blockquote key={i} className="my-2 pl-3 border-l-2 border-[#FFFFFF] bg-[#0A0A0A] py-1 text-xs text-[#A1A1AA] font-mono">
             {line.substring(2)}
           </blockquote>
         );
@@ -356,8 +352,8 @@ export const NotionEditor: React.FC = () => {
       // Bullet List
       if (line.trim().startsWith('- ') || line.trim().startsWith('* ')) {
         elements.push(
-          <div key={i} className="flex items-start gap-2 py-0.5 text-xs text-[#CCCCCC] pl-2">
-            <span className="text-[#555555] mt-0.5">-</span>
+          <div key={i} className="flex items-start gap-2 py-0.5 text-xs text-[#A1A1AA] pl-2">
+            <span className="text-[#71717A] mt-0.5">-</span>
             <span>{line.trim().substring(2)}</span>
           </div>
         );
@@ -372,7 +368,7 @@ export const NotionEditor: React.FC = () => {
 
       // Normal paragraph
       elements.push(
-        <p key={i} className="text-xs text-[#CCCCCC] leading-relaxed my-0.5">
+        <p key={i} className="text-xs text-[#A1A1AA] leading-relaxed my-0.5">
           {line}
         </p>
       );
@@ -388,19 +384,21 @@ export const NotionEditor: React.FC = () => {
   // If no document is selected
   if (!activeDocument) {
     return (
-      <div className="h-full border border-[#262626] bg-[#0A0A0A] p-8 flex flex-col items-center justify-center font-mono select-none">
-        <FileText size={40} className="text-[#333333] mb-4" />
+      <div className="h-full border border-[#242432] bg-[#121217] rounded-2xl p-8 flex flex-col items-center justify-center font-mono select-none">
+        <div className="w-16 h-16 rounded-2xl bg-[#1A1A24] border border-[#2F2F3E] flex items-center justify-center mb-4 text-[#8E8E9E]">
+          <FileText size={32} />
+        </div>
         <h2 className="text-sm font-bold text-[#FFFFFF] tracking-wider mb-2 uppercase">
           NO DOCUMENT ACTIVE
         </h2>
-        <p className="text-xs text-[#737373] max-w-sm text-center mb-6 leading-relaxed">
+        <p className="text-xs text-[#8E8E9E] max-w-sm text-center mb-6 leading-relaxed">
           Select an existing document from the left Notion sidebar or initialize a new blank document for space [{activeSpace.badge}].
         </p>
         <button
           onClick={() => createDocument(activeSpace.id, 'UNTITLED_DOC', '', 'md')}
-          className="px-4 py-2 bg-[#FFFFFF] text-[#000000] font-bold text-xs border border-[#FFFFFF] hover:bg-[#A3A3A3] flex items-center gap-2"
+          className="px-5 py-2.5 bg-[#FFFFFF] text-[#000000] font-bold text-xs rounded-xl border border-[#FFFFFF] hover:bg-[#E2E2E8] flex items-center gap-2 transition-all shadow-sm"
         >
-          <Plus size={14} />
+          <Plus size={15} />
           <span>CREATE NEW DOCUMENT</span>
         </button>
       </div>
@@ -410,12 +408,12 @@ export const NotionEditor: React.FC = () => {
   const formatBadge = FORMAT_BADGES[activeDocument.format] || activeDocument.format.toUpperCase();
 
   return (
-    <div className="h-full border border-[#262626] bg-[#0A0A0A] flex flex-col font-mono select-none overflow-hidden relative">
+    <div className="h-full border border-[#242432] bg-[#0E0E14] rounded-2xl flex flex-col font-mono select-none overflow-hidden relative shadow-lg">
       {/* Top Header Bar */}
-      <div className="h-12 border-b border-[#262626] px-4 flex items-center justify-between bg-[#0F0F0F] shrink-0">
+      <div className="h-12 border-b border-[#242432] px-4 flex items-center justify-between bg-[#14141C] shrink-0">
         {/* Document Title Input */}
-        <div className="flex items-center gap-2 flex-1 min-w-0 mr-4">
-          <span className="px-1.5 py-0.5 text-[10px] font-bold border border-[#404040] bg-[#171717] text-[#FFFFFF] shrink-0">
+        <div className="flex items-center gap-2.5 flex-1 min-w-0 mr-4">
+          <span className="px-2 py-0.5 text-[10px] font-bold border border-[#2F2F3E] bg-[#1E1E28] rounded-lg text-[#FFFFFF] shrink-0">
             {formatBadge}
           </span>
           <input
@@ -423,51 +421,51 @@ export const NotionEditor: React.FC = () => {
             value={title}
             onChange={e => setTitle(e.target.value)}
             placeholder="DOCUMENT TITLE..."
-            className="bg-transparent border-b border-transparent focus:border-[#FFFFFF] text-xs font-bold text-[#FFFFFF] tracking-wider outline-none py-1 flex-1 min-w-[120px]"
+            className="bg-transparent border-b border-transparent focus:border-[#FFFFFF] text-xs font-bold text-[#FFFFFF] tracking-wider outline-none py-1 flex-1 min-w-[120px] transition-colors"
           />
         </div>
 
         {/* View Controls & Metrics */}
         <div className="flex items-center gap-3 shrink-0">
           {/* Word/Char Metrics */}
-          <div className="text-[10px] text-[#737373] hidden sm:flex items-center gap-2">
+          <div className="text-[10px] text-[#8E8E9E] hidden sm:flex items-center gap-2 font-medium">
             <span>{metrics.words} WORDS</span>
             <span>{metrics.chars} CHARS</span>
             <span>{metrics.lines} LINES</span>
           </div>
 
           {/* Auto-Save Indicator */}
-          <div className="text-[10px] font-bold flex items-center gap-1 text-[#A3A3A3] border-l border-[#262626] pl-3">
+          <div className="text-[10px] font-bold flex items-center gap-1.5 text-[#8E8E9E] border-l border-[#242432] pl-3">
             {isSaving ? (
-              <span className="text-[#A3A3A3] animate-pulse">SAVING...</span>
+              <span className="text-amber-400 animate-pulse">SAVING...</span>
             ) : (
-              <span className="text-[#FFFFFF] flex items-center gap-1">
-                <Check size={11} strokeWidth={3} />
+              <span className="text-emerald-400 flex items-center gap-1">
+                <Check size={12} strokeWidth={2.5} />
                 <span>SAVED</span>
               </span>
             )}
           </div>
 
           {/* View Mode Toggle */}
-          <div className="flex items-center border border-[#262626] bg-[#121212]">
+          <div className="flex items-center border border-[#2F2F3E] bg-[#1E1E28] rounded-xl p-0.5 gap-0.5">
             <button
               onClick={() => setViewMode('edit')}
               title="Editor View"
-              className={`p-1.5 text-xs ${viewMode === 'edit' ? 'bg-[#FFFFFF] text-[#000000]' : 'text-[#737373] hover:text-[#FFFFFF]'}`}
+              className={`p-1.5 rounded-lg text-xs transition-colors ${viewMode === 'edit' ? 'bg-[#FFFFFF] text-[#000000]' : 'text-[#8E8E9E] hover:text-[#FFFFFF]'}`}
             >
               <Edit3 size={13} />
             </button>
             <button
               onClick={() => setViewMode('split')}
               title="Split View"
-              className={`p-1.5 text-xs border-x border-[#262626] ${viewMode === 'split' ? 'bg-[#FFFFFF] text-[#000000]' : 'text-[#737373] hover:text-[#FFFFFF]'}`}
+              className={`p-1.5 rounded-lg text-xs transition-colors ${viewMode === 'split' ? 'bg-[#FFFFFF] text-[#000000]' : 'text-[#8E8E9E] hover:text-[#FFFFFF]'}`}
             >
               <Columns size={13} />
             </button>
             <button
               onClick={() => setViewMode('preview')}
               title="Preview View"
-              className={`p-1.5 text-xs ${viewMode === 'preview' ? 'bg-[#FFFFFF] text-[#000000]' : 'text-[#737373] hover:text-[#FFFFFF]'}`}
+              className={`p-1.5 rounded-lg text-xs transition-colors ${viewMode === 'preview' ? 'bg-[#FFFFFF] text-[#000000]' : 'text-[#8E8E9E] hover:text-[#FFFFFF]'}`}
             >
               <Eye size={13} />
             </button>
@@ -478,7 +476,7 @@ export const NotionEditor: React.FC = () => {
             <button
               onClick={handleExport}
               title="Download Document"
-              className="p-1.5 border border-[#262626] hover:border-[#404040] text-[#A3A3A3] hover:text-[#FFFFFF]"
+              className="p-1.5 border border-[#2F2F3E] hover:border-[#FFFFFF] rounded-xl text-[#8E8E9E] hover:text-[#FFFFFF] transition-colors"
             >
               <Download size={13} />
             </button>
@@ -489,7 +487,7 @@ export const NotionEditor: React.FC = () => {
                 }
               }}
               title="Delete Document"
-              className="p-1.5 border border-[#262626] hover:border-[#FFFFFF] text-[#A3A3A3] hover:text-[#FFFFFF]"
+              className="p-1.5 border border-[#2F2F3E] hover:border-rose-500 rounded-xl text-[#8E8E9E] hover:text-rose-400 transition-colors"
             >
               <Trash2 size={13} />
             </button>
@@ -501,15 +499,15 @@ export const NotionEditor: React.FC = () => {
       <div className="flex-1 flex overflow-hidden relative">
         {/* Editor Column */}
         {(viewMode === 'edit' || viewMode === 'split') && (
-          <div className={`h-full flex flex-col ${viewMode === 'split' ? 'w-1/2 border-r border-[#262626]' : 'w-full'}`}>
-            <div className="flex-1 p-4 overflow-hidden relative flex flex-col">
+          <div className={`h-full flex flex-col ${viewMode === 'split' ? 'w-1/2 border-r border-[#242432]' : 'w-full'}`}>
+            <div className="flex-1 p-4 overflow-hidden relative flex flex-col bg-[#0B0B0E]">
               <textarea
                 ref={textareaRef}
                 value={content}
                 onChange={handleTextChange}
                 onKeyDown={handleKeyDown}
                 placeholder="Type '/' for Notion slash commands (/H2, /TODO, /CODE, /TABLE, /AI-SYNTHESIZE)..."
-                className="w-full h-full bg-transparent text-[#FFFFFF] text-xs font-mono outline-none resize-none leading-relaxed selection:bg-[#333333] custom-scrollbar"
+                className="w-full h-full bg-transparent text-[#FFFFFF] text-xs font-mono outline-none resize-none leading-relaxed selection:bg-[#FFFFFF] selection:text-[#000000] custom-scrollbar"
                 autoFocus
               />
 
@@ -522,7 +520,7 @@ export const NotionEditor: React.FC = () => {
                 position={slashPosition}
               />
             </div>
-            <div className="h-6 border-t border-[#1C1C1C] px-3 bg-[#0B0B0B] flex items-center justify-between text-[10px] text-[#555555]">
+            <div className="h-6 border-t border-[#242432] px-3 bg-[#14141C] flex items-center justify-between text-[10px] text-[#8E8E9E]">
               <span>HINT: TYPE &apos;/&apos; FOR COMMANDS</span>
               <span>TAB FOR 2-SPACE INDENT</span>
             </div>
@@ -531,12 +529,12 @@ export const NotionEditor: React.FC = () => {
 
         {/* Live Preview Column */}
         {(viewMode === 'preview' || viewMode === 'split') && (
-          <div className={`h-full flex flex-col bg-[#070707] overflow-y-auto ${viewMode === 'split' ? 'w-1/2' : 'w-full'}`}>
+          <div className={`h-full flex flex-col bg-[#0E0E13] overflow-y-auto ${viewMode === 'split' ? 'w-1/2' : 'w-full'} custom-scrollbar`}>
             <div className="p-6 max-w-3xl mx-auto w-full flex-1">
               {content.trim() ? (
                 renderMarkdown(content)
               ) : (
-                <div className="text-[11px] text-[#444444] italic">
+                <div className="text-[11px] text-[#8E8E9E] italic">
                   Document is empty. Enter markdown text in the editor.
                 </div>
               )}

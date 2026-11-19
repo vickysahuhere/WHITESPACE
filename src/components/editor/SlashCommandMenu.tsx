@@ -157,14 +157,14 @@ export const SlashCommandMenu: React.FC<SlashCommandMenuProps> = ({
     <div
       ref={menuRef}
       style={style}
-      className="absolute z-50 w-72 bg-[#0A0A0A] border border-[#404040] shadow-2xl font-mono select-none overflow-hidden"
+      className="absolute z-50 w-72 bg-[#0A0A0A] border border-[#262626] shadow-2xl font-mono select-none overflow-hidden"
     >
-      <div className="px-3 py-1.5 bg-[#121212] border-b border-[#262626] text-[10px] text-[#737373] flex items-center justify-between">
+      <div className="px-3 py-1.5 bg-[#111111] border-b border-[#1F1F1F] text-[10px] text-[#71717A] flex items-center justify-between font-bold">
         <span>SLASH COMMANDS</span>
         <span>{filteredCommands.length} AVAILABLE</span>
       </div>
 
-      <div className="max-h-64 overflow-y-auto p-1 space-y-0.5">
+      <div className="max-h-64 overflow-y-auto p-1 space-y-0.5 custom-scrollbar">
         {filteredCommands.map((cmd, index) => {
           const isSelected = index === selectedIndex;
           return (
@@ -174,29 +174,29 @@ export const SlashCommandMenu: React.FC<SlashCommandMenuProps> = ({
               onMouseEnter={() => setSelectedIndex(index)}
               className={`px-2.5 py-1.5 flex items-center gap-2 cursor-pointer transition-colors text-xs border ${
                 isSelected 
-                  ? 'bg-[#1F1F1F] text-[#FFFFFF] border-[#FFFFFF]' 
-                  : 'bg-transparent text-[#A3A3A3] border-transparent hover:text-[#FFFFFF]'
+                  ? 'bg-[#18181B] text-[#FFFFFF] border-[#FFFFFF]' 
+                  : 'bg-transparent text-[#A1A1AA] border-transparent hover:text-[#FFFFFF]'
               }`}
             >
-              <span className={`p-1 border ${
+              <span className={`p-1 border shrink-0 ${
                 isSelected 
                   ? 'bg-[#FFFFFF] text-[#000000] border-[#FFFFFF]' 
-                  : 'bg-[#141414] text-[#737373] border-[#262626]'
+                  : 'bg-[#141414] text-[#71717A] border-[#262626]'
               }`}>
                 {cmd.icon}
               </span>
               <div className="min-w-0 flex-1">
                 <div className="font-bold flex items-center justify-between">
                   <span>{cmd.label}</span>
-                  <span className="text-[10px] text-[#737373] font-normal">{cmd.command}</span>
+                  <span className="text-[10px] text-[#71717A] font-normal">{cmd.command}</span>
                 </div>
-                <div className="text-[10px] text-[#737373] truncate">{cmd.description}</div>
+                <div className="text-[10px] text-[#71717A] truncate">{cmd.description}</div>
               </div>
             </div>
           );
         })}
       </div>
-      <div className="px-2 py-1 bg-[#0F0F0F] border-t border-[#262626] text-[9px] text-[#555555] flex justify-between">
+      <div className="px-2 py-1 bg-[#0A0A0A] border-t border-[#1F1F1F] text-[9px] text-[#52525B] flex justify-between">
         <span>UP/DOWN NAVIGATE</span>
         <span>ENTER SELECT</span>
         <span>ESC DISMISS</span>
