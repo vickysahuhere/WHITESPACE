@@ -27,7 +27,8 @@ import {
   Share2,
   Check,
   Copy,
-  Key
+  Key,
+  X
 } from 'lucide-react';
 
 export const StageView: React.FC = () => {
@@ -399,8 +400,9 @@ export const StageView: React.FC = () => {
               <button 
                 onClick={() => setShowInviteModal(false)}
                 className="text-[#8E8E9E] hover:text-[#FFFFFF] p-1 rounded-lg hover:bg-[#242432] transition-colors"
+                title="Close"
               >
-                ✕
+                <X size={16} />
               </button>
             </div>
 

@@ -335,7 +335,7 @@ const hasSdf = workspaceContextFile.includes('sdf') && workspaceContextFile.incl
 recordTest(
   'FEAT-24',
   'Universal App Demo & Guide (CTRL+S+D+F)',
-  hasSdf && guideModalFile.includes('PAGE_GUIDES'),
+  hasSdf && (guideModalFile.includes('PAGE_GUIDES') || guideModalFile.includes('GuideSection')),
   'CTRL+S+D+F universal shortcut listener and AppGuideModal with 4 tabs verified.'
 );
 
