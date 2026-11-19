@@ -18,10 +18,10 @@ interface KanbanViewProps {
   onDispatchTask?: (task: Task) => void;
 }
 
-const COLUMNS: { id: TaskColumn; title: string; subtitle: string }[] = [
-  { id: 'queued', title: '01 // QUEUED SPECS', subtitle: 'Awaiting Dispatch & Planning' },
-  { id: 'active', title: '02 // ACTIVE AGENT LOOP', subtitle: 'Agent Reasoning & Execution' },
-  { id: 'shipped', title: '03 // VERIFIED & SHIPPED', subtitle: 'Completed & Evaluated' }
+const COLUMNS: { id: TaskColumn; title: string }[] = [
+  { id: 'queued', title: 'QUEUED' },
+  { id: 'active', title: 'ACTIVE' },
+  { id: 'shipped', title: 'SHIPPED' }
 ];
 
 export const KanbanView: React.FC<KanbanViewProps> = ({ onDispatchTask }) => {
@@ -100,7 +100,7 @@ export const KanbanView: React.FC<KanbanViewProps> = ({ onDispatchTask }) => {
         <div className="flex items-center gap-2.5">
           <Kanban size={17} className="text-emerald-400" />
           <span className="text-sm font-display font-bold tracking-tight text-[#FFFFFF]">
-            OpenClaw Mission Control // {activeSpace.name} Kanban
+            OpenClaw // Kanban
           </span>
           <span className="text-xs bg-[#1E1E28] border border-[#2F2F3E] px-2.5 py-0.5 rounded-full text-[#D4D4DC] font-mono font-bold">
             {spaceTasks.length} tasks
@@ -134,18 +134,13 @@ export const KanbanView: React.FC<KanbanViewProps> = ({ onDispatchTask }) => {
             >
               {/* Column Header */}
               <div className="p-3.5 bg-[#171722] border-b border-[#242430] flex items-center justify-between">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-display font-bold text-[#FFFFFF] uppercase tracking-wider">
-                      {col.title}
-                    </span>
-                    <span className="bg-[#20202E] border border-[#333346] px-2 py-0.5 rounded-md text-xs text-[#FFFFFF] font-mono font-bold">
-                      {colTasks.length}
-                    </span>
-                  </div>
-                  <div className="text-[11px] font-sans text-[#8E8E9E] mt-0.5">
-                    {col.subtitle}
-                  </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-display font-bold text-[#FFFFFF] uppercase tracking-wider">
+                    {col.title}
+                  </span>
+                  <span className="bg-[#20202E] border border-[#333346] px-2 py-0.5 rounded-md text-xs text-[#FFFFFF] font-mono font-bold">
+                    {colTasks.length}
+                  </span>
                 </div>
 
                 <button
@@ -161,12 +156,12 @@ export const KanbanView: React.FC<KanbanViewProps> = ({ onDispatchTask }) => {
               <div className="flex-1 overflow-y-auto p-3.5 space-y-3 custom-scrollbar">
                 {colTasks.length === 0 ? (
                   <div className="h-36 border border-dashed border-[#242430] rounded-xl flex flex-col items-center justify-center text-xs text-[#52525B]">
-                    <span>NO TASKS IN COLUMN</span>
+                    <span>NO TASKS</span>
                     <button
                       onClick={() => handleOpenCreate(col.id)}
                       className="mt-1 text-emerald-400 hover:text-emerald-300 font-medium transition-colors"
                     >
-                      + Create Specification
+                      + New Task
                     </button>
                   </div>
                 ) : (
@@ -238,7 +233,7 @@ export const KanbanView: React.FC<KanbanViewProps> = ({ onDispatchTask }) => {
                               className="px-3 py-1.5 bg-[#FFFFFF] hover:bg-[#E4E4E7] text-[#0B0B0E] font-display font-bold text-xs rounded-xl flex items-center gap-1.5 transition-all shadow-xs"
                             >
                               <Sparkles size={13} />
-                              <span>DISPATCH AI</span>
+                              <span>DISPATCH</span>
                             </button>
                           ) : (
                             <div className="flex items-center gap-1.5 text-xs text-emerald-400 font-display font-bold">

@@ -464,14 +464,14 @@ export class WebRTCStageService {
   }
 
   private notifyPeers(): void {
-    // Generate active stage peers list
+    // Stage peers list for collaborative team
     const peers: StagePeer[] = [
       {
         id: this.currentMemberId,
-        name: 'You (Stage Host)',
+        name: 'You',
         badge: 'YOU',
-        role: 'Active Presenter',
-        isAudioActive: true,
+        role: '',
+        isAudioActive: !!this.localAudioStream,
         isVideoActive: !!this.cameraStream,
         isScreenSharing: !!this.screenStream,
         stream: this.screenStream || undefined,
@@ -481,8 +481,8 @@ export class WebRTCStageService {
         id: 'user_arnav',
         name: 'Arnav Suryavanshi',
         badge: 'AS',
-        role: 'Studio Audio Peer',
-        isAudioActive: true,
+        role: '',
+        isAudioActive: false,
         isVideoActive: false,
         isScreenSharing: false
       },
@@ -490,7 +490,16 @@ export class WebRTCStageService {
         id: 'user_lakshay',
         name: 'Lakshay Arora',
         badge: 'LA',
-        role: 'WebRTC Peer',
+        role: '',
+        isAudioActive: false,
+        isVideoActive: false,
+        isScreenSharing: false
+      },
+      {
+        id: 'user_shiwant',
+        name: 'Shiwant Goyal',
+        badge: 'SG',
+        role: '',
         isAudioActive: false,
         isVideoActive: false,
         isScreenSharing: false

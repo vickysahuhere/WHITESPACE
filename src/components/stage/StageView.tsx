@@ -31,7 +31,7 @@ import {
 } from 'lucide-react';
 
 export const StageView: React.FC = () => {
-  const { activeSpace, activeMember, setActiveView, audioState, toggleMute } = useWorkspace();
+  const { activeSpace, activeMember, members, setActiveView, audioState, toggleMute } = useWorkspace();
   const { isMicOn, toggleMic, gainPercent, setShowHardwareModal } = useAudio();
 
   const [peers, setPeers] = useState<StagePeer[]>([]);
@@ -119,6 +119,7 @@ export const StageView: React.FC = () => {
 
   const isLive = isMicOn && !audioState.muted;
   const currentQualityConfig = STAGE_QUALITY_PRESETS[qualityPreset];
+  const otherMembers = members.filter(m => m.id !== activeMember.id);
 
   return (
     <div className="flex-1 flex flex-col h-full bg-[#0B0B0F] text-[#FFFFFF] select-none overflow-hidden relative">
@@ -128,11 +129,11 @@ export const StageView: React.FC = () => {
           <div className="flex items-center gap-2">
             <Radio size={16} className="text-emerald-400 animate-pulse" />
             <span className="text-sm font-display font-bold tracking-tight text-[#FFFFFF]">
-              {activeSpace.name} // Voice & Video Stage
+              {activeSpace.name} // Stage
             </span>
           </div>
           <span className="bg-[#1E1E26] border border-[#2F2F3E] text-xs font-mono font-bold px-2.5 py-0.5 rounded-full text-[#D4D4DC]">
-            {peers.length} in stage
+            {members.length} in stage
           </span>
           <span className="text-xs text-[#8E8E9E] font-mono font-semibold">
             {formatCallTime(callDuration)}
@@ -142,7 +143,7 @@ export const StageView: React.FC = () => {
         {/* Studio Specs Indicator */}
         <div className="hidden md:flex items-center gap-2 text-xs">
           <span className="bg-[#17171E] px-2.5 py-1 rounded-lg border border-[#242430] text-[#D4D4DC] font-mono font-medium text-xs">
-            48 kHz @ 510 kbps Opus Stereo
+            510 kbps Opus
           </span>
           <span className="bg-[#17171E] px-2.5 py-1 rounded-lg border border-[#242430] text-emerald-400 font-mono font-bold text-xs">
             {currentQualityConfig.label} ({currentQualityConfig.fps}fps)
@@ -158,13 +159,13 @@ export const StageView: React.FC = () => {
             <div className="h-9 bg-[#17171E] border-b border-[#242430] px-4 flex items-center justify-between text-xs text-[#D4D4DC] shrink-0">
               <div className="flex items-center gap-2 font-semibold">
                 <Monitor size={14} className="text-emerald-400" />
-                <span>Screen Presentation // {currentQualityConfig.label} ({currentQualityConfig.fps}fps)</span>
+                <span>Screen // {currentQualityConfig.label}</span>
               </div>
               <button
                 onClick={handleToggleScreenShare}
                 className="text-xs text-red-400 hover:text-red-300 font-medium transition-colors"
               >
-                Stop Sharing
+                Stop
               </button>
             </div>
             <div className="flex-1 relative bg-[#000000] flex items-center justify-center">
@@ -179,8 +180,8 @@ export const StageView: React.FC = () => {
           </div>
         ) : null}
 
-        {/* Video & Voice Participant Cards (Discord Layout) */}
-        <div className="w-full max-w-5xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pb-20">
+        {/* Video & Voice Participant Cards (All 4 Core Team Members) */}
+        <div className="w-full max-w-6xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pb-20">
           {/* User's Local Tile */}
           <div 
             className={`h-64 sm:h-72 rounded-3xl bg-gradient-to-b from-[#1E1E26] to-[#121217] border relative overflow-hidden flex flex-col items-center justify-center transition-all shadow-xl ${
@@ -204,7 +205,6 @@ export const StageView: React.FC = () => {
                 </div>
                 <div className="text-center">
                   <div className="text-sm font-display font-bold text-[#FFFFFF] tracking-tight">{activeMember.name}</div>
-                  <div className="text-xs font-sans text-[#8E8E9E]">Host & Presenter</div>
                 </div>
               </div>
             )}
@@ -230,41 +230,45 @@ export const StageView: React.FC = () => {
             </div>
           </div>
 
-          {/* Remote Peer 1 */}
-          <div className="h-64 sm:h-72 rounded-3xl bg-gradient-to-b from-[#1C1C24] to-[#121217] border border-[#2F2F3E] relative overflow-hidden flex flex-col items-center justify-center shadow-xl">
-            <div className="flex flex-col items-center justify-center gap-3">
-              <div className="w-20 h-20 rounded-full bg-[#181822] border-2 border-[#333344] flex items-center justify-center text-xl font-mono font-bold text-[#FFFFFF] shadow-2xl">
-                AS
-              </div>
-              <div className="text-center">
-                <div className="text-sm font-display font-bold text-[#FFFFFF] tracking-tight">Arnav Suryavanshi</div>
-                <div className="text-xs font-sans text-[#8E8E9E]">AI Research & RAG Infra</div>
-              </div>
-            </div>
+          {/* Remote Team Members (Arnav Suryavanshi, Lakshay Arora, Shiwant Goyal) */}
+          {otherMembers.map(member => {
+            const peer = peers.find(p => p.id === member.id || p.name === member.name);
+            const isPeerActive = peer ? peer.isAudioActive : false;
 
-            <div className="absolute bottom-3 left-3 bg-[#0B0B0E]/80 backdrop-blur-md px-3 py-1 rounded-full border border-[#2F2F3E] flex items-center gap-2 text-xs font-sans font-semibold text-[#FFFFFF]">
-              <Mic size={12} className="text-emerald-400" />
-              <span>Arnav</span>
-            </div>
-          </div>
+            return (
+              <div 
+                key={member.id}
+                className={`h-64 sm:h-72 rounded-3xl bg-gradient-to-b from-[#1C1C24] to-[#121217] border relative overflow-hidden flex flex-col items-center justify-center shadow-xl transition-all ${
+                  isPeerActive ? 'border-emerald-500/80 ring-4 ring-emerald-500/20' : 'border-[#2F2F3E]'
+                }`}
+              >
+                <div className="flex flex-col items-center justify-center gap-3">
+                  <div className={`w-20 h-20 rounded-full bg-[#181822] border-2 flex items-center justify-center text-xl font-mono font-bold text-[#FFFFFF] shadow-2xl transition-all ${
+                    isPeerActive ? 'border-emerald-400 scale-105' : 'border-[#333344]'
+                  }`}>
+                    {member.badge}
+                  </div>
+                  <div className="text-center">
+                    <div className="text-sm font-display font-bold text-[#FFFFFF] tracking-tight">
+                      {member.name}
+                    </div>
+                  </div>
+                </div>
 
-          {/* Remote Peer 2 */}
-          <div className="h-64 sm:h-72 rounded-3xl bg-gradient-to-b from-[#1C1C24] to-[#121217] border border-[#2F2F3E] relative overflow-hidden flex flex-col items-center justify-center shadow-xl">
-            <div className="flex flex-col items-center justify-center gap-3">
-              <div className="w-20 h-20 rounded-full bg-[#181822] border-2 border-[#333344] flex items-center justify-center text-xl font-mono font-bold text-[#FFFFFF] shadow-2xl">
-                LA
+                {/* Bottom Status Badge - Real Standby/Mute State */}
+                <div className="absolute bottom-3 left-3 bg-[#0B0B0E]/80 backdrop-blur-md px-3 py-1 rounded-full border border-[#2F2F3E] flex items-center gap-2 text-xs font-sans font-semibold text-[#8E8E9E]">
+                  {isPeerActive ? (
+                    <Mic size={12} className="text-emerald-400" />
+                  ) : (
+                    <MicOff size={12} className="text-red-400" />
+                  )}
+                  <span className={isPeerActive ? 'text-white' : 'text-[#8E8E9E]'}>
+                    {member.name.split(' ')[0]}
+                  </span>
+                </div>
               </div>
-              <div className="text-center">
-                <div className="text-sm font-display font-bold text-[#FFFFFF] tracking-tight">Lakshay Arora</div>
-                <div className="text-xs font-sans text-[#8E8E9E]">Realtime WebRTC Audio Lead</div>
-              </div>
-            </div>
-
-            <div className="absolute bottom-3 left-3 bg-[#0B0B0E]/80 backdrop-blur-md px-3 py-1 rounded-full border border-[#2F2F3E] flex items-center gap-2 text-xs font-semibold text-[#8E8E9E]">
-              <MicOff size={12} className="text-red-400" />
-              <span>Lakshay</span>
-            </div>
-          </div>
+            );
+          })}
         </div>
       </div>
 

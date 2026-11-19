@@ -32,8 +32,8 @@ export const VoicePod: React.FC<{
           <div className="text-sm font-display font-bold text-[#FFFFFF] truncate tracking-tight">
             {activeMember.name}
           </div>
-          <div className="text-xs font-sans text-[#8E8E9E] truncate font-medium">
-            {activeMember.role}
+          <div className="text-[11px] font-sans text-[#8E8E9E] truncate font-medium">
+            {isLive ? 'Live' : audioState.muted ? 'Muted' : 'Standby'}
           </div>
         </div>
         <div className={`w-2.5 h-2.5 rounded-full ${isLive ? 'bg-emerald-500 shadow-sm shadow-emerald-500/50 animate-pulse' : audioState.muted ? 'bg-red-500 shadow-sm shadow-red-500/50' : 'bg-[#454558]'}`} 

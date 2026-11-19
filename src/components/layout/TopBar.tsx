@@ -66,7 +66,7 @@ export const TopBar: React.FC<{
         >
           <span className="flex items-center gap-2.5 truncate font-sans">
             <Search size={14} className="text-[#8E8E9E] shrink-0" />
-            <span className="text-xs truncate font-sans">Search commands, docs, tasks...</span>
+            <span className="text-xs truncate font-sans">Search workspace...</span>
           </span>
           <kbd className="text-[10px] bg-[#121216] border border-[#2F2F3E] rounded-md px-1.5 py-0.5 text-[#8E8E9E] shrink-0 font-mono font-bold">CTRL+K</kbd>
         </button>

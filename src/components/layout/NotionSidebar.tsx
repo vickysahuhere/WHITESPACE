@@ -34,11 +34,11 @@ export const NotionSidebar: React.FC<{
   const spaceDocs = getDocumentsForSpace(activeSpace.id);
 
   const navItems: { view: WorkspaceView; label: string; icon: React.ReactNode; shortcut: string }[] = [
-    { view: 'editor', label: 'KNOWLEDGE DOCS', icon: <FileText size={14} />, shortcut: '1' },
-    { view: 'kanban', label: 'OPENCLAW KANBAN', icon: <Kanban size={14} />, shortcut: '2' },
-    { view: 'browser', label: 'OSS DEV BROWSER', icon: <Globe size={14} />, shortcut: '3' },
-    { view: 'stage', label: 'STUDIO STAGE', icon: <Radio size={14} />, shortcut: '4' },
-    { view: 'copilot', label: 'AI COPILOT', icon: <Bot size={14} />, shortcut: '5' },
+    { view: 'editor', label: 'DOCS', icon: <FileText size={14} />, shortcut: '1' },
+    { view: 'kanban', label: 'KANBAN', icon: <Kanban size={14} />, shortcut: '2' },
+    { view: 'browser', label: 'BROWSER', icon: <Globe size={14} />, shortcut: '3' },
+    { view: 'stage', label: 'STAGE', icon: <Radio size={14} />, shortcut: '4' },
+    { view: 'copilot', label: 'COPILOT', icon: <Bot size={14} />, shortcut: '5' },
   ];
 
   const handleCreateNewDoc = () => {
@@ -92,7 +92,7 @@ export const NotionSidebar: React.FC<{
         {/* Navigation Channels with Rounded Items and Bigger Text */}
         <nav className="p-2.5 space-y-1.5 shrink-0">
           <div className="px-2.5 py-1 text-[11px] font-mono font-bold text-[#8E8E9E] uppercase tracking-wider">
-            Workspace Views
+            VIEWS
           </div>
           {navItems.map(item => {
             const isActive = activeView === item.view;
